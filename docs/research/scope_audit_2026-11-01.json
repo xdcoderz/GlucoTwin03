@@ -1,0 +1,81 @@
+{
+  "generated_at_utc": "2026-11-01T17:19:27.323185+00:00",
+  "purpose": "Aggregate scope feasibility; not a new trained model or clinical validation",
+  "source_sha256": {
+    "glucose_readings.csv": "cb8feb2f475558cdefcab77c366cf2856d7cf73f1a1f3790966730025c197cd6",
+    "meal_events.csv": "9a382fc9d79c093681839bb79e07147099937d957177e146f67e08fef85c35c3",
+    "modeling/model_features.csv": "9f7b0357084b4c749b184ddd99010e51b627444580a6d686af168ab8adc47492",
+    "modeling/baseline_predictions.csv": "c54f02220509a0ababbd1600aad9dffdb4cba0385d31a0242e66b247b8e3d518"
+  },
+  "definitions": {
+    "baseline_high": "Recorded meal-time baseline >=180 mg/dL",
+    "composite_event": "Existing label: any future glucose >=180 OR rise >=40 from baseline within 120 minutes",
+    "low_window": "At least one observed glucose <70 among eight exact future samples at +15,+30,...,+120 minutes",
+    "complete_future": "All eight expected future samples present; no interpolation; excludes baseline",
+    "caution": "Counts are overlapping meal windows, not independent episodes. No new low-glucose classifier is evaluated. Subgroups are descriptive post-hoc audits, not fresh held-out validation."
+  },
+  "splits": {
+    "train": {
+      "eligible_meals": 1871,
+      "patients": 70,
+      "baseline_already_ge_180": 233,
+      "composite_events_in_already_high": 224,
+      "baseline_below_180_meals": 1638,
+      "composite_positive_meals": 1212,
+      "absolute_180_positive_meals": 876,
+      "rise40_positive_meals": 984,
+      "rise40_only_without_180": 336,
+      "complete_8_future_15min_samples": 1869,
+      "observed_under70_in_complete_windows": 28,
+      "patients_with_under70_windows": 14
+    },
+    "validation": {
+      "eligible_meals": 451,
+      "patients": 15,
+      "baseline_already_ge_180": 82,
+      "composite_events_in_already_high": 80,
+      "baseline_below_180_meals": 369,
+      "composite_positive_meals": 316,
+      "absolute_180_positive_meals": 240,
+      "rise40_positive_meals": 235,
+      "rise40_only_without_180": 76,
+      "complete_8_future_15min_samples": 451,
+      "observed_under70_in_complete_windows": 35,
+      "patients_with_under70_windows": 6
+    },
+    "test": {
+      "eligible_meals": 493,
+      "patients": 15,
+      "baseline_already_ge_180": 102,
+      "composite_events_in_already_high": 101,
+      "baseline_below_180_meals": 391,
+      "composite_positive_meals": 300,
+      "absolute_180_positive_meals": 234,
+      "rise40_positive_meals": 200,
+      "rise40_only_without_180": 66,
+      "complete_8_future_15min_samples": 493,
+      "observed_under70_in_complete_windows": 21,
+      "patients_with_under70_windows": 5
+    }
+  },
+  "existing_model_test_confusion_matrices_at_0_50": {
+    "all": {
+      "TN": 117,
+      "FP": 76,
+      "FN": 78,
+      "TP": 222
+    },
+    "baseline_below180": {
+      "TN": 117,
+      "FP": 75,
+      "FN": 73,
+      "TP": 126
+    },
+    "baseline_ge180": {
+      "TN": 0,
+      "FP": 1,
+      "FN": 5,
+      "TP": 96
+    }
+  }
+}

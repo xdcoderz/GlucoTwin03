@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "asset": "glucotwin_anatomy.glb",
+  "units": "meters",
+  "standingHeight": 1.75,
+  "axes": {
+    "up": "+Y",
+    "anterior": "+Z",
+    "patientLeft": "+X"
+  },
+  "rootNode": "GlucoTwin_Anatomy",
+  "shellNode": "body_shell",
+  "organGroups": {
+    "pancreas": {
+      "node": "pancreas",
+      "anchor": "anchor_pancreas"
+    },
+    "liver": {
+      "node": "liver",
+      "anchor": "anchor_liver"
+    },
+    "gut": {
+      "node": "gut",
+      "anchor": "anchor_gut"
+    },
+    "muscle": {
+      "node": "muscle",
+      "anchor": "anchor_muscle"
+    },
+    "fat": {
+      "node": "fat",
+      "anchor": "anchor_fat"
+    }
+  },
+  "anchors": {
+    "body": [
+      0,
+      0.8838565889658461,
+      0
+    ],
+    "pancreas": [
+      -0.005,
+      1.146856588965846,
+      -0.025
+    ],
+    "liver": [
+      -0.066,
+      1.241856588965846,
+      0.024
+    ],
+    "gut": [
+      0.028,
+      1.108856588965846,
+      0.042
+    ],
+    "muscle": [
+      -0.095,
+      0.7538565889658461,
+      0.02
+    ],
+    "fat": [
+      0.076,
+      1.068856588965846,
+      0.078
+    ]
+  },
+  "optionalContextNodes": [],
+  "anatomicalReviewStatus": "not_expert_reviewed",
+  "representation": "original procedurally generated educational schematic, not a patient scan",
+  "stats": {
+    "triangles": 149972,
+    "meshes": 13,
+    "materials": 6,
+    "textures": 0,
+    "bytes": 3567456,
+    "sha256": "b1817614bd88e1f050c38cce921ffbf11e96e9b3598cd95d0a572b9de6bab0e4",
+    "bounds": [
+      [
+        -0.38671145660246925,
+        0.0,
+        -0.12283642224821643
+      ],
+      [
+        0.38481177316207116,
+        1.7425726338037937,
+        0.1488019637040976
+      ]
+    ],
+    "generationSeconds": 3.11
+  }
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "kind": "available",
+    "pages": 3,
+    "id": "60f19eb5-056e-4ac0-a730-cd0387d6b4b5",
+    "inputHashMatches": true,
+    "scoreMatches": true,
+    "factorStateMatches": true
+  },
+  {
+    "kind": "unavailable",
+    "pages": 3,
+    "id": "824a5594-7776-4b9f-b15e-fa54635d0b6b",
+    "inputHashMatches": true,
+    "scoreMatches": true,
+    "factorStateMatches": true
+  }
+]

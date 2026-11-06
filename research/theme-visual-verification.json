@@ -1,0 +1,40 @@
+{
+  "themes": {
+    "dark": {
+      "contrasts": [
+        {
+          "selector": ".landing-intro-copy > p",
+          "ratio": 9.83
+        },
+        {
+          "selector": ".landing-workspace-cta",
+          "ratio": 9.1
+        },
+        {
+          "selector": ".sample-note",
+          "ratio": 9.36
+        }
+      ],
+      "statusDot": "oklch(0.81 0.11 157)"
+    },
+    "light": {
+      "contrasts": [
+        {
+          "selector": ".landing-intro-copy > p",
+          "ratio": 7.58
+        },
+        {
+          "selector": ".landing-workspace-cta",
+          "ratio": 4.95
+        },
+        {
+          "selector": ".sample-note",
+          "ratio": 7.91
+        }
+      ],
+      "statusDot": "oklch(0.4 0.08 157)"
+    }
+  },
+  "errors": [],
+  "passed": true
+}

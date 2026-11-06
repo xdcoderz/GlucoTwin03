@@ -1,0 +1,33 @@
+.motion-dashboard { --studio-edge:var(--muted); --studio-deep:var(--primary); --studio-radius:18px; }
+body:has(.motion-dashboard) { background:radial-gradient(ellipse at 0 0, var(--success-surface) 0, transparent 42%), var(--muted); }
+.motion-dashboard .brand-mark { border-radius:8px; box-shadow:0 4px 12px color-mix(in srgb, var(--shadow-color) 12.55%, transparent); }
+.motion-dashboard .page-heading { padding:12px 0 4px; }
+.motion-dashboard .page-heading h1 { font-size:clamp(30px,3.2vw,42px); color:var(--studio-deep); letter-spacing:-.05em; }
+.motion-dashboard .workspace-nav { border:1px solid var(--border); border-radius:10px; padding:8px; background:color-mix(in srgb, var(--card) 72.16%, transparent); }
+.motion-dashboard .workspace-nav a { background:transparent; min-height:40px; padding:10px 14px; font-weight:650; }
+.motion-dashboard .workspace-nav > span { padding:0 8px; }
+.motion-dashboard .twin-experience { border-color:var(--studio-edge); border-radius:var(--studio-radius); box-shadow:0 15px 40px color-mix(in srgb, var(--shadow-color) 6.27%, transparent); }
+.motion-dashboard .experience-topline { padding-top:28px; padding-bottom:24px; background:linear-gradient(120deg,var(--success-surface),var(--card) 65%); }
+.motion-dashboard .experience-topline h2 { font-size:clamp(24px,2.6vw,34px); letter-spacing:-.05em; }
+.motion-dashboard .experience-patient { border-left:2px solid var(--border); padding-left:16px; }
+.motion-dashboard .experience-modes { padding-top:4px; }
+.motion-dashboard .experience-modes button { min-height:84px; border-radius:8px; }
+.motion-dashboard .experience-modes button[aria-pressed=true] { box-shadow:inset 3px 0 var(--shadow-color); }
+.motion-dashboard .vision-mode .experience-modes button[aria-pressed=true] { box-shadow:inset 3px 0 var(--shadow-color); }
+.motion-dashboard .twin-telemetry { background:linear-gradient(110deg,var(--card),var(--card)); }
+.motion-dashboard .twin-telemetry > div + div { border-left:1px solid var(--border); padding-left:22px; }
+.motion-dashboard .telemetry-reading strong { font-size:40px; }
+.motion-dashboard .twin-stage::after { content:''; position:absolute; inset:12px; border:1px solid color-mix(in srgb, var(--border) 9.02%, transparent); border-radius:12px; pointer-events:none; }
+.motion-dashboard .twin-view-label { z-index:1; }
+.motion-dashboard .twin-guide { background:linear-gradient(150deg,var(--card),var(--card) 70%); }
+.motion-dashboard .viewer-playback { background:var(--card); border-color:var(--border); }
+.motion-dashboard .twin-organ-list button.selected { box-shadow:inset 2px 0 var(--organ-color); }
+.motion-dashboard .phase-one-flow { border-radius:var(--studio-radius); box-shadow:0 6px 22px color-mix(in srgb, var(--shadow-color) 2.75%, transparent); }
+.motion-dashboard .summary-card { border-radius:12px; border-top:2px solid var(--border); }
+.motion-dashboard .score-card { border-top-color:var(--ring); }
+.motion-dashboard .flow-connection { transition:none; }
+.motion-dashboard .button, .motion-dashboard .twin-button { transition:background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease; }
+.motion-dashboard .button-primary { box-shadow:0 3px 8px color-mix(in srgb, var(--shadow-color) 7.06%, transparent); }
+@media(hover:hover) and (pointer:fine) { .motion-dashboard .workspace-nav a:hover { background:var(--success-surface); } .motion-dashboard .experience-modes button:hover { border-color:var(--border); } .motion-dashboard .button-primary:hover:not(:disabled) { box-shadow:0 4px 12px color-mix(in srgb, var(--shadow-color) 14.90%, transparent); } }
+@media(max-width:760px) { .motion-dashboard .workspace-nav { gap:4px; } .motion-dashboard .workspace-nav a { padding:8px; font-size:10px; } .motion-dashboard .workspace-nav > span { width:100%; margin:2px 0; padding:4px 8px; } .motion-dashboard .experience-topline { padding:22px 17px; } .motion-dashboard .experience-modes button { min-height:94px; } .motion-dashboard .twin-telemetry > div + div { border:0; padding-left:0; } .motion-dashboard .twin-telemetry > div:last-child { border-top:1px solid var(--border); } }
+@media(prefers-reduced-motion:reduce) { .motion-dashboard .button, .motion-dashboard .twin-button { transition:none; } }

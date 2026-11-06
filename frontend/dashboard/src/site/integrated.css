@@ -1,0 +1,118 @@
+/* Shared visual system adapted from the supplied GlucoTwin anatomy interface. */
+:root {
+  --ink:var(--primary); --muted:var(--muted-foreground); --line:var(--muted); --teal:var(--accent); --teal-dark:var(--card);
+  --surface:color-mix(in srgb, var(--card) 85.00%, transparent); --soft:var(--card);
+  --site-accent:var(--accent); --site-ink:var(--primary); --site-muted:var(--muted-foreground); --site-line:var(--muted);
+  --site-radius:22px;
+}
+body:has(.motion-dashboard) { background:radial-gradient(ellipse at 10% 0,var(--muted),transparent 55%),var(--muted); }
+.motion-dashboard { font-family:'DM Sans','Segoe UI',sans-serif; max-width:1440px; padding:0 clamp(18px,4vw,60px) 24px; }
+.motion-dashboard .site-topbar { height:82px; border-color:var(--border); background:color-mix(in srgb, var(--muted) 94.90%, transparent); gap:18px; }
+.motion-dashboard .brand { gap:12px; font-size:24px; letter-spacing:-.055em; }
+.motion-dashboard .brand .brand-light { color:var(--muted-foreground); font-weight:400; }
+.motion-dashboard .brand small { display:block; font-size:8px; line-height:1.5; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--muted-foreground); margin-top:4px; }
+.motion-dashboard .brand-mark { width:38px; height:38px; color:var(--primary); background:linear-gradient(135deg,var(--card),var(--muted)); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 14px color-mix(in srgb, var(--shadow-color) 7.84%, transparent); }
+.brand-mark svg { width:25px; height:25px; }
+.motion-dashboard .site-nav { background:color-mix(in srgb, var(--card) 61.18%, transparent); padding:4px; border:1px solid var(--border); border-radius:30px; box-shadow:0 4px 16px color-mix(in srgb, var(--shadow-color) 2.35%, transparent); }
+.motion-dashboard .site-nav a { border-radius:24px; padding:9px 15px; font-size:12px; min-height:38px; font-weight:550; }
+.motion-dashboard .site-nav a[aria-current=page] { background:var(--card); color:var(--primary); box-shadow:0 2px 8px color-mix(in srgb, var(--shadow-color) 3.92%, transparent); }
+.motion-dashboard .site-nav a:hover { background:var(--muted); }
+.motion-dashboard .connection-dot { font:10px 'Consolas',monospace; color:var(--muted-foreground); }
+.motion-dashboard .connection-dot i { width:6px; height:6px; }
+.motion-dashboard .safety-banner { margin:0; padding:9px 0; min-height:36px; background:transparent; border:0; border-radius:0; color:var(--muted-foreground); font-size:10px; gap:10px; }
+.motion-dashboard .safety-banner strong { font-size:10px; color:var(--muted-foreground); }
+.landing-experience { width:100vw; margin-left:calc(50% - 50vw); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.motion-dashboard .site-overview { padding-top:54px; gap:48px; display:block; }
+.site-overview .purpose-section { border:0; padding-top:0; }
+.site-overview .journey-section,.site-overview .landing-evidence,.site-overview .site-closing { margin-top:48px; }
+.site-overview .journey-grid { gap:18px; }
+.site-overview .journey-grid li { background:color-mix(in srgb, var(--card) 58.04%, transparent); border:1px solid var(--border); border-radius:20px; padding:22px; box-shadow:0 8px 24px color-mix(in srgb, var(--shadow-color) 1.57%, transparent); }
+.site-overview .journey-grid li::before { color:var(--primary); font-family:Consolas,monospace; }
+.motion-dashboard .page-heading { padding-top:36px; }
+.motion-dashboard .page-heading h1 { font-size:clamp(32px,4vw,46px); font-weight:550; }
+.motion-dashboard .destination-heading h1 { font-weight:550; letter-spacing:-.05em; }
+.motion-dashboard .section-label { font-family:Consolas,monospace; text-transform:uppercase; font-size:10px; letter-spacing:.12em; }
+.motion-dashboard .panel,.motion-dashboard .summary-card,.motion-dashboard .research-workflow,.motion-dashboard .phase-one-flow,.motion-dashboard .twin-experience,.evidence-metrics {
+ border:1px solid var(--border); border-radius:22px; background:var(--surface); box-shadow:0 12px 36px -16px color-mix(in srgb, var(--shadow-color) 7.84%, transparent),0 3px 10px color-mix(in srgb, var(--shadow-color) 1.18%, transparent);
+}
+.motion-dashboard .button { border-radius:12px; min-height:44px; padding:10px 16px; font-size:12px; }
+.motion-dashboard a.button { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+.motion-dashboard .button-primary { background:var(--primary); box-shadow:0 4px 12px color-mix(in srgb, var(--shadow-color) 7.84%, transparent); }
+.motion-dashboard .button-primary:hover:not(:disabled) { background:var(--primary); }
+.motion-dashboard .button-secondary { background:color-mix(in srgb, var(--card) 70.20%, transparent); border-color:var(--border); color:var(--primary); }
+.motion-dashboard .button:disabled { background:var(--muted); color:var(--muted-foreground); box-shadow:none; border-color:var(--border); }
+.motion-dashboard .patient-switcher select { border-radius:12px; min-height:44px; border-color:var(--border); }
+.motion-dashboard .workflow-path { gap:7px; padding:10px; background:color-mix(in srgb, var(--card) 50.20%, transparent); border:1px solid var(--border); border-radius:18px; }
+.motion-dashboard .workflow-path a { flex:1; justify-content:center; border-radius:12px; color:var(--muted-foreground); background:transparent; min-height:44px; }
+.motion-dashboard .workflow-path a:hover { background:var(--card); }
+.motion-dashboard .workflow-path a span { color:var(--primary); }
+.motion-dashboard .meal-strip { background:color-mix(in srgb, var(--muted) 70.20%, transparent); border:1px solid var(--border); border-radius:18px; margin-top:20px; }
+.motion-dashboard .score-action-panel { background:var(--muted); border-color:var(--border); border-radius:20px; }
+.motion-dashboard .score-card { background:linear-gradient(135deg,var(--card),var(--muted)); }
+.motion-dashboard .score-reading { color:var(--primary); }
+.motion-dashboard .score-track span { background:linear-gradient(90deg,var(--accent),var(--accent)); }
+.motion-dashboard .journal-versions button[aria-pressed=true] { background:var(--muted); border-color:var(--border); }
+.motion-dashboard .worklist-current { background:var(--muted); }
+.motion-dashboard .site-closing { background:linear-gradient(110deg,var(--muted),var(--muted)); border:1px solid var(--border); border-radius:22px; padding:32px; }
+.motion-dashboard .evidence-metrics strong { font-weight:500; color:var(--primary); }
+.motion-dashboard .evidence-section { border-color:var(--border); }
+.motion-dashboard .evidence-table-wrap table { background:color-mix(in srgb, var(--card) 65.10%, transparent); }
+.motion-dashboard .architecture-flow li { background:color-mix(in srgb, var(--card) 65.10%, transparent); border-color:var(--border); border-radius:14px; }
+.motion-dashboard .text-link,.motion-dashboard .reference-links a { color:var(--primary); }
+.motion-dashboard .page-footer { border-color:var(--border); }
+.roadmap-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); list-style:none; padding:0; gap:24px; margin:28px 0; }
+.roadmap-steps li { border-top:2px solid var(--border); padding-top:18px; }
+.roadmap-steps strong { font-size:15px; color:var(--primary); }
+.roadmap-steps li p { font-size:13px; line-height:1.8; margin-top:13px; }
+@media(max-width:760px) { .roadmap-steps { grid-template-columns:1fr; gap:20px; } }
+/* Keep the same bright anatomy studio throughout the patient and future pages. */
+.motion-dashboard .anatomy { --twin-bg:var(--muted); --twin-surface:var(--card); --twin-ink:var(--primary); --twin-muted:var(--muted-foreground); --twin-line:var(--muted); }
+.motion-dashboard .anatomy-layout { background:var(--muted); color:var(--primary); }
+.motion-dashboard .twin-viewer,.motion-dashboard .twin-stage { background:radial-gradient(ellipse at 50% 35%,var(--card),var(--muted)); }
+.motion-dashboard .anatomy-heading { background:var(--card); color:var(--primary); }
+.motion-dashboard .anatomy-heading h2,.motion-dashboard .twin-organ-detail h3 { color:var(--primary); }
+.motion-dashboard .anatomy-heading .eyebrow,.motion-dashboard .anatomy-subtitle { color:var(--muted-foreground); }
+.motion-dashboard .twin-guide { background:color-mix(in srgb, var(--card) 78.82%, transparent); border-color:var(--border); }
+.motion-dashboard .twin-guide p,.motion-dashboard .twin-view-options p,.motion-dashboard .twin-view-options label,.motion-dashboard .twin-appearance,.motion-dashboard .twin-appearance summary,.motion-dashboard .twin-signal-key span { color:var(--muted-foreground); }
+.motion-dashboard .twin-guide a,.motion-dashboard .twin-appearance a { color:var(--primary); }
+.motion-dashboard .twin-organ-list button { color:var(--muted-foreground); border-color:var(--border); background:color-mix(in srgb, var(--card) 60.00%, transparent); border-radius:10px; }
+.motion-dashboard .twin-organ-list button.selected,.motion-dashboard .twin-organ-list button:hover { background:var(--card); color:var(--primary); border-color:var(--organ-color,var(--border)); }
+.motion-dashboard .twin-controls { border-color:var(--border); }
+.motion-dashboard .twin-button,.motion-dashboard .tour-entry .button { border-color:var(--border); background:color-mix(in srgb, var(--card) 60.00%, transparent); color:var(--primary); border-radius:10px; }
+.motion-dashboard .twin-button:hover:not(:disabled) { background:var(--card); color:var(--primary); border-color:var(--border); }
+.motion-dashboard .twin-button:disabled { color:var(--muted-foreground); background:var(--muted); }
+.motion-dashboard .twin-view-label,.motion-dashboard .twin-orientation,.motion-dashboard .twin-scale { color:var(--muted-foreground); }
+.motion-dashboard .twin-view-label span { border-color:var(--border); }
+.motion-dashboard .twin-hotspot { color:var(--primary); background:color-mix(in srgb, var(--card) 94.12%, transparent); border-color:var(--border); border-radius:7px; }
+.motion-dashboard .twin-hotspot:hover { color:var(--primary); }
+.motion-dashboard .twin-signal-key { background:color-mix(in srgb, var(--card) 85.10%, transparent); border-color:var(--border); border-radius:6px; }
+.motion-dashboard .twin-telemetry { background:var(--muted); color:var(--primary); border-color:var(--border); }
+.motion-dashboard .twin-telemetry strong { color:color-mix(in srgb,var(--signal-color) 45%,var(--primary)); }
+.motion-dashboard .twin-signal-key strong { color:var(--primary)!important; }
+.motion-dashboard .twin-telemetry p,.motion-dashboard .twin-telemetry > div > span,.motion-dashboard .twin-telemetry strong small,.motion-dashboard .twin-telemetry .telemetry-time { color:var(--muted-foreground); }
+.motion-dashboard .viewer-playback { background:var(--muted); border-color:var(--border); border-radius:14px; }
+.motion-dashboard .viewer-playback strong,.motion-dashboard .viewer-playback span,.motion-dashboard .viewer-playback label,.motion-dashboard .viewer-playback p { color:var(--muted-foreground); }
+.motion-dashboard .twin-patient-snapshot,.motion-dashboard .twin-model-connection { background:var(--muted); border-color:var(--border); }
+.motion-dashboard .twin-patient-snapshot b,.motion-dashboard .twin-patient-snapshot strong { color:var(--primary); }
+.motion-dashboard .anatomy-footer { background:var(--card); color:var(--muted-foreground); border-color:var(--border); }
+@media(max-width:1100px) { .motion-dashboard .site-topbar { gap:12px; } .motion-dashboard .site-nav a { padding:9px 11px; } .motion-dashboard .topbar-right { display:none; } }
+@media(max-width:760px) {
+ .motion-dashboard { padding:0 16px 20px; }
+ .motion-dashboard .site-topbar { height:auto; padding:13px 0 10px; flex-wrap:wrap; gap:12px; }
+ .motion-dashboard .brand { font-size:22px; }
+ .motion-dashboard .site-nav { width:100%; order:3; margin:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; }
+ .motion-dashboard .site-nav a { font-size:10px; padding:8px 4px; min-height:40px; text-align:center; justify-content:center; }
+ .motion-dashboard .safety-banner { padding:9px 0; display:block; font-size:9px; line-height:1.5; }
+ .motion-dashboard .safety-banner strong { margin-right:7px; font-size:9px; }
+ .motion-dashboard .page-heading { padding-top:25px; }
+ .motion-dashboard .workflow-path { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:7px; }
+ .motion-dashboard .workflow-path a { padding:8px 4px; font-size:10px; }
+ .motion-dashboard .meal-strip { padding:18px; gap:16px; }
+ .motion-dashboard .panel,.motion-dashboard .research-workflow { padding:18px; }
+ .motion-dashboard .site-closing { padding:24px; }
+ .site-overview .purpose-section { gap:24px; }
+ .site-overview .journey-grid { gap:12px; }
+ .site-overview .journey-grid li { padding:18px; }
+ .motion-dashboard .twin-stage { height:520px; }
+ [id] { scroll-margin-top:150px; }
+}

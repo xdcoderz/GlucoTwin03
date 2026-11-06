@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-03T08:56:57.884Z",
+  "mode": "real fitted model through Docker Spring API",
+  "results": [
+    {
+      "simulationId": "4ecb68de-1d8e-4e14-8793-b3cc8ea23117",
+      "patientId": "DEMO-001",
+      "description": "2 rotis with dal and a cup of curd",
+      "portionGrams": 250,
+      "score": 0.41383120128309137,
+      "model": "shanghai-logistic-v1",
+      "inputHash": "b204309f57c35b2ec91d6e9c6e97b1d67b09eb570ac83a97c7429879c976788f"
+    },
+    {
+      "simulationId": "a21e502c-6904-4597-a170-67b794127daa",
+      "patientId": "DEMO-001",
+      "description": "2 rotis with dal and a cup of curd",
+      "portionGrams": 400,
+      "score": 0.4207515834270808,
+      "model": "shanghai-logistic-v1",
+      "inputHash": "fb5e69315347f48658d71e29133167ac8aa0372be177b56628b873ea23f94035"
+    }
+  ],
+  "checks": [
+    "Custom text/chips/portion/interval reach the real 43-feature fitted model; changed inputs produce a new immutable attempt.",
+    "Saved attempts reopen after reload; invalid portions rejected; mobile has no horizontal overflow; recorded meals and both patient journals unchanged.",
+    "Both custom simulations and both original patient journals survived Spring restart unchanged."
+  ],
+  "errors": []
+}

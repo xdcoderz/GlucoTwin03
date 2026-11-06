@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0",
+  "provenance": {
+    "synthetic": true,
+    "purpose": "Public prototype demonstration: intentionally distinct high-score scenario",
+    "containsRealPatientData": false
+  },
+  "patient": {
+    "patientId": "DEMO-002",
+    "displayName": "Synthetic Patient 002",
+    "sex": "male",
+    "ageYears": 67,
+    "bmiKgM2": 25.0,
+    "diabetesDurationYears": 5.0,
+    "hba1cPercent": 8.4,
+    "fastingPlasmaGlucoseMgDl": 180.0,
+    "diagnoses": [
+      "Type 2 diabetes mellitus"
+    ],
+    "medications": []
+  },
+  "currentMeal": {
+    "description": "White bread 180 g, corn 150 g, milk 200 g",
+    "minutesSincePreviousMeal": 360.0,
+    "csiiBolusInsulinIu": 0.0,
+    "csiiBasalInsulinIuPerHour": 0.0,
+    "hasRecordedCsiiBolus": false,
+    "hasRecordedCsiiBasalSetting": false,
+    "hasRecordedSubcutaneousInsulin": false,
+    "hasRecordedNonInsulinMedication": false,
+    "hasRecordedIntravenousInsulin": false
+  },
+  "cgmHistory": [
+    {"minutesBefore": 120, "glucoseMgDl": 120.0},
+    {"minutesBefore": 105, "glucoseMgDl": 125.0},
+    {"minutesBefore": 90, "glucoseMgDl": 130.0},
+    {"minutesBefore": 75, "glucoseMgDl": 135.0},
+    {"minutesBefore": 60, "glucoseMgDl": 145.0},
+    {"minutesBefore": 45, "glucoseMgDl": 150.0},
+    {"minutesBefore": 30, "glucoseMgDl": 155.0},
+    {"minutesBefore": 15, "glucoseMgDl": 160.0},
+    {"minutesBefore": 0, "glucoseMgDl": 190.0}
+  ]
+}

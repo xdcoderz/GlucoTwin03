@@ -1,0 +1,1564 @@
+.landing-experience {
+  --font-sans:'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:'IBM Plex Mono', monospace;
+  
+  --ink-primary:var(--primary);
+  --ink-secondary:var(--muted-foreground);
+  --ink-muted:var(--muted-foreground);
+  --ink-subtle:var(--muted-foreground);
+  
+  --bg-base:var(--muted);
+  --glass-bg:color-mix(in srgb, var(--card) 68.00%, transparent);
+  --glass-bg-hover:color-mix(in srgb, var(--card) 88.00%, transparent);
+  --glass-border:color-mix(in srgb, var(--border) 75.00%, transparent);
+  --glass-border-subtle:color-mix(in srgb, var(--border) 60.00%, transparent);
+  --glass-shadow:0 16px 40px -8px color-mix(in srgb, var(--shadow-color) 8.00%, transparent), 0 4px 12px color-mix(in srgb, var(--shadow-color) 3.00%, transparent);
+  --glass-shadow-sm:0 4px 16px color-mix(in srgb, var(--shadow-color) 5.00%, transparent);
+  
+  --accent-cyan:var(--accent);
+  --accent-violet:var(--accent);
+  --signal:var(--accent);
+  --signal-optimal:var(--success-surface);
+  --signal-warm:var(--warning-surface);
+  --signal-alert:var(--destructive-surface);
+}
+
+.landing-experience * {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+.landing-experience {
+  font-family:var(--font-sans);
+  color:var(--ink-primary);
+  background-color:var(--bg-base);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+.landing-experience button, .landing-experience input, .landing-experience a {
+  -webkit-tap-highlight-color:transparent;
+  font:inherit;
+  color:inherit;
+}
+
+.landing-experience button {
+  cursor:pointer;
+  border:0;
+  background:none;
+  transition:background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.landing-experience button:disabled {
+  cursor:not-allowed;
+  opacity:0.45;
+}
+
+.landing-experience a {
+  text-decoration:none;
+}
+
+.landing-experience button:focus-visible, .landing-experience a:focus-visible, .landing-experience input:focus-visible {
+  outline:2px solid var(--accent-cyan);
+  outline-offset:3px;
+}
+
+.landing-experience [hidden] {
+  display:none !important;
+}
+
+.landing-experience .sr-only {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0, 0, 0, 0);
+  border:0;
+}
+
+/* Main Experience Container */
+.landing-experience .experience {
+  position:relative;
+  width:100vw;
+  height:100svh;
+  min-height:720px;
+  overflow:hidden;
+  isolation:isolate;
+  background:radial-gradient(circle at 50% 30%, var(--card) 0%, var(--muted) 55%, var(--muted) 100%);
+}
+
+/* Atmospheric Ambient Glows */
+.landing-experience .atmosphere {
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.landing-experience .aura {
+  position:absolute;
+  border-radius:50%;
+  filter:blur(100px);
+  opacity:0.6;
+  transition:background 1.2s ease, transform 1.2s ease;
+}
+
+.landing-experience .aura-one {
+  width:58vw;
+  height:52vw;
+  left:22%;
+  top:8%;
+  background:radial-gradient(circle, color-mix(in srgb, var(--muted) 70.00%, transparent) 0%, color-mix(in srgb, var(--muted) 30.00%, transparent) 70%, transparent 100%);
+}
+
+.landing-experience .aura-two {
+  width:44vw;
+  height:44vw;
+  right:-5%;
+  top:-10%;
+  background:radial-gradient(circle, color-mix(in srgb, var(--muted) 60.00%, transparent) 0%, color-mix(in srgb, var(--muted) 20.00%, transparent) 70%, transparent 100%);
+}
+
+.landing-experience .aura-three {
+  width:38vw;
+  height:44vw;
+  left:-8%;
+  bottom:5%;
+  background:radial-gradient(circle, color-mix(in srgb, var(--muted) 50.00%, transparent) 0%, color-mix(in srgb, var(--muted) 20.00%, transparent) 70%, transparent 100%);
+}
+
+.landing-experience .grain {
+  position:absolute;
+  inset:0;
+  opacity:0.035;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+/* 3D Scene Viewport */
+.landing-experience #scene {
+  position:absolute;
+  inset:0;
+  z-index:1;
+  touch-action:none;
+}
+
+.landing-experience #scene canvas {
+  width:100%;
+  height:100%;
+  display:block;
+  outline:none;
+}
+
+/* Header Masthead */
+.landing-experience .masthead {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:90px;
+  padding:0 3.5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  z-index:10;
+  pointer-events:none;
+}
+
+.landing-experience .masthead > * {
+  pointer-events:auto;
+}
+
+.landing-experience .brand {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:23px;
+  font-weight:700;
+  letter-spacing:-0.8px;
+  color:var(--ink-primary);
+}
+
+.landing-experience .brand-icon-wrap {
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--card) 95.00%, transparent), color-mix(in srgb, var(--card) 60.00%, transparent));
+  border:1px solid var(--glass-border);
+  box-shadow:0 4px 12px color-mix(in srgb, var(--shadow-color) 12.00%, transparent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.landing-experience .brand svg {
+  width:22px;
+  height:22px;
+  stroke:var(--accent-cyan);
+  stroke-width:2;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.landing-experience .brand-text-block {
+  display:flex;
+  flex-direction:column;
+}
+
+.landing-experience .brand-text-block span {
+  line-height:1.1;
+}
+
+.landing-experience .brand-light {
+  font-weight:400;
+  color:var(--ink-muted);
+}
+
+.landing-experience .brand small {
+  font-family:var(--font-mono);
+  font-size:8.5px;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+  color:var(--ink-muted);
+  margin-top:3px;
+}
+
+.landing-experience .view-nav {
+  display:flex;
+  padding:4px;
+  border-radius:40px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-shadow-sm);
+}
+
+.landing-experience .mode {
+  font-size:12px;
+  font-weight:500;
+  padding:8px 18px;
+  border-radius:30px;
+  color:var(--ink-muted);
+  transition:background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.landing-experience .mode.active {
+  background:var(--card);
+  color:var(--ink-primary);
+  box-shadow:0 2px 8px color-mix(in srgb, var(--shadow-color) 8.00%, transparent);
+}
+
+.landing-experience .mode:hover:not(.active) {
+  color:var(--ink-primary);
+}
+
+.landing-experience .about-button {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:500;
+  color:var(--ink-secondary);
+  padding:8px 16px;
+  border-radius:30px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-shadow-sm);
+}
+
+.landing-experience .about-button:hover {
+  background:var(--glass-bg-hover);
+  color:var(--ink-primary);
+  transform:translateY(-1px);
+}
+
+.landing-experience .about-button .lucide {
+  width:15px;
+  height:15px;
+  color:var(--accent-cyan);
+}
+
+/* Left Editorial & Organ Dossier HUD */
+.landing-experience .editorial-container {
+  position:absolute;
+  left:3.5%;
+  top:110px;
+  bottom:110px;
+  width:380px;
+  max-width:calc(100vw - 40px);
+  z-index:5;
+  pointer-events:none;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.landing-experience .organ-dossier-card {
+  pointer-events:auto;
+  background:var(--glass-bg);
+  backdrop-filter:blur(28px) saturate(190%);
+  border:1px solid var(--glass-border);
+  border-radius:24px;
+  padding:26px 26px 22px;
+  box-shadow:var(--glass-shadow);
+  display:flex;
+  flex-direction:column;
+  max-height:100%;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:color-mix(in srgb, var(--foreground) 40.00%, transparent) transparent;
+}
+
+.landing-experience .organ-dossier-card::-webkit-scrollbar {
+  width:4px;
+}
+.landing-experience .organ-dossier-card::-webkit-scrollbar-thumb {
+  background:color-mix(in srgb, var(--secondary) 40.00%, transparent);
+  border-radius:4px;
+}
+
+.landing-experience .dossier-header {
+  margin-bottom:16px;
+}
+
+.landing-experience .dossier-eyebrow {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.landing-experience .dossier-category-wrap {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.landing-experience .dossier-beacon {
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background-color:var(--accent-cyan);
+  box-shadow:0 0 10px var(--accent-cyan);
+  animation:pulse-beacon 2s ease-in-out infinite;
+}
+
+@keyframes pulse-beacon {
+  0%, 100% { transform:scale(1); opacity:1; }
+  50% { transform:scale(1.4); opacity:0.7; }
+}
+
+.landing-experience .dossier-category {
+  font-family:var(--font-mono);
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+  color:var(--ink-muted);
+}
+
+.landing-experience .dossier-index {
+  font-family:var(--font-mono);
+  font-size:10px;
+  font-weight:500;
+  color:var(--ink-subtle);
+  background:color-mix(in srgb, var(--card) 60.00%, transparent);
+  padding:3px 8px;
+  border-radius:12px;
+  border:1px solid color-mix(in srgb, var(--border) 80.00%, transparent);
+}
+
+.landing-experience .dossier-title {
+  font-size:34px;
+  font-weight:650;
+  line-height:1.08;
+  letter-spacing:-1.2px;
+  color:var(--ink-primary);
+  margin-bottom:8px;
+}
+
+.landing-experience .dossier-title em {
+  font-style:italic;
+  font-weight:400;
+  color:var(--accent-cyan);
+}
+
+.landing-experience .dossier-role-pill {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:11.5px;
+  font-weight:500;
+  color:var(--ink-secondary);
+  background:color-mix(in srgb, var(--card) 75.00%, transparent);
+  border:1px solid var(--glass-border-subtle);
+  padding:4px 11px;
+  border-radius:20px;
+  margin-bottom:12px;
+}
+
+.landing-experience .dossier-desc {
+  font-size:13.5px;
+  line-height:1.65;
+  color:var(--ink-secondary);
+  margin-bottom:16px;
+}
+
+/* Dossier Navigation Tabs */
+.landing-experience .dossier-tabs {
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:4px;
+  padding:3px;
+  border-radius:14px;
+  background:color-mix(in srgb, var(--muted) 45.00%, transparent);
+  margin-bottom:16px;
+}
+
+.landing-experience .dossier-tab-btn {
+  font-size:11px;
+  font-weight:600;
+  padding:7px 4px;
+  border-radius:10px;
+  color:var(--ink-muted);
+  text-align:center;
+  transition:background-color 150ms ease, color 150ms ease;
+}
+
+.landing-experience .dossier-tab-btn.active {
+  background:var(--card);
+  color:var(--ink-primary);
+  box-shadow:0 2px 6px color-mix(in srgb, var(--shadow-color) 6.00%, transparent);
+}
+
+.landing-experience .dossier-tab-btn:hover:not(.active) {
+  color:var(--ink-primary);
+}
+
+/* Tab Content Areas */
+.landing-experience .dossier-tab-content {
+  display:none;
+  animation:fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.landing-experience .dossier-tab-content.active {
+  display:block;
+}
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(6px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* Highlights List */
+.landing-experience .highlights-list {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.landing-experience .highlight-item {
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  font-size:12px;
+  line-height:1.5;
+  color:var(--ink-secondary);
+  background:color-mix(in srgb, var(--card) 55.00%, transparent);
+  border:1px solid var(--glass-border-subtle);
+  border-radius:10px;
+  padding:8px 10px;
+}
+
+.landing-experience .highlight-item .lucide {
+  width:14px;
+  height:14px;
+  flex-shrink:0;
+  margin-top:2px;
+  color:var(--accent-cyan);
+}
+
+/* Mechanism Steps */
+.landing-experience .mechanism-timeline {
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  margin-bottom:16px;
+}
+
+.landing-experience .mechanism-step {
+  display:flex;
+  gap:10px;
+  background:color-mix(in srgb, var(--card) 55.00%, transparent);
+  border:1px solid var(--glass-border-subtle);
+  border-radius:12px;
+  padding:9px 11px;
+}
+
+.landing-experience .step-num {
+  font-family:var(--font-mono);
+  font-size:10px;
+  font-weight:600;
+  color:var(--accent-cyan);
+  background:color-mix(in srgb, var(--accent) 10.00%, transparent);
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.landing-experience .step-body {
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.landing-experience .step-phase {
+  font-size:11.5px;
+  font-weight:600;
+  color:var(--ink-primary);
+}
+
+.landing-experience .step-desc {
+  font-size:11.5px;
+  line-height:1.45;
+  color:var(--ink-secondary);
+}
+
+/* Biomarker Cards */
+.landing-experience .biomarkers-grid {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.landing-experience .biomarker-card {
+  background:color-mix(in srgb, var(--card) 60.00%, transparent);
+  border:1px solid var(--glass-border-subtle);
+  border-radius:12px;
+  padding:9px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.landing-experience .biomarker-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.landing-experience .biomarker-code {
+  font-family:var(--font-mono);
+  font-size:11px;
+  font-weight:600;
+  color:var(--accent-cyan);
+}
+
+.landing-experience .biomarker-badge {
+  font-size:9.5px;
+  font-weight:600;
+  padding:2px 7px;
+  border-radius:10px;
+  text-transform:uppercase;
+  background:color-mix(in srgb, var(--success-surface) 12.00%, transparent);
+  color:var(--signal-optimal);
+}
+
+.landing-experience .biomarker-name {
+  font-size:12px;
+  font-weight:600;
+  color:var(--ink-primary);
+}
+
+.landing-experience .biomarker-range {
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--ink-secondary);
+}
+
+.landing-experience .biomarker-role {
+  font-size:11px;
+  color:var(--ink-muted);
+  line-height:1.4;
+  margin-top:2px;
+}
+
+/* Dossier Footer Actions */
+.landing-experience .dossier-actions {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:4px;
+  padding-top:14px;
+  border-top:1px solid var(--glass-border-subtle);
+}
+
+.landing-experience .action-btn-primary {
+  flex:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--foreground);
+  background:linear-gradient(135deg, var(--accent), var(--accent));
+  padding:10px 16px;
+  border-radius:14px;
+  box-shadow:0 4px 12px color-mix(in srgb, var(--shadow-color) 28.00%, transparent);
+}
+
+.landing-experience .action-btn-primary:hover {
+  background:linear-gradient(135deg, var(--accent), var(--accent));
+  box-shadow:0 6px 16px color-mix(in srgb, var(--shadow-color) 38.00%, transparent);
+  transform:translateY(-1px);
+}
+
+.landing-experience .action-btn-secondary {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-size:11.5px;
+  font-weight:500;
+  color:var(--ink-secondary);
+  background:color-mix(in srgb, var(--card) 70.00%, transparent);
+  border:1px solid var(--glass-border);
+  padding:10px 14px;
+  border-radius:14px;
+}
+
+.landing-experience .action-btn-secondary:hover {
+  background:var(--card);
+  color:var(--ink-primary);
+  transform:translateY(-1px);
+}
+
+.landing-experience .action-btn-icon {
+  width:38px;
+  height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  background:color-mix(in srgb, var(--card) 70.00%, transparent);
+  border:1px solid var(--glass-border);
+  color:var(--ink-secondary);
+}
+
+.landing-experience .action-btn-icon:hover {
+  background:var(--card);
+  color:var(--accent-cyan);
+}
+
+/* Interactive 3D Hotspots */
+.landing-experience .spatial-hotspot {
+  position:absolute;
+  z-index:6;
+  pointer-events:auto;
+  transform:translate(-50%, -50%);
+  display:flex;
+  align-items:center;
+  gap:0;
+  cursor:pointer;
+  transition:opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select:none;
+}
+
+.landing-experience .spatial-hotspot:hover {
+  transform:translate(-50%, -50%) scale(1.06);
+}
+
+.landing-experience .hotspot-beacon-dot {
+  position:relative;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:var(--card);
+  border:2px solid var(--accent-cyan);
+  box-shadow:0 0 14px var(--accent-cyan);
+  flex-shrink:0;
+}
+
+.landing-experience .hotspot-beacon-dot::after {
+  content:'';
+  position:absolute;
+  inset:-6px;
+  border-radius:50%;
+  border:1.5px solid var(--accent-cyan);
+  opacity:0.6;
+  animation:hotspot-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes hotspot-ping {
+  75%, 100% {
+    transform:scale(2.2);
+    opacity:0;
+  }
+}
+
+.landing-experience .hotspot-leader {
+  width:32px;
+  height:1px;
+  background:linear-gradient(90deg, var(--accent-cyan), color-mix(in srgb, var(--accent) 20.00%, transparent));
+  transform-origin:left;
+}
+
+.landing-experience .hotspot-pill {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);
+  padding:5px 12px;
+  border-radius:20px;
+  box-shadow:var(--glass-shadow-sm);
+  white-space:nowrap;
+}
+
+.landing-experience .hotspot-pill-tag {
+  font-family:var(--font-mono);
+  font-size:9px;
+  font-weight:600;
+  color:var(--accent-cyan);
+}
+
+.landing-experience .hotspot-pill-name {
+  font-size:11.5px;
+  font-weight:600;
+  color:var(--ink-primary);
+}
+
+.landing-experience .hotspot-pill-arrow {
+  color:var(--accent-cyan);
+  display:flex;
+  align-items:center;
+}
+
+.landing-experience .hotspot-pill-arrow .lucide {
+  width:12px;
+  height:12px;
+}
+
+/* 3D Tooltip for Hover */
+.landing-experience .scene-tooltip {
+  position:absolute;
+  z-index:15;
+  pointer-events:none;
+  background:color-mix(in srgb, var(--card) 88.00%, transparent);
+  backdrop-filter:blur(12px);
+  color:var(--foreground);
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:11.5px;
+  font-weight:500;
+  box-shadow:0 8px 24px color-mix(in srgb, var(--shadow-color) 20.00%, transparent);
+  transform:translate(-50%, -130%);
+  transition:opacity 0.15s ease, transform 0.15s ease;
+  white-space:nowrap;
+  opacity:0;
+}
+
+.landing-experience .scene-tooltip.visible {
+  opacity:1;
+}
+
+/* Right Side Insight & Telemetry Panel */
+.landing-experience .insight {
+  position:absolute;
+  right:3.5%;
+  top:110px;
+  width:250px;
+  z-index:5;
+  pointer-events:auto;
+  background:var(--glass-bg);
+  backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid var(--glass-border);
+  border-radius:24px;
+  padding:22px 20px;
+  box-shadow:var(--glass-shadow);
+}
+
+.landing-experience .sample-label {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-family:var(--font-mono);
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:1.3px;
+  color:var(--ink-muted);
+}
+
+.landing-experience .sample-dot {
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background-color:var(--signal);
+}
+
+.landing-experience .glucose-reading {
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  margin-top:10px;
+}
+
+.landing-experience #glucose-value {
+  font-size:52px;
+  font-weight:500;
+  letter-spacing:-2.5px;
+  line-height:1;
+  color:var(--ink-primary);
+  font-variant-numeric:tabular-nums;
+}
+
+.landing-experience .reading-unit {
+  font-size:12px;
+  font-weight:500;
+  color:var(--ink-muted);
+}
+
+.landing-experience .reading-unit span {
+  display:block;
+  font-family:var(--font-mono);
+  font-size:7.5px;
+  letter-spacing:0.8px;
+  text-transform:uppercase;
+  color:var(--ink-subtle);
+  margin-top:2px;
+}
+
+.landing-experience .sample-meta {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-family:var(--font-mono);
+  font-size:9.5px;
+  color:var(--ink-muted);
+  margin-top:8px;
+}
+
+.landing-experience .data-divider {
+  width:1px;
+  height:10px;
+  background:color-mix(in srgb, var(--secondary) 40.00%, transparent);
+}
+
+.landing-experience .mini-chart {
+  width:100%;
+  height:52px;
+  margin-top:14px;
+  overflow:visible;
+  display:block;
+}
+
+.landing-experience .chart-line {
+  fill:none;
+  stroke:var(--signal);
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.landing-experience .chart-area {
+  fill:url(#chart-fill);
+}
+
+.landing-experience .chart-point {
+  fill:var(--foreground);
+  stroke:var(--signal);
+  stroke-width:2;
+  filter:drop-shadow(0 2px 4px color-mix(in srgb, var(--primary) 30.00%, transparent));
+}
+
+.landing-experience .sample-timeline {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.landing-experience .text-play {
+  font-family:var(--font-mono);
+  font-size:9.5px;
+  font-weight:600;
+  padding:4px 8px;
+  border-radius:6px;
+  background:color-mix(in srgb, var(--card) 80.00%, transparent);
+  border:1px solid var(--glass-border-subtle);
+  color:var(--ink-secondary);
+}
+
+.landing-experience .text-play:hover {
+  background:var(--card);
+  color:var(--ink-primary);
+}
+
+.landing-experience .sample-timeline input[type=range] {
+  flex:1;
+}
+
+.landing-experience .sample-timeline span {
+  font-family:var(--font-mono);
+  font-size:8.5px;
+  color:var(--ink-subtle);
+}
+
+.landing-experience .sample-tabs {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:3px;
+  padding:3px;
+  border-radius:10px;
+  background:color-mix(in srgb, var(--muted) 50.00%, transparent);
+  margin-top:14px;
+}
+
+.landing-experience .sample-tabs button {
+  font-size:9.5px;
+  font-weight:500;
+  padding:6px 4px;
+  border-radius:8px;
+  color:var(--ink-muted);
+  text-align:center;
+}
+
+.landing-experience .sample-tabs button.active {
+  background:var(--card);
+  color:var(--ink-primary);
+  box-shadow:0 1px 4px color-mix(in srgb, var(--shadow-color) 6.00%, transparent);
+}
+
+/* View Controls & Toggles */
+.landing-experience .view-settings {
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid var(--glass-border-subtle);
+}
+
+.landing-experience .setting-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:11px;
+  color:var(--ink-secondary);
+  margin-bottom:8px;
+}
+
+.landing-experience .setting-row output {
+  font-family:var(--font-mono);
+  font-size:10px;
+  font-weight:600;
+  color:var(--accent-cyan);
+}
+
+.landing-experience .view-settings input[type=range] {
+  width:100%;
+  margin-bottom:12px;
+}
+
+.landing-experience .toggle-row {
+  margin-bottom:8px;
+}
+
+.landing-experience .switch {
+  position:relative;
+  width:32px;
+  height:18px;
+  border-radius:20px;
+  background:var(--primary);
+  border:1px solid color-mix(in srgb, var(--border) 60.00%, transparent);
+  padding:2px;
+  transition:background 0.25s ease;
+}
+
+.landing-experience .switch span {
+  display:block;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--primary);
+  box-shadow:0 1px 4px color-mix(in srgb, var(--shadow-color) 15.00%, transparent);
+  transition:transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.landing-experience .switch[aria-checked=true] {
+  background:var(--accent-cyan);
+}
+
+.landing-experience .switch[aria-checked=true] span {
+  transform:translateX(14px);
+}
+
+.landing-experience .sample-note {
+  font-size:9px;
+  line-height:1.5;
+  color:var(--ink-muted);
+  margin-top:12px;
+}
+
+/* Range Input Styling */
+.landing-experience input[type=range] {
+  appearance:none;
+  -webkit-appearance:none;
+  height:3px;
+  background:var(--muted);
+  border-radius:3px;
+  cursor:pointer;
+  outline:none;
+}
+
+.landing-experience input[type=range]::-webkit-slider-thumb {
+  appearance:none;
+  -webkit-appearance:none;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--primary);
+  border:2px solid var(--accent-cyan);
+  box-shadow:0 2px 6px color-mix(in srgb, var(--shadow-color) 30.00%, transparent);
+  transition:transform 0.15s ease;
+}
+
+.landing-experience input[type=range]::-webkit-slider-thumb:hover {
+  transform:scale(1.25);
+}
+
+/* Floating Camera Tools */
+.landing-experience .scene-tools {
+  position:absolute;
+  bottom:105px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:16px;
+  z-index:5;
+  pointer-events:none;
+}
+
+.landing-experience .scene-tools > * {
+  pointer-events:auto;
+}
+
+.landing-experience .drag-hint {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:10.5px;
+  font-weight:500;
+  color:var(--ink-muted);
+  background:var(--glass-bg);
+  backdrop-filter:blur(16px);
+  padding:6px 12px;
+  border-radius:20px;
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-shadow-sm);
+}
+
+.landing-experience .drag-indicator {
+  width:14px;
+  height:9px;
+  border:1.5px solid var(--ink-muted);
+  border-radius:5px;
+}
+
+.landing-experience .camera-buttons {
+  display:flex;
+  align-items:center;
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:30px;
+  padding:3px;
+  box-shadow:var(--glass-shadow-sm);
+}
+
+.landing-experience .camera-buttons button {
+  padding:6px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:20px;
+  color:var(--ink-secondary);
+}
+
+.landing-experience .camera-buttons button:hover {
+  background:var(--card);
+  color:var(--accent-cyan);
+}
+
+.landing-experience .camera-buttons button .lucide {
+  width:14px;
+  height:14px;
+}
+
+.landing-experience .camera-buttons span {
+  width:1px;
+  height:14px;
+  background:color-mix(in srgb, var(--secondary) 40.00%, transparent);
+}
+
+.landing-experience #reset-camera {
+  font-size:11px;
+  font-weight:600;
+  padding:6px 14px;
+}
+
+/* Bottom Bar & Organ Navigation */
+.landing-experience .bottom-bar {
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  height:85px;
+  padding:0 3.5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  z-index:10;
+  pointer-events:none;
+}
+
+.landing-experience .bottom-bar > * {
+  pointer-events:auto;
+}
+
+.landing-experience .chapter-label {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.landing-experience .chapter-badge {
+  font-family:var(--font-mono);
+  font-size:11px;
+  font-weight:600;
+  color:var(--accent-cyan);
+  background:var(--glass-bg);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);
+  padding:6px 10px;
+  border-radius:12px;
+}
+
+.landing-experience .chapter-title {
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.8px;
+  text-transform:uppercase;
+  color:var(--ink-muted);
+  line-height:1.3;
+}
+
+.landing-experience .organ-nav {
+  display:flex;
+  gap:4px;
+  padding:4px;
+  border-radius:40px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-shadow);
+}
+
+.landing-experience .organ-button {
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:9px 16px;
+  border-radius:30px;
+  font-size:12px;
+  font-weight:500;
+  color:var(--ink-secondary);
+  transition:opacity 150ms ease, transform 150ms ease;
+}
+
+.landing-experience .organ-number {
+  font-family:var(--font-mono);
+  font-size:9.5px;
+  color:var(--ink-subtle);
+}
+
+.landing-experience .organ-button.active {
+  background:var(--card);
+  color:var(--ink-primary);
+  font-weight:600;
+  box-shadow:0 4px 14px color-mix(in srgb, var(--shadow-color) 8.00%, transparent);
+}
+
+.landing-experience .organ-active-dot {
+  display:none;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background-color:var(--accent-cyan);
+}
+
+.landing-experience .organ-button.active .organ-active-dot {
+  display:inline-block;
+}
+
+.landing-experience .organ-button:hover:not(.active) {
+  background:color-mix(in srgb, var(--card) 50.00%, transparent);
+  color:var(--ink-primary);
+}
+
+.landing-experience .prototype-label {
+  text-align:right;
+  font-family:var(--font-mono);
+  font-size:8.5px;
+  letter-spacing:1px;
+  color:var(--ink-muted);
+}
+
+.landing-experience .prototype-label small {
+  display:block;
+  font-family:var(--font-sans);
+  font-size:9px;
+  color:var(--ink-subtle);
+  margin-top:2px;
+}
+
+/* Loading & Error States */
+.landing-experience .scene-loading {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--ink-secondary);
+  z-index:20;
+}
+
+.landing-experience .loading-spinner {
+  width:44px;
+  height:44px;
+  border:2px solid color-mix(in srgb, var(--border) 20.00%, transparent);
+  border-top-color:var(--accent-cyan);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform:rotate(360deg); }
+}
+
+.landing-experience .scene-error {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  background:var(--glass-bg);
+  backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:28px;
+  text-align:center;
+  max-width:340px;
+  z-index:20;
+  box-shadow:var(--glass-shadow);
+}
+
+.landing-experience .scene-error h2 {
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:8px;
+}
+
+.landing-experience .scene-error p {
+  font-size:13px;
+  line-height:1.6;
+  color:var(--ink-secondary);
+  margin-bottom:16px;
+}
+
+.landing-experience .scene-error button {
+  font-size:12px;
+  font-weight:600;
+  color:var(--foreground);
+  background:var(--accent-cyan);
+  padding:8px 18px;
+  border-radius:12px;
+}
+
+/* Information Dialog */
+.landing-experience dialog#about-dialog {
+  border:1px solid var(--glass-border);
+  border-radius:28px;
+  background:color-mix(in srgb, var(--card) 96.00%, transparent);
+  backdrop-filter:blur(32px);
+  padding:44px 44px 36px;
+  width:min(580px, calc(100vw - 36px));
+  max-height:85svh;
+  box-shadow:0 24px 80px color-mix(in srgb, var(--shadow-color) 16.00%, transparent);
+  margin:auto;
+  color:var(--ink-primary);
+}
+
+.landing-experience dialog::backdrop {
+  background:color-mix(in srgb, var(--card) 35.00%, transparent);
+  backdrop-filter:blur(8px);
+}
+
+.landing-experience .dialog-close {
+  position:absolute;
+  top:24px;
+  right:24px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:11px;
+  font-weight:500;
+  color:var(--ink-muted);
+  padding:6px 12px;
+  border-radius:20px;
+  background:color-mix(in srgb, var(--card) 80.00%, transparent);
+}
+
+.landing-experience .dialog-close:hover {
+  background:var(--muted);
+  color:var(--ink-primary);
+}
+
+.landing-experience dialog h2 {
+  font-size:32px;
+  font-weight:650;
+  letter-spacing:-1px;
+  line-height:1.15;
+  margin:16px 0 12px;
+}
+
+.landing-experience dialog h2 em {
+  font-style:italic;
+  color:var(--accent-cyan);
+}
+
+.landing-experience dialog p {
+  font-size:13px;
+  line-height:1.8;
+  color:var(--ink-secondary);
+  margin-bottom:14px;
+}
+
+.landing-experience dialog details {
+  border-top:1px solid color-mix(in srgb, var(--border) 80.00%, transparent);
+  padding:12px 0;
+  font-size:12px;
+}
+
+.landing-experience dialog summary {
+  font-weight:600;
+  cursor:pointer;
+  color:var(--ink-primary);
+  outline:none;
+}
+
+.landing-experience dialog details p {
+  margin-top:8px;
+  font-size:12px;
+}
+
+.landing-experience .dialog-credit {
+  font-family:var(--font-mono);
+  font-size:9.5px;
+  color:var(--ink-subtle);
+  margin-top:20px;
+  line-height:1.6;
+}
+
+/* Responsive Breakpoints */
+@media (max-width:1200px) {
+  .landing-experience .editorial-container {
+    width:340px;
+    left:2.5%;
+  }
+  .landing-experience .insight {
+    right:2.5%;
+    width:230px;
+  }
+}
+
+@media (max-width:900px) {
+  .landing-experience .editorial-container {
+    width:320px;
+    top:95px;
+  }
+  .landing-experience .dossier-title {
+    font-size:28px;
+  }
+  .landing-experience .prototype-label {
+    display:none;
+  }
+}
+
+@media (max-width:768px) {
+  .landing-experience .experience {
+    height:auto;
+    min-height:100svh;
+    overflow-y:auto;
+  }
+  
+  .landing-experience .masthead {
+    height:70px;
+    padding:0 4%;
+  }
+  
+  .landing-experience .brand {
+    font-size:19px;
+  }
+  .landing-experience .brand small {
+    display:none;
+  }
+  
+  .landing-experience .view-nav {
+    display:none;
+  }
+  
+  .landing-experience #scene {
+    position:relative;
+    height:480px;
+    inset:auto;
+    margin-top:70px;
+  }
+  
+  .landing-experience .editorial-container {
+    position:relative;
+    left:auto;
+    top:auto;
+    bottom:auto;
+    width:calc(100vw - 32px);
+    margin:16px auto;
+  }
+  
+  .landing-experience .insight {
+    position:relative;
+    right:auto;
+    top:auto;
+    width:calc(100vw - 32px);
+    margin:16px auto;
+  }
+  
+  .landing-experience .scene-tools {
+    bottom:20px;
+  }
+  
+  .landing-experience .bottom-bar {
+    position:sticky;
+    bottom:0;
+    height:70px;
+    background:color-mix(in srgb, var(--card) 90.00%, transparent);
+    backdrop-filter:blur(20px);
+    border-top:1px solid var(--glass-border-subtle);
+    padding:0 4%;
+  }
+  
+  .landing-experience .chapter-label {
+    display:none;
+  }
+  
+  .landing-experience .organ-nav {
+    width:100%;
+    justify-content:space-between;
+  }
+  
+  .landing-experience .organ-button {
+    padding:7px 10px;
+    font-size:11px;
+  }
+  
+  .landing-experience .organ-number {
+    display:none;
+  }
+}
+
+/* Integration:isolated styles, shared site masthead, no remote font dependency. */
+.landing-experience .hotspots-layer { position:absolute; inset:0; z-index:3; pointer-events:none; }
+.landing-experience .spatial-hotspot { padding:0; background:transparent; border:0; text-align:left; }
+.landing-experience #scene canvas:focus-visible { outline:2px solid var(--ring); outline-offset:-4px; }
+.landing-experience { font-family:var(--font-sans); color:var(--ink-primary); min-width:0; }
+.landing-experience .experience { width:100%; height:calc(100svh - 124px); min-height:710px; }
+.landing-experience .masthead { height:70px; }
+.landing-experience .experience-kicker { font:10px var(--font-mono); letter-spacing:.13em; color:var(--muted-foreground); }
+.landing-experience .editorial-container { top:86px; bottom:100px; width:350px; left:3%; }
+.landing-experience .organ-dossier-card > * { flex-shrink:0; }
+.landing-experience .organ-dossier-card > .dossier-tab-content { flex:1 1 auto; min-height:60px; overflow-y:auto; }
+.landing-experience .insight { right:3%; top:100px; width:245px; }
+.landing-experience .dossier-title { font-size:46px; line-height:1.06; letter-spacing:-.045em; }
+.landing-experience .dossier-desc { line-height:1.7; }
+.landing-experience .landing-workspace-links { display:flex; flex-direction:column; gap:12px; margin:18px 0 8px; }
+.landing-experience .landing-workspace-links a { font-size:12px; color:var(--primary); text-underline-offset:4px; }
+.landing-experience a.landing-workspace-cta { display:flex; align-items:center; justify-content:space-between; min-height:46px; border-radius:12px; padding:12px 15px; background:var(--primary); color:var(--foreground); font-size:13px; font-weight:600; }
+.landing-experience .landing-workspace-cta .lucide { width:16px; height:16px; flex-shrink:0; }
+.landing-experience .action-btn-primary { font-size:11px; }
+.landing-experience .dossier-tab-content { min-height:100px; }
+.landing-experience .biomarker-role { margin:5px 0 0; font-size:12px; }
+.landing-experience .biomarker-card { margin-bottom:8px; }
+.landing-experience .sample-note { font-size:10px; color:var(--muted-foreground); }
+.landing-experience .bottom-bar { padding:0 3%; }
+.landing-experience .chapter-title { display:none; }
+.landing-experience .prototype-label { max-width:180px; font-size:8px; }
+.landing-experience .organ-button { padding:10px 13px; min-height:44px; }
+.landing-experience .mode, .landing-experience .about-button, .landing-experience .camera-buttons button { min-height:40px; }
+.landing-experience .text-play, .landing-experience .sample-tabs button { min-height:32px; }
+.landing-experience .scene-error { max-width:340px; width:calc(100% - 32px); }
+.landing-experience .scene-loading { pointer-events:none; }
+.landing-experience .landing-fallback { padding:100px 24px; text-align:center; }
+.landing-experience .landing-fallback a { display:inline-flex; align-items:center; margin:12px; }
+.landing-experience .landing-loading { min-height:710px; display:grid; place-items:center; }
+@media(min-width:769px) and (max-width:1100px) {
+ .landing-experience .editorial-container { width:290px; left:2%; }
+ .landing-experience .organ-dossier-card { padding:20px; }
+ .landing-experience .insight { width:210px; right:2%; padding:18px; }
+ .landing-experience .dossier-title { font-size:36px; }
+ .landing-experience .prototype-label, .landing-experience .chapter-label { display:none; }
+ .landing-experience .bottom-bar { justify-content:center; }
+ .landing-experience .experience-kicker { max-width:160px; line-height:1.7; }
+}
+@media(max-width:768px) {
+ .landing-experience .experience { display:grid; grid-template-columns:minmax(0,1fr); height:auto; min-height:0; overflow:hidden; }
+ .landing-experience .masthead { position:relative; grid-row:1; padding:12px 16px; height:auto; min-height:62px; gap:12px; flex-wrap:wrap; }
+ .landing-experience .experience-kicker { font-size:8px; }
+ .landing-experience .about-button { padding:7px 10px; }
+ .landing-experience .about-button span { font-size:10px; }
+ .landing-experience .view-nav { display:flex; order:3; margin:auto; }
+ .landing-experience #scene { grid-row:2; width:100%; height:430px; margin:0; }
+ .landing-experience .scene-tools { top:460px; bottom:auto; width:max-content; max-width:100%; gap:5px; }
+ .landing-experience .drag-hint { display:none; }
+ .landing-experience .bottom-bar { grid-row:3; position:relative; height:auto; padding:12px; background:transparent; border:0; }
+ .landing-experience .organ-nav { flex-wrap:wrap; justify-content:center; border-radius:18px; gap:2px; }
+ .landing-experience .organ-button { padding:8px 10px; font-size:11px; flex:1 1 26%; justify-content:center; }
+ .landing-experience .editorial-container { grid-row:4; top:auto; left:auto; bottom:auto; width:auto; max-width:none; margin:4px 16px 16px; }
+ .landing-experience .insight { grid-row:5; top:auto; right:auto; width:auto; margin:0 16px 20px; }
+ .landing-experience .organ-dossier-card { max-height:none; overflow:visible; }
+ .landing-experience .organ-dossier-card > .dossier-tab-content { flex:none; overflow:visible; }
+ .landing-experience .organ-dossier-card,.landing-experience .insight,.landing-experience .organ-nav { backdrop-filter:none; background:var(--card); }
+ .landing-experience .dossier-title { font-size:40px; }
+ .landing-experience .scene-error, .landing-experience .scene-loading { top:270px; }
+ .landing-experience .hotspots-layer { display:none; }
+ .landing-experience .scene-tooltip { display:none; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .landing-experience *, .landing-experience *::before, .landing-experience *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
+}

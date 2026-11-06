@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-11-03T03:19:17.821Z",
+  "mode": "real production container, existing saved scores, read-only",
+  "checks": [
+    "Actual saved model score drives a separate base arc; medication context toggles its own outline.",
+    "42-minute fictional arithmetic, explicit ticking, pause and reset work on production.",
+    "Scripted jump and reversal trigger labelled rules and withhold countdown.",
+    "400px view, roadmap deep link and actual PowerPoint download work.",
+    "No API writes, browser errors or saved-record changes."
+  ],
+  "postRequests": [],
+  "errors": [],
+  "passed": true
+}

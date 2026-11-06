@@ -1,0 +1,40 @@
+# Java / Maven
+**/target/
+.mvn/wrapper/maven-wrapper.jar
+
+# Node
+node_modules/
+**/node_modules/
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Runtime data and local databases
+*.mv.db
+*.trace.db
+*.lock.db
+runtime-data/
+data/private/
+research-results/
+
+# IDE / operating system
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local exports and logs
+*.log
+glucotwin-images.tar
+deliverables/checkpoints/
+.ppt-build/
+.chart-data-*/
+.chrome-*/
+tmp/
+**/test-results/
+**/playwright-report/

@@ -1,0 +1,43 @@
+.lab-shortcuts { display:flex; align-items:center; flex-wrap:wrap; gap:12px; padding:16px 26px; background:var(--card); border-bottom:1px solid var(--border); }
+.lab-shortcuts a { color:var(--primary); font-size:12px; text-underline-offset:4px; margin-left:auto; }
+.pattern-card { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(230px,1fr); gap:24px; padding:24px 26px; border-top:1px solid var(--border); background:var(--card); }
+.pattern-card h3 { margin:0 0 8px; font-size:18px; color:var(--primary); }
+.pattern-card p,.pattern-card details { font-size:12px; line-height:1.75; color:var(--muted-foreground); margin-bottom:0; }
+.pattern-card .section-label { margin-bottom:9px; }
+.pattern-card summary { cursor:pointer; padding:8px 0; font-weight:600; }
+.pattern-rapid,.pattern-reversal,.pattern-gap,.pattern-invalid { border-left:4px solid var(--border); background:var(--warning-surface); }
+.projection-card { padding:28px 26px; border-top:1px solid var(--border); background:linear-gradient(120deg,var(--card),var(--card)); }
+.projection-card,.pattern-card { scroll-margin-top:110px; }
+.projection-title-row { display:flex; gap:20px; justify-content:space-between; align-items:flex-start; }
+.projection-title-row h3 { margin:0; font-size:23px; letter-spacing:-.035em; color:var(--primary); }
+.projection-badge { white-space:nowrap; font-size:10px; padding:9px 12px; border:1px solid var(--border); border-radius:20px; color:var(--muted-foreground); background:color-mix(in srgb, var(--card) 60.00%, transparent); }
+.projection-readout { display:grid; grid-template-columns:210px minmax(0,1fr); gap:30px; align-items:center; margin-top:26px; }
+.projection-readout span,.projection-readout small { display:block; font-size:11px; color:var(--muted-foreground); }
+.projection-readout strong { display:block; color:var(--primary); font:56px/1.3 Consolas,monospace; font-variant-numeric:tabular-nums; letter-spacing:-.05em; margin:6px 0; }
+.projection-readout p { max-width:720px; font-size:15px; line-height:1.8; color:var(--muted-foreground); margin:0; }
+.projection-progress { height:4px; background:var(--muted); border-radius:4px; margin:24px 0 18px; overflow:hidden; }
+.projection-progress span { display:block; width:100%; height:100%; background:var(--accent); transform-origin:left; }
+.projection-actions { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.projection-actions > span { font-size:11px; color:var(--muted-foreground); }
+.projection-card details { margin-top:20px; padding:14px 0; border-top:1px solid var(--border); font-size:12px; color:var(--muted-foreground); line-height:1.8; }
+.projection-card summary { cursor:pointer; font-weight:600; }
+.projection-card details p { margin:12px 0 0; max-width:950px; }
+.projection-boundary { font-size:11px; line-height:1.75; color:var(--muted-foreground); margin:16px 0 0; max-width:1000px; }
+.projection-empty { font-size:14px; color:var(--muted-foreground); padding:22px 0 4px; margin:0; line-height:1.75; }
+.visual-score-track { height:5px; background:var(--muted); margin-top:16px; border-radius:5px; overflow:hidden; }
+.visual-score-track span { display:block; width:100%; height:100%; background:var(--accent); transform-origin:left; }
+.motion-dashboard .visual-signal-legend { font-size:10px; line-height:1.75; }
+.projection-card button:focus-visible,.projection-card summary:focus-visible,.pattern-card summary:focus-visible { outline:3px solid var(--border); outline-offset:3px; }
+@media(max-width:760px) {
+ .lab-shortcuts { padding:16px; align-items:stretch; }
+ .lab-shortcuts .button { flex:1 1 100%; }
+ .lab-shortcuts a { margin:8px 0; }
+ .pattern-card { grid-template-columns:minmax(0,1fr); padding:22px 17px; gap:8px; }
+ .projection-card { padding:24px 17px; }
+ .projection-card,.pattern-card { scroll-margin-top:160px; }
+ .projection-title-row { flex-direction:column; gap:12px; }
+ .projection-title-row h3 { font-size:22px; }
+ .projection-readout { grid-template-columns:minmax(0,1fr); gap:20px; }
+ .projection-readout p { font-size:13px; }
+ .projection-actions .button { flex:1 1 100%; }
+}

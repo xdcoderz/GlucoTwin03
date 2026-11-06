@@ -1,0 +1,167 @@
+/* Landing composition:introduction, 70/30 anatomy workspace, then sample data. */
+.landing-experience .landing-introduction { max-width:1440px; margin:0 auto; padding:46px clamp(20px,4vw,60px) 40px; display:grid; grid-template-columns:1.05fr .95fr; align-items:center; gap:60px; }
+.landing-experience .landing-kicker { color:var(--muted-foreground); font:10px/1.6 Consolas,monospace; letter-spacing:.15em; margin:0 0 17px; }
+.landing-experience .landing-introduction h1 { font-size:clamp(44px,4.7vw,68px); line-height:1.04; letter-spacing:-.055em; font-weight:600; color:var(--primary); margin:0; }
+.landing-experience .landing-introduction h1 em { font-style:italic; color:var(--primary); font-weight:450; }
+.landing-experience .landing-intro-copy > p { color:var(--muted-foreground); font-size:17px; line-height:1.8; margin:0; max-width:620px; }
+.landing-experience .landing-workspace-links { flex-direction:row; align-items:center; flex-wrap:wrap; gap:18px 24px; margin:23px 0 0; }
+.landing-experience .landing-workspace-cta { gap:24px; }
+.landing-experience .landing-workspace-cta svg { width:17px; height:17px; flex-shrink:0; }
+.landing-experience .experience { width:100%; height:auto; min-height:0; display:block; overflow:visible; padding:0 clamp(20px,4vw,60px) 40px; background:radial-gradient(ellipse at 35% 20%,color-mix(in srgb, var(--muted) 40.00%, transparent),transparent 65%); }
+.landing-experience .anatomy-workbench { display:grid; grid-template-columns:minmax(0,7fr) minmax(0,3fr); gap:24px; max-width:1320px; margin:0 auto; align-items:stretch; }
+.landing-experience .landing-model-column { min-width:0; border:1px solid var(--border); border-radius:22px; overflow:hidden; background:var(--card); box-shadow:0 10px 36px -18px color-mix(in srgb, var(--shadow-color) 14.90%, transparent); }
+.landing-experience .landing-stage { height:clamp(560px,65vh,740px); position:relative; min-width:0; isolation:isolate; background:radial-gradient(ellipse at 50% 40%,var(--card),var(--muted)); }
+.landing-experience .landing-stage-caption { position:absolute; top:22px; left:24px; right:24px; z-index:4; pointer-events:none; display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--muted-foreground); font:9px/1.7 Consolas,monospace; letter-spacing:.1em; }
+.landing-experience .landing-stage-caption span:last-child { font:11px/1.5 'Segoe UI',sans-serif; letter-spacing:0; }
+.landing-experience #scene { position:absolute; inset:0; width:100%; height:100%; margin:0; touch-action:none; }
+.landing-experience .hotspots-layer { position:absolute; inset:0; width:100%; height:100%; display:block; z-index:3; pointer-events:none; }
+.landing-experience .scene-tooltip { z-index:7; display:block; }
+.landing-experience .scene-loading,.landing-experience .scene-error { top:50%; left:50%; }
+.landing-experience .scene-tools { position:static; inset:auto; transform:none; display:grid; grid-template-columns:auto minmax(0,1fr); gap:14px 22px; width:100%; max-width:none; padding:17px 20px 14px; background:var(--card); border-top:1px solid var(--border); pointer-events:auto; }
+.landing-experience .camera-control-group { display:flex; align-items:center; gap:10px; }
+.landing-experience .control-group-label { color:var(--muted-foreground); font-size:11px; }
+.landing-experience .camera-buttons { display:flex; padding:3px; border:1px solid var(--border); border-radius:12px; box-shadow:none; background:var(--card); backdrop-filter:none; }
+.landing-experience .camera-buttons button { min-height:38px; padding:7px 11px; border-radius:8px; }
+.landing-experience #reset-camera { padding:7px 12px; white-space:nowrap; }
+.landing-experience .view-settings { display:grid; grid-template-columns:minmax(125px,1.1fr) minmax(115px,1fr) minmax(120px,1fr); gap:2px 16px; align-items:center; margin:0; padding:0; border:0; min-width:0; }
+.landing-experience .view-settings > .setting-row:first-child { grid-column:1; grid-row:1; margin:0; font-size:10px; }
+.landing-experience .view-settings > input { grid-column:1; grid-row:2; margin:5px 0 0; width:100%; }
+.landing-experience .view-settings .toggle-row { grid-row:1/3; margin:0; font-size:10px; gap:8px; }
+.landing-experience .view-settings .toggle-row:nth-of-type(2) { grid-column:2; }
+.landing-experience .view-settings .toggle-row:nth-of-type(3) { grid-column:3; }
+.landing-experience .switch { flex-shrink:0; }
+.landing-experience .camera-help { grid-column:1/-1; margin:0; color:var(--muted-foreground); font-size:10px; line-height:1.6; }
+.landing-experience .editorial-container { position:relative; inset:auto; width:auto; max-width:none; height:auto; margin:0; display:block; pointer-events:auto; min-width:0; }
+.landing-experience .organ-dossier-card { width:100%; height:100%; max-height:none; padding:24px; border:1px solid var(--border); border-radius:22px; background:color-mix(in srgb, var(--card) 90.20%, transparent); backdrop-filter:blur(16px); box-shadow:0 10px 36px -18px color-mix(in srgb, var(--shadow-color) 14.90%, transparent); overflow:visible; }
+.landing-experience .dossier-title { font-size:clamp(24px,2.2vw,32px); line-height:1.14; letter-spacing:-.04em; margin:14px 0 16px; }
+.landing-experience .dossier-desc { font-size:12px; line-height:1.75; margin-bottom:0; }
+.landing-experience .dossier-category { font-size:8px; letter-spacing:.1em; }
+.landing-experience .dossier-index { font-size:9px; }
+.landing-experience .dossier-role-pill { font-size:9px; margin-bottom:13px; }
+.landing-experience .organ-nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin:20px 0; padding:0; border:0; border-radius:0; background:transparent; backdrop-filter:none; box-shadow:none; }
+.landing-experience .organ-button { justify-content:flex-start; min-height:44px; padding:9px; border:1px solid var(--border); border-radius:10px; background:color-mix(in srgb, var(--card) 58.04%, transparent); color:var(--muted-foreground); font-size:11px; line-height:1.4; white-space:normal; }
+.landing-experience .organ-button.active { background:var(--card); color:var(--primary); border-color:var(--border); box-shadow:0 2px 8px color-mix(in srgb, var(--shadow-color) 2.75%, transparent); }
+.landing-experience .organ-number { display:none; }
+.landing-experience .organ-active-dot { margin-left:auto; flex-shrink:0; }
+.landing-experience .dossier-tabs { margin:0 0 16px; gap:2px; }
+.landing-experience .dossier-tab-btn { min-height:44px; padding:6px 2px; font-size:10px; }
+.landing-experience .organ-dossier-card > .dossier-tab-content { flex:1 0 auto; min-height:155px; overflow:visible; }
+.landing-experience .highlight-item { font-size:11px; padding:10px; }
+.landing-experience .mechanism-step { gap:10px; }
+.landing-experience .step-phase { font-size:11px; }
+.landing-experience .step-desc,.landing-experience .biomarker-role { font-size:11px; line-height:1.7; }
+.landing-experience .biomarkers-grid { grid-template-columns:1fr; }
+.landing-experience .dossier-actions { margin-top:18px; padding-top:16px; border-top:1px solid var(--border); }
+.landing-experience .action-btn-primary { min-height:44px; font-size:11px; }
+.landing-experience .insight { position:relative; inset:auto; display:grid; grid-template-columns:minmax(230px,.8fr) minmax(0,1.8fr); gap:48px; width:auto; max-width:1320px; margin:24px auto 0; padding:28px; border:1px solid var(--border); border-radius:22px; background:color-mix(in srgb, var(--card) 90.20%, transparent); box-shadow:0 10px 36px -18px color-mix(in srgb, var(--shadow-color) 12.55%, transparent); backdrop-filter:none; }
+.landing-experience .sample-summary,.landing-experience .sample-playback { min-width:0; }
+.landing-experience .sample-label { font-size:9px; }
+.landing-experience #glucose-value { font-size:58px; }
+.landing-experience .sample-note { font-size:11px; line-height:1.7; margin-top:16px; max-width:380px; }
+.landing-experience .mini-chart { height:100px; margin:4px 0 15px; overflow:visible; }
+.landing-experience .sample-timeline { gap:14px; }
+.landing-experience .sample-timeline input { min-width:0; }
+.landing-experience .text-play { min-height:40px; padding:8px 14px; font-size:11px; }
+.landing-experience .sample-tabs { max-width:350px; margin-top:15px; }
+.landing-experience .sample-tabs button { min-height:38px; font-size:11px; }
+/* Markers are circles at rest; reveal one name through hover, focus or a pinned click. */
+.landing-experience .spatial-hotspot { display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; padding:0; border:0; background:transparent; transform:translate(-50%,-50%); pointer-events:auto; z-index:3; transition:opacity 150ms ease; }
+.landing-experience .spatial-hotspot:hover { transform:translate(-50%,-50%); }
+.landing-experience .hotspot-beacon-dot { width:13px; height:13px; flex-shrink:0; box-shadow:0 0 0 4px color-mix(in srgb, var(--shadow-color) 7.06%, transparent),0 0 10px color-mix(in srgb, var(--shadow-color) 20.00%, transparent); }
+.landing-experience .hotspot-beacon-dot::after { animation:none; }
+.landing-experience .hotspot-pill { position:absolute; left:calc(100% + 5px); top:50%; transform:translateY(-50%); display:flex; padding:8px 12px; border:1px solid var(--border); border-radius:9px; background:color-mix(in srgb, var(--card) 96.08%, transparent); color:var(--primary); box-shadow:0 5px 16px color-mix(in srgb, var(--shadow-color) 7.45%, transparent); white-space:nowrap; visibility:hidden; opacity:0; pointer-events:none; transition:opacity 150ms ease; }
+.landing-experience .hotspot-pill-name { font-size:12px; font-weight:550; }
+.landing-experience .spatial-hotspot.label-left .hotspot-pill { left:auto; right:calc(100% + 5px); }
+.landing-experience .spatial-hotspot:not([data-dismissed=true]):is(:hover,:focus-visible,[aria-expanded=true]) { z-index:5; }
+.landing-experience .spatial-hotspot:not([data-dismissed=true]):is(:hover,:focus-visible,[aria-expanded=true]) .hotspot-pill { visibility:visible; opacity:1; }
+.landing-experience .spatial-hotspot:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
+@media(max-width:1200px) {
+ .landing-experience .scene-tools { grid-template-columns:1fr; gap:15px; }
+ .landing-experience .view-settings { width:100%; }
+ .landing-experience .organ-dossier-card { padding:19px; }
+ .landing-experience .landing-introduction { gap:35px; }
+}
+@media(max-width:900px) {
+ .landing-experience .anatomy-workbench { grid-template-columns:minmax(0,1fr); }
+ .landing-experience .landing-stage { height:580px; }
+ .landing-experience .editorial-container { width:auto; }
+ .landing-experience .organ-dossier-card { padding:24px; }
+ .landing-experience .dossier-title { font-size:30px; }
+ .landing-experience .organ-nav { grid-template-columns:repeat(3,minmax(0,1fr)); }
+ .landing-experience .dossier-tab-content { min-height:0; }
+ .landing-experience .organ-dossier-card > .dossier-tab-content { min-height:0; }
+ .landing-experience .landing-introduction { grid-template-columns:1fr; gap:24px; padding-top:34px; }
+ .landing-experience .landing-introduction h1 { font-size:52px; }
+ .landing-experience .landing-introduction h1 br { display:none; }
+ .landing-experience .landing-introduction h1 em::before { content:' '; }
+ .landing-experience .insight { grid-template-columns:minmax(180px,.8fr) minmax(0,1.3fr); gap:24px; }
+}
+@media(max-width:600px) {
+ .landing-experience .landing-introduction { padding:30px 18px; gap:20px; }
+ .landing-experience .landing-introduction h1 { font-size:44px; line-height:1.1; }
+ .landing-experience .landing-intro-copy > p { font-size:15px; line-height:1.8; }
+ .landing-experience .landing-workspace-links { gap:16px; margin-top:20px; }
+ .landing-experience a.landing-workspace-cta { width:100%; justify-content:space-between; }
+ .landing-experience .experience { padding:0 14px 28px; }
+ .landing-experience .anatomy-workbench { gap:16px; }
+ .landing-experience .landing-stage { height:490px; }
+ .landing-experience .landing-stage-caption { top:17px; left:17px; right:17px; flex-direction:column; align-items:flex-start; gap:3px; }
+ .landing-experience .scene-tools { padding:16px; }
+ .landing-experience .view-settings { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 18px; }
+ .landing-experience .view-settings > .setting-row:first-child { grid-column:1/-1; grid-row:1; }
+ .landing-experience .view-settings > input { grid-column:1/-1; grid-row:2; margin:0 0 7px; }
+ .landing-experience .view-settings .toggle-row:nth-of-type(2) { grid-column:1; grid-row:3; }
+ .landing-experience .view-settings .toggle-row:nth-of-type(3) { grid-column:2; grid-row:3; }
+ .landing-experience .organ-dossier-card { padding:20px; backdrop-filter:none; background:var(--card); }
+ .landing-experience .organ-nav { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .landing-experience .organ-button { font-size:12px; padding:10px; }
+ .landing-experience .dossier-tabs { margin-top:5px; }
+ .landing-experience .dossier-tab-btn { font-size:11px; }
+ .landing-experience .highlight-item,.landing-experience .step-desc,.landing-experience .biomarker-role { font-size:12px; }
+ .landing-experience .insight { display:grid; grid-template-columns:1fr; padding:22px; gap:24px; margin-top:16px; }
+ .landing-experience .sample-note { max-width:none; }
+ .landing-experience .mini-chart { height:92px; }
+ .landing-experience .sample-tabs { max-width:none; }
+}
+@media(prefers-reduced-motion:reduce) { .landing-experience .spatial-hotspot,.landing-experience .hotspot-pill { transition:none; } }
+
+/* Keep the explorer quiet until an organ is selected. */
+.landing-experience .anatomy-workbench { align-items:start; }
+.landing-experience .editorial-container { padding-top:38px; }
+.landing-experience .organ-list { padding:20px; border:1px solid var(--border); border-radius:26px; background:color-mix(in srgb, var(--muted) 78.82%, transparent); box-shadow:0 10px 36px -18px color-mix(in srgb, var(--shadow-color) 12.55%, transparent); }
+.landing-experience .organ-list ul { list-style:none; display:flex; flex-direction:column; gap:12px; margin:0; padding:0; }
+.landing-experience .organ-list .organ-button { width:100%; min-height:66px; padding:18px 23px; display:flex; align-items:center; justify-content:space-between; gap:16px; border:1px solid transparent; border-radius:40px; background:var(--card); color:var(--primary); font:500 16px/1.4 'Segoe UI',sans-serif; text-align:left; }
+.landing-experience .organ-list .organ-button.active { background:var(--card); border-color:var(--border); color:var(--primary); box-shadow:0 2px 8px color-mix(in srgb, var(--shadow-color) 2.75%, transparent); }
+.landing-experience .organ-list .organ-button svg { width:18px; height:18px; flex-shrink:0; }
+.landing-experience .organ-list .organ-button:focus-visible,.landing-experience .back-to-body:focus-visible { outline:2px solid var(--ring); outline-offset:3px; }
+.landing-experience .back-to-body { position:absolute; top:22px; left:22px; z-index:6; display:flex; align-items:center; gap:9px; padding:10px 15px; min-height:44px; border:1px solid var(--border); border-radius:30px; background:color-mix(in srgb, var(--card) 92.55%, transparent); color:var(--primary); font:500 12px/1.4 'Segoe UI',sans-serif; cursor:pointer; }
+.landing-experience .back-to-body svg { width:17px; height:17px; }
+.landing-experience .focused-organ-name { position:absolute; top:32px; right:24px; z-index:5; color:var(--primary); font:500 14px/1.5 'Segoe UI',sans-serif; }
+.landing-experience [data-focused-organ]:not([data-focused-organ=body]) .landing-stage-caption { visibility:hidden; }
+.landing-experience .organ-info-bar { padding:23px 24px 18px; background:var(--card); border-top:1px solid var(--border); }
+.landing-experience .organ-info-heading { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 18px; margin-bottom:18px; }
+.landing-experience .organ-info-heading h2 { margin:0; color:var(--primary); font-size:24px; line-height:1.2; letter-spacing:-.03em; }
+.landing-experience .organ-info-heading > span { color:var(--muted-foreground); font-size:12px; }
+.landing-experience .organ-info-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; }
+.landing-experience .organ-info-grid h3 { color:var(--primary); font-size:12px; line-height:1.5; font-weight:600; margin:0 0 7px; }
+.landing-experience .organ-info-grid p { color:var(--muted-foreground); font-size:12px; line-height:1.75; margin:0; }
+.landing-experience .organ-info-footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-top:18px; padding-top:12px; border-top:1px solid var(--border); font-size:10px; line-height:1.6; color:var(--muted-foreground); }
+.landing-experience .organ-info-footer a { color:var(--primary); text-decoration:underline; text-underline-offset:3px; }
+.landing-experience .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+@media(max-width:1100px) {
+ .landing-experience .organ-list { padding:14px; }
+ .landing-experience .organ-list .organ-button { padding:15px 17px; font-size:14px; }
+ .landing-experience .organ-info-grid { grid-template-columns:1fr; gap:16px; }
+}
+@media(max-width:900px) {
+ .landing-experience .editorial-container { padding-top:0; }
+ .landing-experience .organ-list ul { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .landing-experience .organ-info-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media(max-width:600px) {
+ .landing-experience .organ-list ul,.landing-experience .organ-info-grid { grid-template-columns:1fr; }
+ .landing-experience .organ-list .organ-button { min-height:54px; }
+ .landing-experience .organ-info-bar { padding:22px 20px 18px; }
+ .landing-experience .back-to-body { top:16px; left:16px; }
+ .landing-experience .focused-organ-name { top:29px; right:17px; font-size:12px; }
+}

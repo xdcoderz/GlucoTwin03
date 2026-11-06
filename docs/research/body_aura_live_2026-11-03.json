@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-03T07:42:32.673Z",
+  "checks": [
+    "Landing: green/red/blue/off, rapid retarget, reduced motion, natural palette, neck-to-knees geometry, organ focus and narrow layout.",
+    "Workspace: shared aura/crop, sample-linked color, 42-minute projection, overlay off.",
+    "No browser or shader errors, no POSTs and both saved journals unchanged."
+  ],
+  "errors": [],
+  "posts": []
+}

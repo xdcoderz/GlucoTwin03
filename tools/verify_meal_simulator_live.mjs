@@ -1,0 +1,60 @@
+/** Exercises authorized synthetic what-if saves; recorded patient journals must not change. */
+import {chromium} from '../frontend/dashboard/node_modules/playwright/index.mjs';
+import {strict as assert} from 'node:assert';
+import fs from 'node:fs';
+const browser=await chromium.launch({channel:'chrome',headless:true,args:['--ignore-gpu-blocklist']});
+const report={at:new Date().toISOString(),mode:'real fitted model through Docker Spring API',results:[],checks:[],errors:[]};
+try {
+ const page=await browser.newPage({viewport:{width:1440,height:1080},reducedMotion:'reduce'});
+ page.on('pageerror',e=>report.errors.push(e.message));
+ page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
+ const api='http://localhost:8080/api';
+ const get=async path=>{const r=await page.request.get(api+path);assert(r.ok(),path);return r.json();};
+ const before={};for(const id of ['DEMO-001','DEMO-002'])before[id]=await get(`/patients/${id}/journal`);
+ const original=await get('/patients/DEMO-001');
+ await page.goto('http://localhost:3000/?patient=DEMO-001#workspace');
+ const meal=page.locator('#meal-context');
+ await page.waitForFunction(()=>{const button=document.querySelector('.meal-simulate-button');return button&&!button.disabled;});
+ await meal.getByLabel('Meal description',{exact:true}).fill('2 rotis with dal and a cup of curd');
+ await meal.getByLabel('Total portion (g)',{exact:true}).fill('250');
+ await meal.getByLabel('Minutes since previous meal',{exact:true}).fill('180');
+ async function simulate() {
+   const reply=page.waitForResponse(r=>r.url().endsWith('/DEMO-001/meal-simulations')&&r.request().method()==='POST');
+   await meal.getByRole('button',{name:'Simulate this meal'}).click();
+   const response=await reply;assert(response.ok());const row=await response.json();
+   assert.equal(row.prediction.status,'available');assert.equal(typeof row.prediction.model_score,'number');
+   assert(row.prediction.model_score>=0&&row.prediction.model_score<=1);assert.equal(Object.keys(row.features).length,43);
+   assert.equal(row.features.baseline_glucose_mg_dl,142);assert.equal(row.features.glucose_observations_prev_120_min,9);
+   report.results.push({simulationId:row.simulationId,patientId:row.patientId,description:row.meal.description,portionGrams:row.meal.portionGrams,score:row.prediction.model_score,model:row.prediction.model_version,inputHash:row.inputHash});
+   await page.waitForFunction(()=>document.querySelector('#meal-context [data-testid=anatomy-stage]')?.getAttribute('data-status')==='ready');
+   assert.equal(await meal.getByTestId('meal-simulation-score').innerText(),row.prediction.model_score.toFixed(3));
+   assert.equal(await meal.getByTestId('anatomy-stage').getAttribute('data-organ-palette'),'natural');
+   assert.equal(await meal.getByTestId('anatomy-stage').getAttribute('data-body-tone'),row.prediction.predicted_event?'attention':'neutral');
+   return row;
+ }
+ const first=await simulate();assert.deepEqual(first.meal.selectedFoodCategories,['bread','dairy']);
+ assert.equal(first.features.reported_food_weight_g,250);assert.equal(first.features.food_items_with_reported_weight,1);
+ await meal.locator('.meal-form-grid').screenshot({path:'D:/3Nov/docs/screenshots/meal_form_desktop.png',style:'.topbar{visibility:hidden!important}'});
+ await meal.getByTestId('anatomy-stage').screenshot({path:'D:/3Nov/docs/screenshots/meal_simulation_twin.png'});
+ await meal.getByLabel('Total portion (g)',{exact:true}).fill('400');
+ assert.equal(await meal.getByTestId('meal-simulation-score').count(),0);
+ const second=await simulate();assert.notEqual(second.inputHash,first.inputHash);assert.equal(second.features.reported_food_weight_g,400);
+ report.checks.push('Custom text/chips/portion/interval reach the real 43-feature fitted model; changed inputs produce a new immutable attempt.');
+ const saved=await get('/patients/DEMO-001/meal-simulations');
+ assert.deepEqual(saved.find(row=>row.simulationId===first.simulationId),first);
+ const invalid=await page.request.post(api+'/patients/DEMO-001/meal-simulations',{data:{description:'Invalid portion verification',categories:['bread'],portionGrams:2001,minutesSincePreviousMeal:180}});
+ assert.equal(invalid.status(),400);
+ assert.deepEqual(await get('/patients/DEMO-001/meal-simulations'),saved);
+ await page.reload();await meal.locator('.meal-simulation-history > summary').click();
+ await meal.locator('.meal-simulation-history li button').filter({hasText:'250 g'}).first().click();
+ assert.equal(await meal.getByLabel('Total portion (g)',{exact:true}).inputValue(),'250');
+ assert.equal(await meal.getByTestId('meal-simulation-score').innerText(),first.prediction.model_score.toFixed(3));
+ await page.setViewportSize({width:400,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await meal.locator('.meal-form-grid').screenshot({path:'D:/3Nov/docs/screenshots/meal_form_mobile.png',style:'.topbar{visibility:hidden!important}'});
+ for(const id of Object.keys(before))assert.deepEqual(await get(`/patients/${id}/journal`),before[id]);
+ assert.deepEqual((await get('/patients/DEMO-001')).currentMeal,original.currentMeal);
+ report.checks.push('Saved attempts reopen after reload; invalid portions rejected; mobile has no horizontal overflow; recorded meals and both patient journals unchanged.');
+ assert.deepEqual(report.errors,[]);
+ fs.writeFileSync('D:/3Nov/docs/research/meal_simulator_live_2026-11-03.json',JSON.stringify(report,null,2));
+ console.log(JSON.stringify(report,null,2));
+} finally {await browser.close();}

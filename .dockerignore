@@ -1,0 +1,17 @@
+.git
+**/.git
+**/node_modules
+**/target
+**/.venv
+**/__pycache__
+**/dist
+*.mv.db
+*.trace.db
+data/processed
+data/private
+research-results
+deliverables
+tmp
+.ppt-build
+.chart-data-*
+.chrome-*

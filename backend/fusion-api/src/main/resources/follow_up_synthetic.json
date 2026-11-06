@@ -1,0 +1,9 @@
+{
+  "synthetic": true,
+  "description": "Fictional post-meal observations for workflow demonstration. Not predictions, research outcomes or clinical evidence.",
+  "offsetMinutes": [15, 30, 45, 60, 75, 90, 105, 120],
+  "patients": {
+    "DEMO-001": [148, 153, 157, 161, 159, 155, 150, 146],
+    "DEMO-002": [194, 202, 212, 220, 215, 205, 198, 192]
+  }
+}

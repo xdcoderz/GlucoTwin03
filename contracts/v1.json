@@ -1,0 +1,49 @@
+{
+  "contractVersion": "1.0",
+  "assemblyDate": "2026-11-02",
+  "horizonMinutes": 120,
+  "threshold": 0.5,
+  "target": "Glucose >=180 mg/dL OR rise >=40 mg/dL from meal baseline in the following 120 minutes",
+  "historyOffsetsMinutes": [120, 105, 90, 75, 60, 45, 30, 15, 0],
+  "patients": ["DEMO-001", "DEMO-002"],
+  "cgmEventFields": ["patientId", "eventId", "observedAt", "glucoseMgDl", "source"],
+  "predictionFields": ["status", "model_score", "horizon_minutes", "threshold", "predicted_event", "model_version", "top_factors", "reason"],
+  "predictionStatuses": ["pending", "insufficient_data", "available", "unavailable"],
+  "routes": {
+    "ingest": "POST /api/cgm/events",
+    "patients": "GET /api/patients",
+    "patient": "GET /api/patients/{id}",
+    "history": "GET /api/patients/{id}/cgm",
+    "refresh": "POST /api/patients/{id}/refresh",
+    "prediction": "GET /api/patients/{id}/prediction",
+    "model": "POST /predict"
+  },
+  "featureNames": [
+    "baseline_glucose_mg_dl", "glucose_lag_15_min_mg_dl", "glucose_lag_30_min_mg_dl",
+    "glucose_lag_60_min_mg_dl", "glucose_lag_120_min_mg_dl",
+    "glucose_change_prev_15_min_mg_dl", "glucose_change_prev_30_min_mg_dl",
+    "glucose_change_prev_60_min_mg_dl", "glucose_change_prev_120_min_mg_dl",
+    "glucose_mean_prev_120_min_mg_dl", "glucose_std_prev_120_min_mg_dl",
+    "glucose_min_prev_120_min_mg_dl", "glucose_max_prev_120_min_mg_dl",
+    "glucose_range_prev_120_min_mg_dl", "glucose_observations_prev_120_min",
+    "meal_hour_sin", "meal_hour_cos", "meal_is_weekend", "minutes_since_previous_meal",
+    "reported_food_weight_g", "food_items_with_reported_weight", "meal_text_length_characters",
+    "meal_contains_rice", "meal_contains_noodle", "meal_contains_bread", "meal_contains_fruit",
+    "meal_contains_vegetable", "meal_contains_animal_protein", "meal_contains_dairy",
+    "meal_contains_root_or_corn", "csii_bolus_insulin_iu_at_meal",
+    "csii_basal_insulin_iu_per_hour_at_meal", "has_recorded_csii_bolus_at_meal",
+    "has_recorded_csii_basal_setting_at_meal", "has_recorded_subcutaneous_insulin_at_meal",
+    "has_recorded_non_insulin_medication_at_meal", "has_recorded_intravenous_insulin_at_meal",
+    "sex_female", "age_years", "bmi_kg_m2", "diabetes_duration_years", "hba1c_percent",
+    "fasting_plasma_glucose_mg_dl"
+  ],
+  "ownership": {
+    "data": "data/sample",
+    "replay": "cgm-publisher",
+    "backend": "backend/fusion-api",
+    "ml": "ml-service",
+    "dashboard": "frontend/dashboard",
+    "packaging": "compose.modules.yaml",
+    "docs": "docs"
+  }
+}

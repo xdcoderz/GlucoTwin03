@@ -1,0 +1,21 @@
+{
+  "contractVersion": "readiness-1.0",
+  "extends": "workflow-v1.json",
+  "route": "GET /api/patients/{id}/readiness",
+  "readOnly": true,
+  "fields": ["patientId", "serverTime", "baselineAt", "clockMode", "historyReady", "receivedExpectedSamples", "expectedSamples", "historySlots", "qualityIssues", "latestReceivedAt", "model", "predictionId", "predictionStatus", "computedAt", "inputChanged", "followUpSamples", "followUpComplete", "reviewState", "nextAction"],
+  "historySlotFields": ["minutesBefore", "observedAt", "status", "glucoseMgDl"],
+  "historySlotStatuses": ["received", "missing", "conflict"],
+  "modelFields": ["status", "modelVersion", "checkedAt"],
+  "modelStatuses": ["ready", "unavailable"],
+  "nextActions": ["history", "score", "follow_up", "review", "complete"],
+  "rules": [
+    "Readiness GET never invokes predict or creates a journal entry",
+    "History requires all nine exact pre-meal offsets; conflicts and off-grid samples block inference",
+    "The model health probe uses bounded timeouts and a five-second cache; readiness is not a guarantee of scoring success",
+    "latestReceivedAt is a receipt wall-clock timestamp, not a CGM observation timestamp; legacy null receipts remain unknown",
+    "The configured synthetic replay baseline does not move with the wall clock",
+    "Same event ID and identical patient, timestamp, value and source is idempotent; changed content returns HTTP 409",
+    "History readiness is independent of model availability; unavailable scoring attempts can still be saved"
+  ]
+}

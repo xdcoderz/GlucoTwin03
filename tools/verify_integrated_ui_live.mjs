@@ -1,0 +1,123 @@
+/** Read-only browser acceptance against the real assembled Docker stack. */
+import { chromium } from '../frontend/dashboard/node_modules/playwright/index.mjs';
+import { strict as assert } from 'node:assert';
+import fs from 'node:fs';
+const ui=process.env.GLUCO_UI_URL || 'http://localhost:3000';
+const api=process.env.GLUCO_API_URL || 'http://localhost:8080/api';
+const out='D:/3Nov/docs/screenshots';
+const browser=await chromium.launch({channel:'chrome',headless:true,args:['--ignore-gpu-blocklist']});
+const evidence={checkedAt:new Date().toISOString(),ui,api,mode:'read-only real services; existing saved model results',patients:[],checks:[],postRequests:[],pageErrors:[]};
+try {
+ const page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
+ page.on('pageerror',error=>evidence.pageErrors.push(error.message));
+ page.on('request',request=>{ if(request.method()==='POST') evidence.postRequests.push(request.url()); });
+ const get=async path=>{const response=await page.request.get(api+path); assert(response.ok(),path); return response.json();};
+ const before={};
+ for(const id of ['DEMO-001','DEMO-002']) {
+  const data=await get('/patients/'+id); before[id]=await get('/patients/'+id+'/journal');
+  assert.equal(data.prediction.status,'available');
+  evidence.patients.push({id,score:data.prediction.model_score,modelVersion:data.prediction.model_version,resultId:data.journal.predictionId});
+ }
+ await page.goto(ui);
+ await page.waitForFunction(()=>document.querySelector('[data-testid="landing-experience"]')?.getAttribute('data-scene-status')==='ready');
+ assert.match(await page.getByRole('heading',{level:1}).innerText(),/A little closer/);
+ assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
+ const cta=await page.locator('.landing-workspace-links').boundingBox();
+ const workbench=await page.locator('.anatomy-workbench').boundingBox();
+ assert(cta && workbench && cta.y+cta.height<=workbench.y+1,'Primary landing action precedes the model.');
+ await page.screenshot({path:out+'/integrated_live_hero_desktop.png'});
+ evidence.checks.push('Imported hero is first; local GLB loads in production container.');
+ assert.equal(await page.locator('.safety-banner').count(),0);
+ const modelBox=await page.locator('.landing-model-column').boundingBox();
+ const organBox=await page.locator('.editorial-container').boundingBox();
+ assert(Math.abs(modelBox.width/(modelBox.width+organBox.width)-.7)<.01);
+ assert.equal(await page.locator('.editorial-container button').count(),5);
+ assert.equal(await page.locator('.dossier-tabs,.dossier-header,.dossier-actions').count(),0);
+ assert.equal(await page.locator('#organ-info-bar').isVisible(),false);
+ assert.equal(await page.locator('.hotspot-pill:visible').count(),0);
+ await page.locator('[data-organ-hotspot=pancreas]').click();
+ await page.waitForFunction(()=>document.querySelector('[data-testid="landing-experience"]')?.getAttribute('data-focus-state')==='ready');
+ assert.equal(await page.locator('#organ-info-title').innerText(),'Pancreas');
+ assert.equal(await page.locator('#organ-info-bar').isVisible(),true);
+ await page.getByRole('button',{name:'Switch to light mode'}).click();
+ assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+ assert.equal(await page.locator('#organ-info-title').innerText(),'Pancreas');
+ await page.getByRole('button',{name:'Switch to dark mode'}).click();
+ assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
+ evidence.checks.push('Dark default and live theme switching preserve the selected organ and model canvas.');
+ await page.evaluate(()=>scrollTo(0,0));
+ await page.screenshot({path:out+'/integrated_live_organ_focus.png',fullPage:true});
+ await page.locator('#back-to-body').click();
+ assert.equal(await page.locator('#organ-info-bar').isVisible(),false);
+ evidence.checks.push('70/30 anatomy view, simple organ list, node-driven focus, contextual information bar and whole-body return verified.');
+ const nav=page.getByRole('navigation',{name:'Main navigation'});
+ await nav.getByRole('link',{name:'Patient workspace',exact:true}).click();
+ for(const patient of evidence.patients) {
+  await page.getByLabel('Synthetic scenario').selectOption(patient.id);
+  await page.waitForFunction(expected=>document.querySelector('[data-destination="workspace"] .score-reading')?.textContent===expected,patient.score.toFixed(3));
+  assert.equal(await page.locator('[data-destination=workspace] [data-testid=anatomy-stage]').count(),0);
+  assert.equal(await page.locator('[data-destination=workspace] .timeline-scrubber input').count(),1);
+  assert.equal(await page.locator('[data-destination=workspace] .factor-list li').count(),5);
+  assert.equal(await page.getByRole('button',{name:/Score & save/}).count(),1);
+  assert.equal(await page.getByRole('button',{name:/Score & save/}).isEnabled(),true);
+  await page.screenshot({path:out+`/integrated_live_workspace_${patient.id}.png`,fullPage:true});
+ }
+ evidence.checks.push('Both patients show actual scores, five factors, one score action, one timeline and a closed optional twin.');
+ await page.locator('[data-destination=workspace] #patient-twin > summary').click();
+ await page.waitForFunction(()=>document.querySelector('[data-destination="workspace"] [data-testid="anatomy-stage"]')?.getAttribute('data-status')==='ready');
+ assert.equal(await page.getByRole('button',{name:'Start guided tour',exact:true}).count(),0);
+ const stage=page.locator('[data-destination=workspace]').getByTestId('anatomy-stage');
+ await stage.scrollIntoViewIfNeeded();
+ await page.screenshot({path:out+'/integrated_live_patient_body.png'});
+ await page.locator('[data-destination=workspace] #patient-twin > summary').click();
+ const demo=page.locator('[data-destination=workspace] .workspace-scenarios');
+ const savedScore=await page.locator('[data-destination=workspace] .score-reading').innerText();
+ await demo.locator(':scope > summary').click();
+ await page.waitForFunction(()=>document.querySelector('[data-instance="workspace-demo"] [data-testid="anatomy-stage"]')?.getAttribute('data-status')==='ready');
+ assert.equal(await demo.getByLabel('Fictional glucose story').locator('option').count(),5);
+ await demo.getByLabel('Fictional glucose story').selectOption('countdown');
+ assert.equal(await demo.getByTestId('projection-clock').innerText(),'90:00');
+ await demo.getByLabel('Fictional glucose story').selectOption('surge');
+ await demo.getByLabel('3D sample',{exact:true}).fill('4');
+ assert.equal(await demo.getByTestId('anatomy-stage').getAttribute('data-body-tone'),'attention');
+ assert.equal(await page.locator('[data-destination=workspace] .score-reading').innerText(),savedScore);
+ await demo.locator(':scope > summary').click();
+ evidence.checks.push('Workspace has five fictional scenarios, synchronized tint and time-to-70 projection; saved score is unchanged.');
+ await page.locator('[data-destination=workspace]').getByRole('link',{name:'Review',exact:true}).click();
+ assert.equal(await page.locator('#review-section').isVisible(),true);
+ evidence.checks.push('Optional 3D opens and closes, guided tour is hidden, and the Review deep link works.');
+ await nav.getByRole('link',{name:'Evidence',exact:true}).click();
+ assert.match(await page.getByRole('heading',{level:1}).innerText(),/What the prototype demonstrates/);
+ assert.equal(await page.locator('[data-destination=evidence] .architecture-flow').count(),0);
+ assert.match(await page.locator('[data-destination=evidence] .evidence-errors').innerText(),/78/);
+ assert.equal((await page.request.get(ui+'/research/PROJECT_NOTES.md')).ok(),true);
+ await page.screenshot({path:out+'/integrated_live_evidence_desktop.png'});
+ await nav.getByRole('link',{name:'Future lab',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('[data-destination="future"] [data-testid="anatomy-stage"]')?.getAttribute('data-status')==='ready');
+ await page.getByLabel('Fictional glucose story').selectOption('dip');
+ await page.screenshot({path:out+'/integrated_live_future_desktop.png'});
+ await page.getByRole('link',{name:'Validation roadmap',exact:true}).click();
+ assert.equal(await nav.getByRole('link',{name:'Future lab',exact:true}).getAttribute('aria-current'),'page');
+ assert.equal(await page.locator('#validation-roadmap').evaluate(el=>el.open),true);
+ assert.equal(await page.getByRole('link',{name:'Download the validation roadmap slide'}).isVisible(),true);
+ evidence.checks.push('Concise Evidence, technical-note download and relocated Future lab roadmap verified.');
+ evidence.checks.push('Evidence and Future lab load; fictional scenario remains a separate visual mode.');
+ await page.setViewportSize({width:400,height:860});
+ for(const [label,id] of [['Overview','overview'],['Patient workspace','workspace'],['Evidence','evidence'],['Future lab','future']]) {
+  await nav.getByRole('link',{name:label,exact:true}).click();
+  if(id==='overview') await page.waitForFunction(()=>document.querySelector('[data-testid="landing-experience"]')?.getAttribute('data-scene-status')==='ready');
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),id+' mobile overflow');
+  await page.screenshot({path:out+`/integrated_live_${id}_mobile.png`,fullPage:id==='overview'});
+ }
+ evidence.checks.push('All four destinations fit a 400px viewport.');
+ for(const id of ['DEMO-001','DEMO-002']) assert.deepEqual(await get('/patients/'+id+'/journal'),before[id]);
+ assert.deepEqual(evidence.postRequests,[]);
+ assert.deepEqual(evidence.pageErrors,[]);
+ evidence.checks.push('No POSTs, page errors or saved-record changes during live verification.');
+ evidence.passed=true;
+} catch(error) { evidence.passed=false; evidence.error=String(error); throw error; }
+finally {
+ fs.writeFileSync('D:/3Nov/docs/research/ui_integration_live_2026-11-03.json',JSON.stringify(evidence,null,2));
+ await browser.close();
+}
+console.log(JSON.stringify(evidence,null,2));

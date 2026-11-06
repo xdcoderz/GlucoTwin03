@@ -1,0 +1,91 @@
+.anatomy { --twin-bg:var(--card); --twin-surface:var(--card); --twin-ink:var(--foreground); --twin-muted:var(--muted-foreground); --twin-line:var(--card); margin:26px 0; border:1px solid var(--line); border-radius:16px; overflow:hidden; background:var(--surface); }
+.anatomy-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:23px 24px 20px; }
+.anatomy-heading h2 { font-size:23px; letter-spacing:-.035em; }
+.anatomy-subtitle { margin:7px 0 0; font-size:12px; color:var(--muted-foreground); line-height:1.5; }
+.anatomy-mode { border:1px solid var(--line); border-radius:5px; color:var(--muted-foreground); padding:7px 9px; font-size:9px; letter-spacing:.07em; white-space:nowrap; }
+.anatomy-layout { display:grid; grid-template-columns:minmax(0, 1.65fr) minmax(300px, 1fr); background:var(--twin-bg); color:var(--twin-ink); }
+.twin-viewer { min-width:0; background:radial-gradient(ellipse at 48% 36%, var(--card) 0%, var(--card) 68%); }
+.twin-stage { position:relative; height:542px; overflow:hidden; }
+.twin-stage canvas { display:block; width:100%; height:100%; touch-action:none; outline-offset:-5px; }
+.twin-stage canvas:focus-visible { outline:2px solid var(--border); }
+.twin-view-label { position:absolute; top:22px; left:23px; display:flex; align-items:center; gap:9px; color:var(--muted-foreground); font-size:9px; letter-spacing:.13em; pointer-events:none; }
+.twin-view-label span { display:grid; place-items:center; width:25px; height:25px; border:1px solid var(--border); border-radius:50%; font-size:10px; letter-spacing:0; }
+.twin-orientation { position:absolute; right:20px; top:26px; text-align:right; color:var(--muted-foreground); font-size:8px; letter-spacing:.1em; line-height:1.8; pointer-events:none; }
+.twin-scale { position:absolute; bottom:17px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:8px; font-size:7px; letter-spacing:.12em; color:var(--muted-foreground); white-space:nowrap; pointer-events:none; }
+.twin-scale span { width:4px; height:4px; background:var(--accent); border-radius:50%; }
+.twin-scale i { width:70px; height:1px; background:var(--secondary); }
+.twin-hotspot { position:absolute; z-index:2; border:1px solid var(--border); background:color-mix(in srgb, var(--card) 92.94%, transparent); color:var(--foreground); padding:7px 9px; min-height:30px; border-radius:4px; font-size:10px; white-space:nowrap; transform:translate(44px, -50%); }
+.twin-hotspot::before { position:absolute; content:''; right:100%; width:44px; top:50%; height:1px; background:var(--secondary); }
+.twin-hotspot span { position:absolute; left:-47px; top:calc(50% - 3px); width:6px; height:6px; border-radius:50%; background:var(--organ-color); box-shadow:0 0 7px color-mix(in srgb, var(--shadow-color) 40.00%, transparent); }
+.hotspot-liver, .hotspot-gut { transform:translate(calc(-100% - 43px), -50%); }
+.hotspot-liver::before, .hotspot-gut::before { left:100%; right:auto; }
+.hotspot-liver span, .hotspot-gut span { right:-47px; left:auto; }
+.hotspot-fat { margin-top:17px; }
+.twin-hotspot:hover { border-color:var(--organ-color); color:var(--foreground); }
+.twin-controls { padding:11px 16px; display:flex; gap:6px; flex-wrap:wrap; border-top:1px solid var(--ring); }
+.twin-button { min-height:36px; border:1px solid var(--border); border-radius:6px; background:var(--card); color:var(--primary); font:inherit; font-size:10px; font-weight:600; padding:7px 10px; }
+.twin-button:hover:not(:disabled) { background:var(--card); border-color:var(--border); }
+.twin-button:disabled { cursor:not-allowed; color:var(--muted-foreground); background:var(--card); }
+.twin-button:focus-visible, .twin-organ-list button:focus-visible, .twin-hotspot:focus-visible, .twin-guide a:focus-visible { outline:2px solid var(--border); outline-offset:3px; }
+.twin-reset { margin-left:auto; }
+.twin-view-options { padding:0 18px 15px; display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
+.twin-view-options p { max-width:300px; margin:0; color:var(--muted-foreground); font-size:10px; line-height:1.65; }
+.twin-view-options label { display:grid; grid-template-columns:auto 36px; gap:5px; color:var(--muted-foreground); font-size:9px; min-width:130px; }
+.twin-view-options input { accent-color:var(--primary); grid-column:1; width:100%; margin:2px 0; }
+.twin-view-options label span { grid-column:2; grid-row:2; align-self:center; text-align:right; font-variant-numeric:tabular-nums; }
+.twin-guide { background:var(--card); border-left:1px solid var(--ring); padding:23px 23px 20px; }
+.twin-guide-kicker { color:var(--muted-foreground); font-size:9px; letter-spacing:.13em; margin-bottom:14px; }
+.twin-organ-list { display:grid; grid-template-columns:1fr; gap:5px; }
+.twin-organ-list button { display:flex; gap:12px; align-items:center; min-height:40px; padding:8px 11px; background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--muted-foreground); font:inherit; font-size:11px; text-align:left; }
+.twin-organ-list button.selected { border-color:var(--organ-color); background:var(--card); color:var(--foreground); }
+.twin-organ-list button:hover { background:var(--card); }
+.organ-number { font-size:9px; color:var(--muted-foreground); font-variant-numeric:tabular-nums; }
+.organ-swatch { margin-left:auto; width:6px; height:6px; border-radius:50%; background:var(--organ-color); }
+.organ-swatch { width:9px; height:9px; border:1px solid var(--border); flex-shrink:0; }
+.twin-appearance { padding:0 18px 18px; color:var(--muted-foreground); font-size:11px; line-height:1.7; }
+.twin-overlay-toggle { display:flex; align-items:center; gap:9px; min-height:44px; width:fit-content; cursor:pointer; }
+.twin-overlay-toggle input { width:16px; height:16px; accent-color:var(--primary); }
+.twin-appearance summary { cursor:pointer; padding:10px 0; color:var(--foreground); }
+.twin-appearance p { margin:8px 0; }
+.twin-appearance ul { padding-left:20px; margin:10px 0; }
+.twin-appearance li { margin:8px 0; }
+.twin-appearance a { color:var(--primary); text-underline-offset:3px; }
+.twin-appearance summary:focus-visible, .twin-appearance a:focus-visible, .twin-overlay-toggle input:focus-visible { outline:2px solid var(--border); outline-offset:3px; }
+.twin-organ-detail { margin-top:22px; min-height:230px; }
+.twin-detail-kicker { font-size:9px; color:var(--muted-foreground); letter-spacing:.07em; margin-bottom:8px; }
+.twin-organ-detail h3 { margin:0 0 11px; color:var(--foreground); font-size:24px; line-height:1.15; letter-spacing:-.035em; }
+.twin-organ-detail > p:not(.twin-detail-kicker) { color:var(--muted-foreground); font-size:11px; line-height:1.75; margin-bottom:13px; }
+.twin-model-connection { border-left:2px solid var(--border); padding-left:11px; margin:15px 0 11px; }
+.twin-model-connection strong { font-size:10px; color:var(--foreground); font-weight:600; }
+.twin-model-connection p { color:var(--muted-foreground); font-size:10px; line-height:1.65; margin:5px 0 0; }
+.twin-organ-detail .twin-not-measured { color:var(--success); font-size:10px; }
+.twin-organ-detail a { color:var(--primary); font-size:10px; text-underline-offset:3px; }
+.twin-primary { margin-top:4px; border-color:var(--border); background:var(--muted); color:var(--primary); }
+.twin-primary:hover:not(:disabled) { color:var(--foreground); }
+.twin-patient-snapshot { margin-top:19px; padding-top:16px; border-top:1px solid var(--border); }
+.twin-patient-snapshot > p { margin:0 0 12px; color:var(--muted-foreground); font-size:8px; letter-spacing:.08em; }
+.twin-patient-snapshot > p strong { float:right; font-size:9px; color:var(--muted-foreground); }
+.twin-patient-snapshot > div { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+.twin-patient-snapshot b { display:block; font-size:23px; line-height:1.2; font-weight:600; color:var(--foreground); font-variant-numeric:tabular-nums; }
+.twin-patient-snapshot small { display:block; font-size:9px; color:var(--muted-foreground); margin-top:5px; }
+.twin-patient-snapshot .snapshot-note { margin:11px 0 0; font-size:9px; letter-spacing:0; line-height:1.65; }
+.anatomy-footer { display:flex; gap:12px; padding:12px 22px; color:var(--muted-foreground); background:var(--card); font-size:10px; line-height:1.65; }
+.anatomy-footer strong { color:var(--primary); font-weight:600; white-space:nowrap; }
+.twin-overlay { position:absolute; z-index:4; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px; text-align:center; background:color-mix(in srgb, var(--card) 92.94%, transparent); color:var(--primary); }
+.twin-overlay strong { font-size:17px; font-weight:600; }
+.twin-overlay p { max-width:340px; margin-top:11px; font-size:12px; color:var(--muted-foreground); line-height:1.7; }
+@media (max-width:1000px) { .anatomy-layout { grid-template-columns:minmax(0, 1.4fr) minmax(285px, 1fr); } .anatomy-mode { display:none; } .twin-view-options { flex-direction:column; gap:12px; } .twin-view-options label { width:100%; grid-template-columns:110px minmax(60px, 1fr) 36px; align-items:center; } .twin-view-options input { grid-column:2; } .twin-view-options label span { grid-column:3; grid-row:1; } .twin-reset { margin-left:0; } }
+@media (max-width:760px) { .anatomy-layout { grid-template-columns:1fr; } .anatomy-heading { padding:19px 17px; } .anatomy-heading h2 { font-size:21px; } .twin-stage { height:520px; } .twin-guide { border-left:0; border-top:1px solid var(--border); padding:20px 18px; } .twin-organ-list { grid-template-columns:repeat(2, minmax(0, 1fr)); } .twin-organ-list button { min-height:44px; font-size:11px; gap:8px; } .twin-organ-detail { min-height:0; } .twin-patient-snapshot > div { max-width:330px; } .anatomy-footer { flex-direction:column; gap:2px; padding:12px 17px; } .twin-controls { gap:7px; } .twin-button { min-height:44px; padding:9px 11px; } .twin-hotspot { font-size:9px; padding:7px; } .twin-orientation { right:14px; top:30px; font-size:7px; } }
+@media (prefers-reduced-motion:reduce) { .anatomy *, .anatomy *::before, .anatomy *::after { transition:none !important; } }
+.tour-entry { display:flex; align-items:center; gap:18px; flex-shrink:0; }
+.tour-entry .button { min-height:44px; }
+.anatomy-tour { padding:20px 24px; background:var(--success-surface); border-top:1px solid var(--border); display:flex; gap:24px; align-items:center; justify-content:space-between; }
+.anatomy-tour h3 { margin:5px 0 8px; color:var(--ink); font-size:18px; }
+.anatomy-tour p:not(.eyebrow) { margin:0; font-size:12px; color:var(--primary); max-width:640px; line-height:1.7; }
+.tour-actions { display:flex; flex-wrap:wrap; gap:8px; min-width:240px; justify-content:flex-end; }
+.tour-actions .button, .tour-exit { min-height:44px; }
+.tour-actions .button:disabled { opacity:.55; cursor:not-allowed; }
+.tour-exit { border:0; padding:8px 10px; color:var(--primary); background:transparent; text-decoration:underline; text-underline-offset:3px; font-size:12px; }
+.tour-announcement:not(:empty) { background:var(--success-surface); padding:14px 24px; color:var(--primary); font-size:12px; }
+@media (max-width:1000px) { .anatomy-tour { flex-direction:column; align-items:flex-start; gap:14px; } .tour-actions { justify-content:flex-start; } }
+@media (max-width:760px) { .anatomy-heading { flex-wrap:wrap; gap:16px; } .tour-entry { width:100%; } .anatomy-tour { padding:18px; } .tour-actions { min-width:0; } }

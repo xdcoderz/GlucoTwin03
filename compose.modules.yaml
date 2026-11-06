@@ -1,0 +1,67 @@
+# Separate development project. Start only the module you are working on.
+name: glucotwin-modules
+services:
+  checks:
+    image: python:3.13-slim
+    working_dir: /workspace
+    volumes:
+      - .:/workspace:ro
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+    command: ["python", "-B", "tools/check_modules.py"]
+    profiles: [checks]
+
+  ml:
+    image: glucotwin-modules-ml:latest
+    build:
+      context: .
+      dockerfile: ml-service/Dockerfile
+    ports: ["127.0.0.1:18000:8000"]
+    profiles: [ml]
+
+  backend:
+    image: glucotwin-modules-backend:latest
+    build:
+      context: .
+      dockerfile: backend/fusion-api/Dockerfile
+    environment:
+      ML_SERVICE_URL: http://ml:8000
+      SIMULATED_MEAL_TIME: "${SIMULATED_MEAL_TIME:-2026-10-30T12:00:00+00:00}"
+      SPRING_DATASOURCE_URL: jdbc:h2:file:/data/glucotwin-modules;DB_CLOSE_ON_EXIT=FALSE
+    volumes:
+      - module-h2:/data
+    ports: ["127.0.0.1:18080:8080"]
+    profiles: [backend]
+
+  mock-api:
+    image: python:3.13-slim
+    working_dir: /workspace
+    volumes:
+      - .:/workspace:ro
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      SIMULATED_MEAL_TIME: "${SIMULATED_MEAL_TIME:-2026-10-30T12:00:00+00:00}"
+    command: ["python", "-B", "tools/preview_api.py", "--host", "0.0.0.0"]
+    ports: ["127.0.0.1:18081:18081"]
+    profiles: [dashboard]
+
+  dashboard:
+    image: glucotwin-modules-dashboard:latest
+    build:
+      context: frontend/dashboard
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:18081
+    ports: ["127.0.0.1:13000:80"]
+    profiles: [dashboard]
+
+  replay:
+    image: glucotwin-modules-replay:latest
+    build:
+      context: .
+      dockerfile: cgm-publisher/Dockerfile
+    command: ["python", "-u", "app.py", "--dry-run"]
+    profiles: [replay]
+
+volumes:
+  module-h2:

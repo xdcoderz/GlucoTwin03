@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#151718" />
+    <style>html{background:var(--background,#151718)}html[data-theme=light]{background:var(--background,#f6f7f9)}</style>
+    <script>
+      try { document.documentElement.dataset.theme=localStorage.getItem('glucotwin.theme')==='light'?'light':'dark'; } catch {}
+      document.documentElement.style.colorScheme=document.documentElement.dataset.theme;
+      document.querySelector('meta[name="theme-color"]').setAttribute('content',document.documentElement.dataset.theme==='light'?'#f6f7f9':'#151718');
+    </script>
+    <title>GlucoTwin | Research dashboard</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

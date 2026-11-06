@@ -1,0 +1,252 @@
+[
+  {
+    "number": 1,
+    "question": "What exact problem does GlucoTwin solve, and who is its intended user?",
+    "answer": "It brings patient background, meal information and recent glucose together to score a defined post-meal event. It is intended for doctor-facing research demonstrations."
+  },
+  {
+    "number": 2,
+    "question": "Why use GlucoTwin when existing CGM dashboards already show glucose trends?",
+    "answer": "Our focus is a meal-time event score for the next 120 minutes, alongside contributing factors and saved-result review. We have not established superiority over commercial CGM products."
+  },
+  {
+    "number": 3,
+    "question": "What makes this a digital twin?",
+    "answer": "It maintains a virtual representation of one patient's context and glucose state. The anatomical body is educational; the MVP does not simulate the patient's complete physiology."
+  },
+  {
+    "number": 4,
+    "question": "Explain the complete workflow.",
+    "answer": "Select a patient and meal, validate the glucose history, request a score and save the attempt. Then inspect factors, replay fictional follow-up, record a review and export the result."
+  },
+  {
+    "number": 5,
+    "question": "Which features actually work, and which are simulated?",
+    "answer": "Actual model inference, input checks, storage, review history and PDF export work. Demo inputs are synthetic, and Future lab glucose curves are scripted examples."
+  },
+  {
+    "number": 6,
+    "question": "What useful output exists beyond the dashboard visuals?",
+    "answer": "A saved event score with contributing factors, its original input snapshot and a traceable review record. These support inspecting the research workflow and reproducing what was evaluated."
+  },
+  {
+    "number": 7,
+    "question": "What does the patient JSON contain?",
+    "answer": "It contains demographics, recorded health measurements, medications, meal details and glucose history. The feature builder converts relevant fields into model inputs."
+  },
+  {
+    "number": 8,
+    "question": "Where do glucose readings come from without a physical device?",
+    "answer": "A publisher reads the synthetic fixtures and sends timestamped readings to Spring over HTTP. This lets us demonstrate ingestion without requiring CGM hardware."
+  },
+  {
+    "number": 9,
+    "question": "Why HTTP instead of MQTT?",
+    "answer": "The current source is a deterministic software replay, so HTTP provides the required delivery with fewer components. MQTT could be considered if device integration creates a need for it."
+  },
+  {
+    "number": 10,
+    "question": "How do replay speed and reading timestamps differ?",
+    "answer": "The publisher sends samples roughly 1.2 real seconds apart. Their timestamps represent 15-minute intervals, so replay speed is independent of simulated elapsed time."
+  },
+  {
+    "number": 11,
+    "question": "Why are there nine readings in a two-hour window?",
+    "answer": "We include both endpoints: -120, -105, -90, -75, -60, -45, -30, -15 and 0 minutes. Eight intervals therefore contain nine readings."
+  },
+  {
+    "number": 12,
+    "question": "How are patient records kept separate?",
+    "answer": "Each event includes a patient ID, and backend queries and saved results are associated with that ID. Patient-switch guards prevent late frontend responses from replacing another patient's displayed data."
+  },
+  {
+    "number": 13,
+    "question": "How does training data differ from demonstration data?",
+    "answer": "The fitted model was trained on ShanghaiT2DM-derived meal windows. The public application uses synthetic patient records and replayed glucose, not participant-level training records."
+  },
+  {
+    "number": 14,
+    "question": "What is needed before accepting real patient data?",
+    "answer": "We need verified data permissions, privacy controls, authentication, compatible input schemas and suitable validation. The existing research-input path validates local records; it is not an operational clinical integration."
+  },
+  {
+    "number": 15,
+    "question": "What happens when readings are missing or invalid?",
+    "answer": "Ingestion rejects invalid values, while readiness checks identify missing or conflicting required timestamps. Scoring is gated when the required pre-meal history is incomplete."
+  },
+  {
+    "number": 16,
+    "question": "How do you handle duplicate events?",
+    "answer": "An identical event with the same ID does not create another reading. Reusing that ID with a different payload returns a conflict and preserves the original."
+  },
+  {
+    "number": 17,
+    "question": "How do you handle units and timezones?",
+    "answer": "The input contract uses mg/dL, and the workspace labels meal and observation times in UTC. Automatic mixed-unit ingestion is not implemented; incoming values must follow the contract."
+  },
+  {
+    "number": 18,
+    "question": "What is the meal-time baseline?",
+    "answer": "It is the glucose value at the configured meal timestamp. A saved attempt freezes its baseline and inputs, so later observations do not rewrite that original prediction context."
+  },
+  {
+    "number": 19,
+    "question": "Why separate Spring Boot and FastAPI?",
+    "answer": "Spring handles application state, validation and workflow coordination; FastAPI runs the Python model. This separates application responsibilities from inference dependencies."
+  },
+  {
+    "number": 20,
+    "question": "Why doesn't the browser call the model directly?",
+    "answer": "Spring provides one controlled application interface and prepares the model inputs. It also owns saved attempts and failure handling, keeping the browser independent of inference-service details."
+  },
+  {
+    "number": 21,
+    "question": "How are the 43 model features created?",
+    "answer": "The feature builder derives glucose lags, changes and summary statistics, then combines them with meal, medication and patient fields. The resulting inputs follow a fixed contract."
+  },
+  {
+    "number": 22,
+    "question": "How do you ensure training and inference inputs match?",
+    "answer": "Startup checks verify the artifact's feature names, order, count and preprocessing pipeline. Contract checks also compare the service's feature list with the project's frozen schema."
+  },
+  {
+    "number": 23,
+    "question": "How do you prevent future-data leakage?",
+    "answer": "Prediction inputs use the fixed meal baseline and preceding two-hour history. Post-meal readings are stored for follow-up and excluded from that original feature window."
+  },
+  {
+    "number": 24,
+    "question": "Why logistic regression?",
+    "answer": "The supplied fitted model is compact, reproducible and supports straightforward contribution calculations. We compared its reported performance with simple baselines; we do not claim an exhaustive model-selection study."
+  },
+  {
+    "number": 25,
+    "question": "Does the model learn whenever new readings arrive?",
+    "answer": "No. Incoming readings update application state, while inference uses a fixed fitted artifact. Retraining would require a separate, versioned training and evaluation process."
+  },
+  {
+    "number": 26,
+    "question": "What exactly is the prediction target?",
+    "answer": "An event occurs if glucose reaches at least 180 mg/dL or rises at least 40 mg/dL above the meal baseline within the following 120 minutes. Either condition makes the composite event positive."
+  },
+  {
+    "number": 27,
+    "question": "Is this a rolling prediction?",
+    "answer": "The current MVP scores a window anchored to the meal timestamp. It does not continuously move the horizon forward with each new sample."
+  },
+  {
+    "number": 28,
+    "question": "What if glucose is already above 180 at baseline?",
+    "answer": "The dashboard explicitly identifies an already-high baseline. The score still concerns the defined post-meal window and must not be described as predicting a newly developing spike."
+  },
+  {
+    "number": 29,
+    "question": "Does 0.368 mean a 36.8% clinical probability?",
+    "answer": "We cannot make that claim because the model has not been calibrated as an individual clinical probability. We present it as an uncalibrated score on a zero-to-one scale."
+  },
+  {
+    "number": 30,
+    "question": "What does ROC AUC of approximately 0.757 establish?",
+    "answer": "It indicates useful ranking discrimination on the held-out test set. It does not establish calibration, clinical benefit or performance in a different population."
+  },
+  {
+    "number": 31,
+    "question": "Why investigate a model whose F1 loses to always-positive prediction?",
+    "answer": "Its ranking and balanced accuracy show information beyond that simple baseline. However, the F1 limitation remains significant and requires further evaluation rather than a claim of overall superiority."
+  },
+  {
+    "number": 32,
+    "question": "What do the 78 missed events mean?",
+    "answer": "At threshold 0.50, the model missed 78 of the 300 positive test meals. This limits its usefulness and prevents treating a below-threshold score as a safety clearance."
+  },
+  {
+    "number": 33,
+    "question": "Why split by patient rather than meal?",
+    "answer": "Meals from the same person share characteristics. Keeping each patient in one split reduces leakage that could make performance appear better than it generalizes to unseen patients."
+  },
+  {
+    "number": 34,
+    "question": "Why use a threshold of 0.50?",
+    "answer": "It is the fixed research threshold used in the reported evaluation. It has not been established as a clinically appropriate operating point; changing it would alter false-positive and false-negative rates."
+  },
+  {
+    "number": 35,
+    "question": "How are contributing factors calculated?",
+    "answer": "The logistic model combines transformed feature values with fitted coefficients to calculate contributions. These describe the model's computation, not proven biological causes."
+  },
+  {
+    "number": 36,
+    "question": "What do the factor bars represent?",
+    "answer": "They compare absolute magnitudes of the returned contributions within that result, with direction labelled separately. They are not percentages, confidence intervals or SHAP values."
+  },
+  {
+    "number": 37,
+    "question": "How do you verify the loaded model?",
+    "answer": "The service checks its SHA-256 against metadata, the scikit-learn version, feature schema and required pipeline steps. These establish consistency with the expected artifact, not clinical validity."
+  },
+  {
+    "number": 38,
+    "question": "What happens when ML becomes unavailable?",
+    "answer": "The API saves an unavailable attempt with a null score and classification. The dashboard and PDF withhold the score and factors rather than substitute an estimate."
+  },
+  {
+    "number": 39,
+    "question": "How do you distinguish current inputs from an older result?",
+    "answer": "Saved attempts retain their input fingerprint and timestamp. When current inputs differ, the interface identifies that difference and allows a new versioned attempt."
+  },
+  {
+    "number": 40,
+    "question": "What is saved with a scoring attempt?",
+    "answer": "The result includes its ID, meal baseline, computation time, input snapshot and hash, model output and version. This provides a record of what that particular attempt evaluated."
+  },
+  {
+    "number": 41,
+    "question": "Why separate predictions from follow-up observations?",
+    "answer": "A prediction must retain the information available when it was issued. Later observations provide review evidence and should not retroactively change the saved inputs or score."
+  },
+  {
+    "number": 42,
+    "question": "Do eight follow-up readings prove no event occurred continuously?",
+    "answer": "No. They complete our expected 15-minute sampling schedule, but events could occur between readings. The interface describes a sampled outcome, not continuous coverage."
+  },
+  {
+    "number": 43,
+    "question": "Why can a positive outcome be established with incomplete follow-up?",
+    "answer": "One valid sample meeting the event rule establishes that an event was observed. Samples that remain below the rule cannot rule out events during missing periods."
+  },
+  {
+    "number": 44,
+    "question": "When is prediction-outcome comparison withheld?",
+    "answer": "Comparison is withheld for unavailable predictions, unknown outcomes, changed inputs or retrospective receipt timing. This prevents presenting an unsuitable comparison as prospective agreement."
+  },
+  {
+    "number": 45,
+    "question": "How are review actions recorded?",
+    "answer": "Review and reopen actions append timestamped notes instead of overwriting earlier entries. Reviewer identity is not authenticated in the current local demonstration."
+  },
+  {
+    "number": 46,
+    "question": "What changes in the body when glucose changes?",
+    "answer": "A separate graphic overlay changes display color and brightness, with optional particle motion. Organ geometry and natural tissue colors remain fixed because organ function is not measured."
+  },
+  {
+    "number": 47,
+    "question": "How anatomically accurate is the body?",
+    "answer": "Colors are informed by anatomical references, but procedural shapes and positions remain approximate. Pancreas inspection fades surrounding anatomy; the viewer is not a patient scan or validated atlas."
+  },
+  {
+    "number": 48,
+    "question": "How are fictional Future lab scenarios isolated?",
+    "answer": "They run as labelled frontend storyboards and do not replace fitted-model outputs. Their invented future values are excluded from Phase 1 saved inference records and research exports."
+  },
+  {
+    "number": 49,
+    "question": "How did you verify persistence and PDF consistency?",
+    "answer": "We recreated Spring in an isolated assembled stack and compared complete journals before and after. Exported PDFs matched their selected records' IDs, hashes, scores, factors and timestamps."
+  },
+  {
+    "number": 50,
+    "question": "What did the acceptance checks prove, and what remains?",
+    "answer": "They demonstrated the core software workflow on this machine, including real inference, outage recovery, persistence and exports. Real-patient use still requires appropriate data controls, calibration, external evaluation and clinical validation."
+  }
+]

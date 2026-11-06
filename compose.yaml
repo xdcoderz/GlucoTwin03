@@ -1,0 +1,77 @@
+name: glucotwin
+services:
+  ml-service:
+    build:
+      context: .
+      dockerfile: ml-service/Dockerfile
+    environment:
+      MODEL_PATH: /app/artifacts/logistic_regression.joblib
+      MODEL_METADATA_PATH: /app/artifacts/model_metadata.json
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import json,urllib.request,sys; d=json.load(urllib.request.urlopen('http://127.0.0.1:8000/health')); sys.exit(0 if d.get('model_loaded') else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    restart: unless-stopped
+
+  spring:
+    build:
+      context: .
+      dockerfile: backend/fusion-api/Dockerfile
+    environment:
+      ML_SERVICE_URL: http://ml-service:8000
+      SIMULATED_MEAL_TIME: "${SIMULATED_MEAL_TIME:-2026-10-30T12:00:00+00:00}"
+      SPRING_DATASOURCE_URL: jdbc:h2:file:/data/glucotwin;DB_CLOSE_ON_EXIT=FALSE
+    ports:
+      - "8080:8080"
+    volumes:
+      - h2-data:/data
+    depends_on:
+      ml-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/actuator/health/readiness | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 35s
+    restart: unless-stopped
+
+  cgm-publisher:
+    build:
+      context: .
+      dockerfile: cgm-publisher/Dockerfile
+    environment:
+      SPRING_API_URL: http://spring:8080/api/cgm/events
+      SIMULATED_MEAL_TIME: "${SIMULATED_MEAL_TIME:-2026-10-30T12:00:00+00:00}"
+      REPLAY_INTERVAL_SECONDS: 1.2
+    depends_on:
+      spring:
+        condition: service_healthy
+    restart: "no"
+
+  dashboard:
+    build:
+      context: frontend/dashboard
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8080
+    ports:
+      - "3000:80"
+    depends_on:
+      spring:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  h2-data:
+

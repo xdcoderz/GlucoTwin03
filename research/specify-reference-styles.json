@@ -1,0 +1,133 @@
+{
+  "title": "Specify | Your Design Token Engine",
+  "colors": [
+    [
+      "rgb(0, 0, 0)",
+      4954
+    ],
+    [
+      "rgb(0, 0, 238)",
+      1214
+    ],
+    [
+      "rgb(26, 29, 30)",
+      367
+    ],
+    [
+      "rgb(255, 255, 255)",
+      220
+    ],
+    [
+      "rgba(26, 29, 30, 0.5)",
+      176
+    ],
+    [
+      "rgb(246, 247, 249)",
+      101
+    ],
+    [
+      "rgba(26, 29, 30, 0.85)",
+      80
+    ],
+    [
+      "rgb(98, 77, 227)",
+      77
+    ],
+    [
+      "rgba(26, 29, 30, 0.7)",
+      36
+    ],
+    [
+      "rgba(255, 255, 255, 0.7)",
+      32
+    ],
+    [
+      "rgb(145, 207, 172)",
+      29
+    ],
+    [
+      "rgb(150, 199, 242)",
+      29
+    ],
+    [
+      "rgba(138, 120, 238, 0.4)",
+      18
+    ],
+    [
+      "rgb(141, 74, 247)",
+      16
+    ],
+    [
+      "rgb(29, 88, 192)",
+      16
+    ],
+    [
+      "rgba(255, 255, 255, 0.2)",
+      15
+    ],
+    [
+      "rgb(255, 211, 135)",
+      13
+    ],
+    [
+      "rgb(21, 23, 24)",
+      10
+    ],
+    [
+      "rgba(255, 255, 255, 0.8)",
+      10
+    ],
+    [
+      "rgb(0, 150, 57)",
+      8
+    ],
+    [
+      "rgb(23, 21, 31)",
+      3
+    ],
+    [
+      "rgb(44, 34, 80)",
+      3
+    ],
+    [
+      "rgb(88, 66, 195)",
+      3
+    ],
+    [
+      "rgb(158, 140, 252)",
+      3
+    ],
+    [
+      "rgb(241, 238, 254)",
+      3
+    ]
+  ],
+  "headings": [
+    {
+      "text": "Your Design Token Engine",
+      "font": "Inter-Bold, Inter, \"Inter Placeholder\", sans-serif",
+      "color": "rgb(26, 29, 30)"
+    },
+    {
+      "text": "Taking design tokens to the next level",
+      "font": "Inter-Bold, Inter, \"Inter Placeholder\", sans-serif",
+      "color": "rgb(26, 29, 30)"
+    },
+    {
+      "text": "Easy setup and instant output",
+      "font": "Inter-Bold, Inter, \"Inter Placeholder\", sans-serif",
+      "color": "rgb(26, 29, 30)"
+    },
+    {
+      "text": "Trusted by product teams",
+      "font": "Inter-Bold, Inter, \"Inter Placeholder\", sans-serif",
+      "color": "rgb(26, 29, 30)"
+    },
+    {
+      "text": "Design tokens are the heart of your design system",
+      "font": "Inter-Bold, Inter, \"Inter Placeholder\", sans-serif",
+      "color": "rgb(26, 29, 30)"
+    }
+  ],
+  "bodyBackground": "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box"
+}

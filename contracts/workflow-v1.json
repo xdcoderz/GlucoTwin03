@@ -1,0 +1,31 @@
+{
+  "contractVersion": "workflow-1.0",
+  "extends": "v1.json",
+  "clockMode": "synthetic_replay",
+  "horizonMinutes": 120,
+  "historyOffsetsMinutes": [120, 105, 90, 75, 60, 45, 30, 15, 0],
+  "followUpOffsetsMinutes": [15, 30, 45, 60, 75, 90, 105, 120],
+  "routes": {
+    "worklist": "GET /api/worklist",
+    "journal": "GET /api/patients/{id}/journal",
+    "savedResult": "GET /api/journal/{predictionId}",
+    "review": "POST /api/journal/{predictionId}/reviews",
+    "syntheticReplay": "POST /api/demo/patients/{id}/follow-up"
+  },
+  "reviewActions": ["reviewed", "reopened"],
+  "reviewNoteMaxLength": 1000,
+  "replayStages": ["partial", "gap", "complete"],
+  "outcomeStatuses": ["awaiting_outcome", "partial_follow_up", "insufficient_follow_up", "event_observed", "no_event_observed_complete"],
+  "journalFields": ["predictionId", "patientId", "displayName", "mealId", "baselineAt", "computedAt", "horizonEnd", "clockMode", "inputHash", "prospective", "superseded", "inputChanged", "baselineGlucoseMgDl", "baselineAlreadyHigh", "qualityIssues", "prediction", "snapshot", "outcome", "reviewState", "reviews"],
+  "rules": [
+    "GET requests never create a prediction record",
+    "Scoring uses the configured recorded meal baseline, never the newest follow-up timestamp",
+    "Each explicit refresh saves a new attempt, including unavailable or insufficient data",
+    "Model inputs and returned prediction are immutable; reviews append separate records",
+    "Missing or conflicting follow-up cannot establish a negative sampled outcome",
+    "A valid positive sample may establish an observed event with incomplete coverage",
+    "No comparison for unavailable scores, retrospective results or changed inputs",
+    "Eight 15-minute samples do not establish continuous coverage",
+    "Review identity is not authenticated; public inputs remain synthetic-only"
+  ]
+}

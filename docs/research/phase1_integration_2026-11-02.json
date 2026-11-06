@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-02",
+  "services": "Docker Spring/FastAPI/H2",
+  "patient": "DEMO-001",
+  "resultId": "d666dc67-311e-44e3-a7bf-b1b93a872990",
+  "score": 0.3677653238267805,
+  "modelVersion": "shanghai-logistic-v1",
+  "partialGapSamples": 7,
+  "gapEvent": null,
+  "completeSamples": 8,
+  "completeEvent": false,
+  "snapshotUnchanged": true,
+  "fixedBaseline": 142,
+  "nextAction": "complete",
+  "isolatedUnavailableCheck": "passed on port 18086",
+  "modelOutageInMainStack": "not run: stop blocked by automatic review"
+}

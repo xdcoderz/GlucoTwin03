@@ -1,0 +1,483 @@
+{
+  "available": {
+    "predictionId": "60f19eb5-056e-4ac0-a730-cd0387d6b4b5",
+    "patientId": "DEMO-001",
+    "displayName": "Synthetic Patient 001",
+    "mealId": "DEMO-001-MEAL-1793361600000",
+    "baselineAt": "2026-10-30T12:00:00Z",
+    "computedAt": "2026-11-02T16:26:38.397799Z",
+    "horizonEnd": "2026-10-30T14:00:00Z",
+    "clockMode": "synthetic_replay",
+    "inputHash": "8fb90c39713bfbb0610841f55c750eddf36b96087143986ef31439ac895592d7",
+    "prospective": true,
+    "superseded": false,
+    "inputChanged": false,
+    "baselineGlucoseMgDl": 142,
+    "baselineAlreadyHigh": false,
+    "qualityIssues": [],
+    "prediction": {
+      "status": "available",
+      "model_score": 0.3677653238267805,
+      "horizon_minutes": 120,
+      "threshold": 0.5,
+      "predicted_event": false,
+      "model_version": "shanghai-logistic-v1",
+      "top_factors": [
+        {
+          "feature": "glucose_change_prev_15_min_mg_dl",
+          "contribution": 0.6262444178563972,
+          "direction": "up"
+        },
+        {
+          "feature": "has_recorded_non_insulin_medication_at_meal",
+          "contribution": -0.5011316230920357,
+          "direction": "down"
+        },
+        {
+          "feature": "glucose_change_prev_30_min_mg_dl",
+          "contribution": -0.46503252579335674,
+          "direction": "down"
+        },
+        {
+          "feature": "minutes_since_previous_meal",
+          "contribution": -0.4152169489010624,
+          "direction": "down"
+        },
+        {
+          "feature": "glucose_change_prev_120_min_mg_dl",
+          "contribution": -0.3902446736067203,
+          "direction": "down"
+        }
+      ],
+      "reason": null
+    },
+    "snapshot": {
+      "patient": {
+        "patientId": "DEMO-001",
+        "displayName": "Synthetic Patient 001",
+        "sex": "female",
+        "ageYears": 52,
+        "bmiKgM2": 27.4,
+        "diabetesDurationYears": 7,
+        "hba1cPercent": 7.6,
+        "fastingPlasmaGlucoseMgDl": 136,
+        "diagnoses": [
+          "Type 2 diabetes mellitus",
+          "Hypertension"
+        ],
+        "medications": [
+          "Metformin"
+        ]
+      },
+      "currentMeal": {
+        "description": "Brown rice 120 g, mixed vegetables 150 g, grilled chicken 60 g",
+        "minutesSincePreviousMeal": 240,
+        "csiiBolusInsulinIu": 0,
+        "csiiBasalInsulinIuPerHour": 0,
+        "hasRecordedCsiiBolus": false,
+        "hasRecordedCsiiBasalSetting": false,
+        "hasRecordedSubcutaneousInsulin": false,
+        "hasRecordedNonInsulinMedication": true,
+        "hasRecordedIntravenousInsulin": false,
+        "mealId": "DEMO-001-MEAL-1793361600000",
+        "baselineAt": "2026-10-30T12:00:00Z",
+        "clockMode": "synthetic_replay"
+      },
+      "cgmHistory": [
+        {
+          "eventId": "DEMO-001-HISTORY-01",
+          "observedAt": "2026-10-30T10:00:00Z",
+          "glucoseMgDl": 112,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:46.748985Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-02",
+          "observedAt": "2026-10-30T10:15:00Z",
+          "glucoseMgDl": 114,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:48.304836Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-03",
+          "observedAt": "2026-10-30T10:30:00Z",
+          "glucoseMgDl": 116,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:49.554599Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-04",
+          "observedAt": "2026-10-30T10:45:00Z",
+          "glucoseMgDl": 118,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:50.828230Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-05",
+          "observedAt": "2026-10-30T11:00:00Z",
+          "glucoseMgDl": 121,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:52.088660Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-06",
+          "observedAt": "2026-10-30T11:15:00Z",
+          "glucoseMgDl": 126,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:53.319908Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-07",
+          "observedAt": "2026-10-30T11:30:00Z",
+          "glucoseMgDl": 131,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:54.544677Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-08",
+          "observedAt": "2026-10-30T11:45:00Z",
+          "glucoseMgDl": 136,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:55.785728Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-09",
+          "observedAt": "2026-10-30T12:00:00Z",
+          "glucoseMgDl": 142,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:57.007506Z"
+        }
+      ],
+      "prediction": {
+        "status": "available",
+        "model_score": 0.3677653238267805,
+        "horizon_minutes": 120,
+        "threshold": 0.5,
+        "predicted_event": false,
+        "model_version": "shanghai-logistic-v1",
+        "top_factors": [
+          {
+            "feature": "glucose_change_prev_15_min_mg_dl",
+            "contribution": 0.6262444178563972,
+            "direction": "up"
+          },
+          {
+            "feature": "has_recorded_non_insulin_medication_at_meal",
+            "contribution": -0.5011316230920357,
+            "direction": "down"
+          },
+          {
+            "feature": "glucose_change_prev_30_min_mg_dl",
+            "contribution": -0.46503252579335674,
+            "direction": "down"
+          },
+          {
+            "feature": "minutes_since_previous_meal",
+            "contribution": -0.4152169489010624,
+            "direction": "down"
+          },
+          {
+            "feature": "glucose_change_prev_120_min_mg_dl",
+            "contribution": -0.3902446736067203,
+            "direction": "down"
+          }
+        ],
+        "reason": null
+      }
+    },
+    "outcome": {
+      "status": "no_event_observed_complete",
+      "expectedSamples": 8,
+      "receivedSamples": 8,
+      "complete": true,
+      "conflictingTimestamps": 0,
+      "eventObserved": false,
+      "reaches180": false,
+      "rises40": false,
+      "observedMaxMgDl": 161,
+      "observedRiseMgDl": 19,
+      "predictionMatched": true,
+      "readings": [
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-15",
+          "observedAt": "2026-10-30T12:15:00Z",
+          "glucoseMgDl": 148,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.397361Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-30",
+          "observedAt": "2026-10-30T12:30:00Z",
+          "glucoseMgDl": 153,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.405731Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-45",
+          "observedAt": "2026-10-30T12:45:00Z",
+          "glucoseMgDl": 157,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.413069Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-60",
+          "observedAt": "2026-10-30T13:00:00Z",
+          "glucoseMgDl": 161,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.886131Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-75",
+          "observedAt": "2026-10-30T13:15:00Z",
+          "glucoseMgDl": 159,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.635752Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-90",
+          "observedAt": "2026-10-30T13:30:00Z",
+          "glucoseMgDl": 155,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.640745Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-105",
+          "observedAt": "2026-10-30T13:45:00Z",
+          "glucoseMgDl": 150,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.648047Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-120",
+          "observedAt": "2026-10-30T14:00:00Z",
+          "glucoseMgDl": 146,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.661999Z"
+        }
+      ],
+      "note": "Fictional synthetic follow-up; not generated by the model. Complete means eight 15-minute samples, not continuous coverage. Missing samples cannot establish a negative outcome."
+    },
+    "reviewState": "awaiting_review",
+    "reviews": [
+      {
+        "recordedAt": "2026-11-02T16:28:22.147307Z",
+        "action": "reviewed",
+        "note": "TEST ONLY: MVP acceptance reviewed fictional samples; not a clinical assessment."
+      },
+      {
+        "recordedAt": "2026-11-02T16:28:22.275238Z",
+        "action": "reopened",
+        "note": "TEST ONLY: verify append-only reopen history."
+      }
+    ]
+  },
+  "unavailable": {
+    "predictionId": "824a5594-7776-4b9f-b15e-fa54635d0b6b",
+    "patientId": "DEMO-001",
+    "displayName": "Synthetic Patient 001",
+    "mealId": "DEMO-001-MEAL-1793361600000",
+    "baselineAt": "2026-10-30T12:00:00Z",
+    "computedAt": "2026-11-02T16:30:32.918657Z",
+    "horizonEnd": "2026-10-30T14:00:00Z",
+    "clockMode": "synthetic_replay",
+    "inputHash": "8fb90c39713bfbb0610841f55c750eddf36b96087143986ef31439ac895592d7",
+    "prospective": false,
+    "superseded": false,
+    "inputChanged": false,
+    "baselineGlucoseMgDl": 142,
+    "baselineAlreadyHigh": false,
+    "qualityIssues": [],
+    "prediction": {
+      "status": "unavailable",
+      "model_score": null,
+      "horizon_minutes": 120,
+      "threshold": null,
+      "predicted_event": null,
+      "model_version": null,
+      "top_factors": [],
+      "reason": "model_service_unreachable_or_invalid"
+    },
+    "snapshot": {
+      "patient": {
+        "patientId": "DEMO-001",
+        "displayName": "Synthetic Patient 001",
+        "sex": "female",
+        "ageYears": 52,
+        "bmiKgM2": 27.4,
+        "diabetesDurationYears": 7,
+        "hba1cPercent": 7.6,
+        "fastingPlasmaGlucoseMgDl": 136,
+        "diagnoses": [
+          "Type 2 diabetes mellitus",
+          "Hypertension"
+        ],
+        "medications": [
+          "Metformin"
+        ]
+      },
+      "currentMeal": {
+        "description": "Brown rice 120 g, mixed vegetables 150 g, grilled chicken 60 g",
+        "minutesSincePreviousMeal": 240,
+        "csiiBolusInsulinIu": 0,
+        "csiiBasalInsulinIuPerHour": 0,
+        "hasRecordedCsiiBolus": false,
+        "hasRecordedCsiiBasalSetting": false,
+        "hasRecordedSubcutaneousInsulin": false,
+        "hasRecordedNonInsulinMedication": true,
+        "hasRecordedIntravenousInsulin": false,
+        "mealId": "DEMO-001-MEAL-1793361600000",
+        "baselineAt": "2026-10-30T12:00:00Z",
+        "clockMode": "synthetic_replay"
+      },
+      "cgmHistory": [
+        {
+          "eventId": "DEMO-001-HISTORY-01",
+          "observedAt": "2026-10-30T10:00:00Z",
+          "glucoseMgDl": 112,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:46.748985Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-02",
+          "observedAt": "2026-10-30T10:15:00Z",
+          "glucoseMgDl": 114,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:48.304836Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-03",
+          "observedAt": "2026-10-30T10:30:00Z",
+          "glucoseMgDl": 116,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:49.554599Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-04",
+          "observedAt": "2026-10-30T10:45:00Z",
+          "glucoseMgDl": 118,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:50.828230Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-05",
+          "observedAt": "2026-10-30T11:00:00Z",
+          "glucoseMgDl": 121,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:52.088660Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-06",
+          "observedAt": "2026-10-30T11:15:00Z",
+          "glucoseMgDl": 126,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:53.319908Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-07",
+          "observedAt": "2026-10-30T11:30:00Z",
+          "glucoseMgDl": 131,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:54.544677Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-08",
+          "observedAt": "2026-10-30T11:45:00Z",
+          "glucoseMgDl": 136,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:55.785728Z"
+        },
+        {
+          "eventId": "DEMO-001-HISTORY-09",
+          "observedAt": "2026-10-30T12:00:00Z",
+          "glucoseMgDl": 142,
+          "source": "synthetic-cgm-replay",
+          "receivedAt": "2026-11-02T16:25:57.007506Z"
+        }
+      ],
+      "prediction": {
+        "status": "unavailable",
+        "model_score": null,
+        "horizon_minutes": 120,
+        "threshold": null,
+        "predicted_event": null,
+        "model_version": null,
+        "top_factors": [],
+        "reason": "model_service_unreachable_or_invalid"
+      }
+    },
+    "outcome": {
+      "status": "no_event_observed_complete",
+      "expectedSamples": 8,
+      "receivedSamples": 8,
+      "complete": true,
+      "conflictingTimestamps": 0,
+      "eventObserved": false,
+      "reaches180": false,
+      "rises40": false,
+      "observedMaxMgDl": 161,
+      "observedRiseMgDl": 19,
+      "predictionMatched": null,
+      "readings": [
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-15",
+          "observedAt": "2026-10-30T12:15:00Z",
+          "glucoseMgDl": 148,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.397361Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-30",
+          "observedAt": "2026-10-30T12:30:00Z",
+          "glucoseMgDl": 153,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.405731Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-45",
+          "observedAt": "2026-10-30T12:45:00Z",
+          "glucoseMgDl": 157,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.413069Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-60",
+          "observedAt": "2026-10-30T13:00:00Z",
+          "glucoseMgDl": 161,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.886131Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-75",
+          "observedAt": "2026-10-30T13:15:00Z",
+          "glucoseMgDl": 159,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.635752Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-90",
+          "observedAt": "2026-10-30T13:30:00Z",
+          "glucoseMgDl": 155,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.640745Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-105",
+          "observedAt": "2026-10-30T13:45:00Z",
+          "glucoseMgDl": 150,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.648047Z"
+        },
+        {
+          "eventId": "DEMO-001-MEAL-1793361600000-FOLLOWUP-120",
+          "observedAt": "2026-10-30T14:00:00Z",
+          "glucoseMgDl": 146,
+          "source": "synthetic-follow-up-replay",
+          "receivedAt": "2026-11-02T16:27:11.661999Z"
+        }
+      ],
+      "note": "Fictional synthetic follow-up; not generated by the model. Complete means eight 15-minute samples, not continuous coverage. Missing samples cannot establish a negative outcome."
+    },
+    "reviewState": "awaiting_review",
+    "reviews": []
+  }
+}

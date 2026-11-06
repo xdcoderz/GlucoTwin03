@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-11-03T07:12:23.575Z",
+  "ui": "http://localhost:3000",
+  "api": "http://localhost:8080/api",
+  "mode": "read-only real services; existing saved model results",
+  "patients": [
+    {
+      "id": "DEMO-001",
+      "score": 0.3677653238267805,
+      "modelVersion": "shanghai-logistic-v1",
+      "resultId": "d666dc67-311e-44e3-a7bf-b1b93a872990"
+    },
+    {
+      "id": "DEMO-002",
+      "score": 0.9887812722077698,
+      "modelVersion": "shanghai-logistic-v1",
+      "resultId": "c1690588-9c58-4095-bda7-28ddd13627ae"
+    }
+  ],
+  "checks": [
+    "Imported hero is first; local GLB loads in production container.",
+    "Dark default and live theme switching preserve the selected organ and model canvas.",
+    "70/30 anatomy view, simple organ list, node-driven focus, contextual information bar and whole-body return verified.",
+    "Both patients show actual scores, five factors, one score action, one timeline and a closed optional twin.",
+    "Workspace has five fictional scenarios, synchronized tint and time-to-70 projection; saved score is unchanged.",
+    "Optional 3D opens and closes, guided tour is hidden, and the Review deep link works.",
+    "Concise Evidence, technical-note download and relocated Future lab roadmap verified.",
+    "Evidence and Future lab load; fictional scenario remains a separate visual mode.",
+    "All four destinations fit a 400px viewport.",
+    "No POSTs, page errors or saved-record changes during live verification."
+  ],
+  "postRequests": [],
+  "pageErrors": [],
+  "passed": true
+}

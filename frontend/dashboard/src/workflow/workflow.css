@@ -1,0 +1,58 @@
+.research-workflow { margin:26px 0; padding:24px; background:var(--surface); border:1px solid var(--line); border-radius:16px; }
+.workflow-heading, .journal-heading, .journal-detail-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
+.workflow-heading h2 { font-size:23px; }
+.workflow-heading p:not(.eyebrow), .workflow-note { color:var(--muted-foreground); font-size:12px; line-height:1.7; }
+.workflow-clock { font-size:9px; color:var(--muted-foreground); border:1px solid var(--line); padding:9px; border-radius:5px; white-space:nowrap; }
+.worklist-scroll { overflow-x:auto; margin:20px 0 28px; }
+.worklist-scroll:focus-visible { outline:2px solid var(--teal); outline-offset:3px; }
+.worklist-table { width:100%; border-collapse:collapse; min-width:800px; text-align:left; font-size:12px; }
+.worklist-table caption { text-align:left; color:var(--muted-foreground); font-size:11px; padding-bottom:12px; }
+.worklist-table th { font-size:10px; color:var(--muted-foreground); background:var(--soft); padding:12px 10px; border-bottom:1px solid var(--line); }
+.worklist-table td { padding:15px 10px; border-bottom:1px solid var(--line); vertical-align:top; max-width:255px; line-height:1.6; }
+.worklist-table small { display:block; color:var(--muted-foreground); font-size:10px; margin-top:5px; overflow-wrap:anywhere; }
+.worklist-current { background:var(--success-surface); }
+.patient-row-button { border:0; background:transparent; color:var(--teal-dark); padding:4px 0; min-height:28px; text-decoration:underline; text-underline-offset:4px; font-weight:650; }
+.workflow-tag { display:block; padding:3px 6px; margin-top:7px; border-radius:4px; font-size:10px; }
+.observation, .workflow-caution { color:var(--warning); background:var(--warning-surface); }
+.workflow-caution { font-size:12px; padding:12px; line-height:1.6; border-left:3px solid var(--border); }
+.journal-heading h3 { margin:0; font-size:20px; }
+.journal-heading .button { min-height:44px; }
+.journal-empty { background:var(--soft); padding:22px; border:1px dashed var(--border); border-radius:8px; margin-top:18px; }
+.journal-empty p { font-size:12px; color:var(--muted-foreground); line-height:1.7; }
+.journal-layout { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:24px; margin-top:20px; }
+.journal-versions { display:flex; flex-direction:column; gap:8px; max-height:500px; overflow-y:auto; }
+.journal-versions button { text-align:left; background:var(--soft); border:1px solid var(--line); border-radius:7px; padding:13px; color:var(--ink); }
+.journal-versions button[aria-pressed=true] { border-color:var(--teal); background:var(--success-surface); }
+.journal-versions span, .journal-versions small { display:block; color:var(--muted-foreground); font-size:10px; line-height:1.6; margin-top:6px; overflow-wrap:anywhere; }
+.journal-versions strong { font-size:12px; }
+.journal-detail { min-width:0; border-left:1px solid var(--line); padding-left:24px; }
+.journal-detail h4 { margin:0; font-size:17px; }
+.record-id { font-size:10px; color:var(--muted-foreground); overflow-wrap:anywhere; }
+.journal-metadata { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; margin:22px 0; }
+.journal-metadata dt { font-size:10px; color:var(--muted-foreground); }
+.journal-metadata dd { margin:5px 0 0; font-size:11px; line-height:1.5; overflow-wrap:anywhere; }
+.outcome-summary { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:17px; }
+.outcome-summary strong { font-size:15px; }
+.outcome-summary p { font-size:11px; color:var(--muted-foreground); line-height:1.7; margin-bottom:0; }
+.followup-readings { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+.followup-readings span { font-size:10px; color:var(--muted-foreground); padding:9px; border:1px solid var(--line); border-radius:6px; }
+.followup-readings strong { display:block; font-size:11px; color:var(--ink); margin-top:4px; }
+.replay-controls { margin:20px 0; padding:16px; border:1px solid var(--line); border-radius:8px; }
+.replay-controls legend { font-size:12px; font-weight:650; padding:0 6px; }
+.replay-controls p { color:var(--muted-foreground); font-size:11px; line-height:1.7; margin-top:0; }
+.replay-controls > div, .review-form > div { display:flex; gap:8px; flex-wrap:wrap; }
+.replay-controls .button { min-height:44px; }
+.review-form label { display:block; font-size:12px; font-weight:650; margin:20px 0 8px; }
+.review-form textarea { display:block; width:100%; min-height:95px; border:1px solid var(--border); border-radius:6px; padding:12px; font:inherit; font-size:12px; color:var(--ink); resize:vertical; }
+.review-form p { font-size:10px; color:var(--muted-foreground); }
+.review-form .button { min-height:44px; }
+.review-history { padding:0 0 0 18px; margin-top:22px; }
+.review-history li { margin-bottom:14px; }
+.review-history strong { font-size:10px; color:var(--muted-foreground); }
+.review-history p { font-size:12px; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.7; }
+.workflow-action-status { color:var(--teal-dark); font-size:12px; min-height:18px; line-height:1.6; margin-bottom:0; }
+.workflow-error { border:1px solid var(--border); background:var(--warning-surface); padding:16px; font-size:12px; line-height:1.6; }
+.research-workflow textarea:focus-visible { outline:3px solid var(--teal); outline-offset:3px; }
+.research-workflow button:disabled { cursor:not-allowed; opacity:.55; }
+@media (max-width:1050px) { .journal-layout { grid-template-columns:170px minmax(0, 1fr); gap:16px; } .journal-detail { padding-left:16px; } .journal-detail-heading { flex-direction:column; gap:8px; } }
+@media (max-width:760px) { .research-workflow { padding:18px; } .workflow-heading, .journal-heading { flex-direction:column; gap:12px; } .workflow-heading h2 { font-size:21px; } .workflow-clock { white-space:normal; } .journal-layout { grid-template-columns:1fr; } .journal-versions { flex-direction:row; max-height:none; overflow-x:auto; } .journal-versions button { min-width:190px; } .journal-detail { border-left:0; border-top:1px solid var(--line); padding:20px 0 0; } .journal-metadata { grid-template-columns:1fr; gap:12px; } .worklist-table { min-width:780px; } .patient-row-button { min-height:44px; } }

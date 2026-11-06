@@ -1,0 +1,75 @@
+/* Final presentation layer: shared spacing and restrained motion, no data changes. */
+:root { --radius-md:12px; --radius-full:999px; --ui-ease:cubic-bezier(.23,1,.32,1); }
+body:has(main.motion-dashboard) { background:radial-gradient(ellipse at 50% 0,var(--studio-glow),transparent 700px),var(--background); }
+.motion-dashboard { padding-bottom:56px; }
+.motion-dashboard .site-topbar { background:color-mix(in srgb,var(--background) 92%,transparent); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+.motion-dashboard .site-nav { box-shadow:none; background:var(--card); }
+.motion-dashboard .site-nav a { font-weight:600; }
+.motion-dashboard .site-nav a[aria-current=page] { background:var(--accent); color:var(--primary); box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--primary) 20%,transparent); }
+.motion-dashboard :is(.page-heading,.destination-heading) { padding-top:40px; padding-bottom:24px; }
+.motion-dashboard :is(.page-heading,.destination-heading) h1 { line-height:1.12; letter-spacing:-.045em; }
+.motion-dashboard :is(.subheading,.destination-heading>p:last-child) { max-width:760px; line-height:1.75; }
+.motion-dashboard :is(.panel,.summary-card,.evidence-section,.research-workflow) { border-color:var(--border); box-shadow:0 12px 32px -24px var(--shadow-color); }
+.motion-dashboard :is(.section-label,.eyebrow) { line-height:1.6; }
+.motion-dashboard :is(button,input,textarea,select,a,summary):focus-visible { outline:2px solid var(--ring); outline-offset:4px; }
+.motion-dashboard :is(input:not([type=range]):not([type=checkbox]),textarea,select) { border-radius:var(--radius-md); }
+.motion-dashboard :is(textarea,input:not([type=range]):not([type=checkbox]),select):focus { border-color:var(--primary); }
+.motion-dashboard button:disabled { cursor:not-allowed; }
+.motion-dashboard .button-primary { background:var(--primary); color:var(--primary-foreground); font-weight:650; box-shadow:none; }
+.motion-dashboard .button-secondary { color:var(--foreground); }
+.motion-dashboard .workflow-path { margin-bottom:24px; padding:8px; border-radius:16px; background:var(--card); }
+.motion-dashboard .workflow-path a { min-height:44px; border-radius:10px; }
+.motion-dashboard .meal-simulator { padding:28px; }
+.meal-form-heading h2 { max-width:600px; }
+.meal-simulator .meal-context-meta { border-radius:14px; padding:18px 20px; gap:24px; }
+.meal-simulator .meal-result { padding:28px; background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 25%,var(--background)),var(--background)); }
+.meal-simulator .meal-score-value { margin:18px 0 12px; color:var(--foreground); }
+.meal-simulator .meal-input-details summary { padding-top:8px; }
+.meal-simulator .meal-simulation-history li button { min-height:66px; }
+.motion-dashboard :is(.workspace-scenarios,.saved-attempts,.evidence-disclosure,.future-roadmap)>summary { padding:14px 0; line-height:1.5; }
+.motion-dashboard .score-reading { font-variant-numeric:tabular-nums; letter-spacing:-.04em; }
+.motion-dashboard .factor-list li { padding-top:14px; padding-bottom:14px; }
+.motion-dashboard .evidence-section { padding:28px; border:1px solid var(--border); border-radius:20px; background:var(--card); }
+.motion-dashboard .evidence-section h2 { margin-bottom:18px; line-height:1.3; }
+.motion-dashboard .evidence-table-wrap { border-radius:12px; overflow:auto; }
+.motion-dashboard .evidence-resources { gap:16px; padding:24px 0; }
+.motion-dashboard .evidence-resources a { line-height:1.6; text-underline-offset:4px; }
+.motion-dashboard .site-closing { background:var(--accent); padding:32px; }
+.landing-experience .landing-introduction { padding-top:72px; padding-bottom:64px; }
+.landing-experience .landing-intro-copy>p { max-width:660px; line-height:1.8; }
+.landing-experience .landing-model-column { border-radius:24px; overflow:hidden; }
+.landing-experience .organ-list .organ-button { min-height:64px; padding:18px 22px; }
+.landing-experience .scene-tools { padding:20px 24px; }
+.landing-experience .insight { border-radius:20px; }
+.motion-dashboard .anatomy { border-radius:20px; }
+/* A short fade when changing destinations, without moving charts or values. */
+@media(prefers-reduced-motion:no-preference) {
+ .motion-dashboard [data-destination]:not([hidden]) { animation:destination-appear 250ms var(--ui-ease) both; }
+ .motion-dashboard :is(.button,.site-nav a,.meal-chips button,.organ-button,.twin-button) { transition:transform 160ms var(--ui-ease),background-color 160ms ease,border-color 160ms ease,box-shadow 160ms ease; }
+ .motion-dashboard :is(.button,.meal-chips button,.twin-button):active:not(:disabled) { transform:scale(.98); }
+}
+@keyframes destination-appear { from { opacity:.65; } to { opacity:1; } }
+@media(hover:hover) and (pointer:fine) {
+ .motion-dashboard .button-primary:hover:not(:disabled) { background:var(--primary-hover); box-shadow:0 5px 20px -8px var(--studio-glow); }
+ .motion-dashboard :is(.button-secondary,.meal-simulation-history li button):hover:not(:disabled) { background:var(--secondary); border-color:var(--primary); }
+ .motion-dashboard .workflow-path a:hover { background:var(--accent); }
+ .landing-experience .organ-list .organ-button:hover { border-color:var(--primary); }
+}
+@media(max-width:850px) {
+ .motion-dashboard :is(.page-heading,.destination-heading) { padding-top:28px; }
+ .motion-dashboard .meal-simulator,.meal-simulator .meal-result,.motion-dashboard .evidence-section { padding:20px; }
+ .landing-experience .landing-introduction { padding-top:42px; padding-bottom:36px; }
+ .landing-experience .scene-tools { padding:16px; }
+ .motion-dashboard .site-closing { padding:24px; }
+}
+@media(max-width:480px) {
+ .motion-dashboard { padding-left:16px; padding-right:16px; }
+ .motion-dashboard .meal-simulator { padding:16px; }
+ .meal-simulator .meal-context-meta { padding:14px; gap:16px; }
+ .motion-dashboard .workflow-path { gap:4px; }
+ .motion-dashboard .workflow-path a { padding:9px; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .motion-dashboard [data-destination] { animation:none; }
+ .motion-dashboard :is(.button,.site-nav a,.meal-chips button,.organ-button,.twin-button) { transition:none; }
+}
