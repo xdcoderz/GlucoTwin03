@@ -162,6 +162,7 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
   contextHalo.position.set(0,.05,-.38);contextHalo.scale.y=2.2;contextHalo.visible=false;scene.add(contextHalo);
 
   let disposed = false;
+  let renderFrame = 0;
   let active: ViewId = 'body';
   let shellOpacity = .20;
   let cameraTween: gsap.core.Tween | null = null;
@@ -208,6 +209,12 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
   updateDots();
 
   function render() {
+    if (disposed || renderFrame) return;
+    // Context, opacity and signal often change together. Draw once per frame.
+    renderFrame = requestAnimationFrame(() => { renderFrame = 0; draw(); });
+  }
+
+  function draw() {
     if (disposed) return;
     const distance = camera.position.distanceTo(controls.target);
     const stage = active === 'body' ? 'body' : cameraStage(distance);
@@ -380,7 +387,7 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
       syncFlow(); render();
     },
     dispose() {
-      disposed = true; cameraTween?.kill(); bodyAura.dispose(); cancelAnimationFrame(signalFrame); observer.disconnect(); visibilityObserver.disconnect();
+      disposed = true; cancelAnimationFrame(renderFrame); cameraTween?.kill(); bodyAura.dispose(); cancelAnimationFrame(signalFrame); observer.disconnect(); visibilityObserver.disconnect();
       document.removeEventListener('visibilitychange', syncFlow); reducedMotion.removeEventListener('change', syncFlow);
       controls.removeEventListener('change', changed); controls.removeEventListener('start', interrupt); controls.dispose();
       canvas.removeEventListener('pointerdown', pointerDown); canvas.removeEventListener('pointerup', pointerUp);

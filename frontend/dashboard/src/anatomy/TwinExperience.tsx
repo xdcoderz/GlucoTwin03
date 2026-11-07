@@ -43,6 +43,7 @@ export default function TwinExperience({ data, api, fixedPhase, active = true, w
   }, []);
 
   useEffect(() => {
+    if (!active) return;
     let stopped = false;
     let timer: number;
     let controller: AbortController;
@@ -66,7 +67,7 @@ export default function TwinExperience({ data, api, fixedPhase, active = true, w
     }
     void poll();
     return () => { stopped = true; clearTimeout(timer); controller?.abort(); };
-  }, [api, data.patient.patientId, retry]);
+  }, [api, data.patient.patientId, retry, active]);
 
   const recorded = useMemo(() => recordedTimeline(readings, data.currentMeal.baselineAt), [readings, data.currentMeal.baselineAt]);
   const baseline = recorded.points.find(point => point.minutes === 0)?.glucose ?? null;

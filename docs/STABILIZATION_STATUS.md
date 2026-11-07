@@ -22,6 +22,17 @@ Browser smoke checks: from `frontend/dashboard`, run `npx playwright test tests/
 
 ## Remaining gates
 
+### Second stabilization pass
+
+- Added a 16-request burst regression check and increased the preview server's connection backlog. Cancelled browser reads no longer produce noisy response-write tracebacks.
+- Coalesced 3D redraw requests into one frame and cancel the queued draw during disposal. This avoids repeated draws when context, signal and opacity update together; it is not a measured frame-rate benchmark.
+- Inactive twin views suspend their glucose polling and resume when selected again.
+- Organ controls expose their organ names to assistive technology without decorative numbering.
+- The meal-twin startup assertion allows 15 seconds, still below the application fallback deadline of 20 seconds. Its eventual successful hardware rendering remains a separate verification gate.
+- Python: all 16 tests passed, including the concurrent request test. Production build and a subsequent TypeScript check passed. The custom-meal persistence test passed after the preview fix. Two same-origin preview smoke checks passed in the subsequent run.
+- The broad 46-test run was interrupted after graphics failures to investigate them. It did not complete and is not a passing full-suite result. The graphics-focused runs also did not establish that all actual GPU rendering tests pass. Remaining browser regressions and Docker acceptance stay open.
+- The final stalled-import regression passed: after the 20-second deadline the fallback appears, Retry is available, the Liver guide works, and the meal form remains editable. GitHub Actions now includes this check alongside the same-origin preview checks. This verifies fallback behavior, not GPU rendering success.
+
 Local verification: production TypeScript/Vite build passed; all 15 Python tests and seven static module checks passed; three selected browser checks passed (same-origin persistence, unavailable meal output, independent mobile review). Browser preview logs still show aborted-client connections during reloads. The full browser suite and the 20-second 3D fallback have not been acceptance-tested in this change. The existing large-bundle build warning remains.
 
 - Run the updated Nginx image and real Spring/model stack together. Docker and Maven are unavailable in the current review environment.

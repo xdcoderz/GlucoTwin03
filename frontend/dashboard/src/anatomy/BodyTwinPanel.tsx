@@ -157,7 +157,7 @@ export default function BodyTwinPanel({ patientId, glucose, modelScore, medicati
         {playbackControls}
         <p className="twin-guide-kicker">EXPLORE THE CONNECTIONS</p>
         <nav className="twin-organ-list" aria-label="Choose an organ or tissue">
-          {ORGAN_IDS.map((id, index) => <button key={id} className={selected === id ? 'selected' : ''} aria-pressed={selected === id} onClick={event => choose(id, keyboardAction(event))} style={{ '--organ-color': ORGANS[id].color } as React.CSSProperties}><span className="organ-number">0{index + 1}</span><span>{ORGANS[id].name}</span><span className="organ-swatch" aria-hidden="true" /></button>)}
+          {ORGAN_IDS.map((id, index) => <button key={id} aria-label={ORGANS[id].name} className={selected === id ? 'selected' : ''} aria-pressed={selected === id} onClick={event => choose(id, keyboardAction(event))} style={{ '--organ-color': ORGANS[id].color } as React.CSSProperties}><span className="organ-number" aria-hidden="true">0{index + 1}</span><span>{ORGANS[id].name}</span><span className="organ-swatch" aria-hidden="true" /></button>)}
         </nav>
         <div className="twin-organ-detail" aria-live="polite" aria-atomic="true">
           <p className="twin-detail-kicker">{organ ? organ.role : 'FROM WHOLE BODY TO PANCREAS'}</p>

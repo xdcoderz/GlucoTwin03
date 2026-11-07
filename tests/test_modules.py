@@ -7,6 +7,7 @@ import threading
 import subprocess
 import sys
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 from http.server import ThreadingHTTPServer
@@ -77,7 +78,7 @@ class ReplayTests(unittest.TestCase):
 class PreviewTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.server = ThreadingHTTPServer(("127.0.0.1", 0), preview.Handler)
+        cls.server = preview.PreviewServer(("127.0.0.1", 0), preview.Handler)
         cls.server.patients = preview.load_patients()
         cls.base = f"http://127.0.0.1:{cls.server.server_port}"
         cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
@@ -92,6 +93,17 @@ class PreviewTests(unittest.TestCase):
     def request(self, path, method="GET"):
         with urlopen(Request(self.base + path, method=method), timeout=3) as response:
             return json.load(response)
+
+    def test_dashboard_request_burst_keeps_patient_and_unavailable_score(self):
+        def fetch_patient(_):
+            with urlopen(self.base + '/api/patients/DEMO-001', timeout=10) as response:
+                return json.load(response)
+        with ThreadPoolExecutor(max_workers=16) as pool:
+            rows = list(pool.map(fetch_patient, range(16)))
+        self.assertEqual(len(rows), 16)
+        for row in rows:
+            self.assertEqual(row['patient']['patientId'], 'DEMO-001')
+            self.assertIsNone(row['prediction']['model_score'])
 
     def test_both_patients_are_explicit_previews(self):
         self.assertEqual(len(self.request("/api/patients")), 2)

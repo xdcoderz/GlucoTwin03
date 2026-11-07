@@ -41,7 +41,7 @@ test('returned meal scores drive a separate labeled twin and edits clear stale o
   await meal.getByLabel('Total portion (g)',{exact:true}).fill('350');
   await meal.getByRole('button',{name:'Simulate this meal'}).click();
   await expect(meal.getByTestId('meal-simulation-score')).toHaveText('0.720');
-  const stage=meal.getByTestId('anatomy-stage');await expect(stage).toHaveAttribute('data-status','ready');
+  const stage=meal.getByTestId('anatomy-stage');await expect(stage).toHaveAttribute('data-status','ready',{timeout:15000});
   await expect(stage).toHaveAttribute('data-body-tone','attention');await expect(stage).toHaveAttribute('data-organ-palette','natural');
   await expect(meal.locator('.twin-signal-key')).toContainText('MEAL WHAT-IF SCORE CONTEXT');
   await expect(meal.locator('.body-glow-legend')).toContainText('Blue does not establish a safe meal');

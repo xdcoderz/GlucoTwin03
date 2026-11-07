@@ -52,7 +52,11 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
-        self.wfile.write(encoded)
+        try:
+            self.wfile.write(encoded)
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            # Navigation/abort cancels polling requests; state remains intact.
+            pass
 
     def do_OPTIONS(self):
         self.send_response(204)
@@ -153,12 +157,19 @@ class Handler(BaseHTTPRequestHandler):
         self.dispatch("POST")
 
 
+class PreviewServer(ThreadingHTTPServer):
+    # A workspace starts several independent polls in one burst. The stdlib's
+    # small default backlog can refuse valid connections on a slower machine.
+    request_queue_size = 64
+    daemon_threads = True
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=18081)
     args = parser.parse_args()
-    server = ThreadingHTTPServer((args.host, args.port), Handler)
+    server = PreviewServer((args.host, args.port), Handler)
     server.patients = load_patients()
     print(f"PREVIEW ONLY: http://{args.host}:{args.port}; scores remain unavailable", flush=True)
     server.serve_forever()
