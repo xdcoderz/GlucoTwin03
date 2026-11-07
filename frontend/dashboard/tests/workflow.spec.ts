@@ -35,7 +35,8 @@ test('save, partial/gapped/complete follow-up, review, historical version and bo
   await workflow.getByRole('button', { name: 'Complete follow-up replay' }).click();
   await expect(workflow.locator('.outcome-summary')).toContainText('8 of 8');
   await expect(workflow.locator('.outcome-summary')).toContainText('No event observed in complete samples');
-  await expect(page.locator('.glucose-reading')).toContainText('142');
+  // Follow-up samples must never change the saved meal-time baseline.
+  await expect(page.locator('.meal-context-meta')).toContainText('142 mg/dL');
   await workflow.getByLabel('Local demo review note').fill('TEST ONLY: reviewed the fictional meal response; all sample times present.');
   await workflow.getByRole('button', { name: 'Mark reviewed', exact: true }).click();
   await openDisclosure(page,'.review-history-disclosure');
@@ -78,7 +79,9 @@ test('save, partial/gapped/complete follow-up, review, historical version and bo
   expect(errors).toEqual([]);
 });
 
-test('mobile keyboard review and workflow dependency failure/recovery', async ({ page }) => {
+test('mobile keyboard review and workflow dependency failure/recovery', async ({ page, request }) => {
+  // This test must also run by itself, without records left by another test.
+  await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
   await page.setViewportSize({ width: 400, height: 860 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/#workspace');

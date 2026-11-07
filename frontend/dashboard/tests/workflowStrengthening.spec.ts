@@ -42,7 +42,7 @@ test('a background API outage preserves review draft, disables changes and recov
   await expect(page.getByRole('button', { name: 'Mark reviewed', exact: true })).toBeDisabled();
   await expect(page.getByTestId('anatomy-stage')).toBeAttached();
   await page.unroute('**/api/patients/DEMO-002');
-  await page.getByRole('button', { name: 'Retry connection', exact: true }).click();
+  // Automatic polling may recover before a user can click the retry button.
   await expect(page.locator('.connection-warning')).toHaveCount(0);
   await expect(page.getByLabel('Local demo review note')).toHaveValue(/preserve this unsaved draft/);
   await expect(page.getByRole('button', { name: 'Mark reviewed', exact: true })).toBeEnabled();

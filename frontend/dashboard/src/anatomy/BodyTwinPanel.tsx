@@ -61,6 +61,8 @@ export default function BodyTwinPanel({ patientId, glucose, modelScore, medicati
   useEffect(() => {
     let cancelled = false;
     setStatus('loading');
+    // Slow or stalled GPU initialization must leave the text controls usable.
+    const loadingDeadline = window.setTimeout(() => { if (!cancelled) setStatus('error'); }, 20000);
     import('./scene').then(async ({ createAnatomyScene }) => {
       if (cancelled || !host.current || !canvas.current) return;
       const created = await createAnatomyScene(host.current, canvas.current, {
@@ -76,6 +78,7 @@ export default function BodyTwinPanel({ patientId, glucose, modelScore, medicati
           }
         }),
       });
+      window.clearTimeout(loadingDeadline);
       if (cancelled) { created.dispose(); return; }
       engine.current = created;
       engine.current.setContext(contextRef.current.modelScore,contextRef.current.medicationContext);
@@ -84,8 +87,8 @@ export default function BodyTwinPanel({ patientId, glucose, modelScore, medicati
       engine.current.setOverlayVisible(overlayRef.current);
       if (selectedRef.current !== 'body') engine.current.focus(selectedRef.current, true);
       setStatus('ready');
-    }).catch(() => { if (!cancelled) setStatus('error'); });
-    return () => { cancelled = true; engine.current?.dispose(); engine.current = null; };
+    }).catch(() => { window.clearTimeout(loadingDeadline); if (!cancelled) setStatus('error'); });
+    return () => { cancelled = true; window.clearTimeout(loadingDeadline); engine.current?.dispose(); engine.current = null; };
   }, [attempt]);
 
   function choose(id: ViewId, instant = false) {

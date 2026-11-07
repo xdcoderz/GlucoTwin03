@@ -1,5 +1,7 @@
 # GlucoTwin
 
+Demo stabilization work is tracked in [Stabilization status](docs/STABILIZATION_STATUS.md). The dashboard now calls `/api` through its own web server; local frontend development uses the Vite proxy to the backend.
+
 > **Research prototype under construction.** Demo inputs are synthetic. The included research model is uncalibrated and not clinically validated. No diagnosis, dosing, or emergency use.
 
 GlucoTwin fuses a static synthetic health record with a replayed glucose timeline and scores one defined post-meal event over the next **120 minutes**. The dashboard is intended for a doctor-facing research demonstration.

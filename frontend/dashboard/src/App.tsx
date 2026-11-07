@@ -15,7 +15,7 @@ import ThemeToggle from './site/ThemeToggle';
 import './site/workspace.css';
 import MealSimulator from './meal/MealSimulator';
 
-const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 const initialPatientId = new URLSearchParams(window.location.search).get("patient") === "DEMO-002" ? "DEMO-002" : "DEMO-001";
 
 function App() {
