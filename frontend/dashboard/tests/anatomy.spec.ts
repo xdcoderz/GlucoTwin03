@@ -2,6 +2,9 @@ import { openPatientTwin, openDisclosure } from './workspaceSupport';
 import { test, expect } from '@playwright/test';
 
 test('full body, organ controls, zoom drill-down, reset, and patient context', async ({ page }) => {
+  // Two viewer initializations and several camera/organ interactions also run
+  // against CPU graphics in CI. Keep individual expectations unchanged.
+  test.setTimeout(90000);
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/#workspace');
@@ -10,14 +13,13 @@ test('full body, organ controls, zoom drill-down, reset, and patient context', a
   await expect(stage).toHaveAttribute('data-status', 'ready', { timeout: 15000 });
   await expect(stage).toHaveAttribute('data-view', 'body');
   await page.locator('.anatomy').scrollIntoViewIfNeeded();
-  await page.locator('.anatomy').screenshot({ path: '../../docs/screenshots/anatomy_full_body.png' });
+  // Keep interaction checks independent of expensive full-panel image capture.
+  // Playwright still captures screenshots on failure.
   await page.getByRole('button', { name: 'Explore the pancreas', exact: true }).click();
   await expect(stage).toHaveAttribute('data-view', 'pancreas');
   await expect(stage).toHaveAttribute('data-stage', 'detail');
   await expect(page.locator('.twin-organ-detail h3')).toHaveText('Pancreas');
   await expect(page.locator('.twin-organ-detail')).toContainText('does not measure insulin secretion');
-  await page.waitForTimeout(650);
-  await page.locator('.anatomy').screenshot({ path: '../../docs/screenshots/anatomy_pancreas.png' });
   for (const name of ['Liver', 'Digestive tract', 'Skeletal muscle', 'Adipose tissue']) {
     await page.getByRole('navigation', { name: 'Choose an organ or tissue' }).getByRole('button', { name }).click();
     await expect(page.locator('.twin-organ-detail h3')).toHaveText(name);

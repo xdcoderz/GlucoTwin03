@@ -28,7 +28,13 @@ export type AnatomyScene = {
 /** User-supplied procedural GLB, with separate recorded/fictional glucose overlays. */
 export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanvasElement, callbacks: Callbacks): Promise<AnatomyScene> {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "low-power" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+  const context = renderer.getContext();
+  const deviceInfo = context.getExtension('WEBGL_debug_renderer_info');
+  const deviceName = String(deviceInfo ? context.getParameter(deviceInfo.UNMASKED_RENDERER_WEBGL) : context.getParameter(context.RENDERER));
+  const softwareGraphics = /swiftshader|llvmpipe|software rasterizer/i.test(deviceName);
+  // CPU rendering needs a smaller drawing buffer to keep the form responsive.
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, softwareGraphics ? .75 : 1.7));
+  host.dataset.graphicsQuality = softwareGraphics ? 'reduced' : 'standard';
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
@@ -163,6 +169,7 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
 
   let disposed = false;
   let renderFrame = 0;
+  let lastDraw = 0;
   let active: ViewId = 'body';
   let shellOpacity = .20;
   let cameraTween: gsap.core.Tween | null = null;
@@ -211,7 +218,12 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
   function render() {
     if (disposed || renderFrame) return;
     // Context, opacity and signal often change together. Draw once per frame.
-    renderFrame = requestAnimationFrame(() => { renderFrame = 0; draw(); });
+    renderFrame = requestAnimationFrame(now => {
+      renderFrame = 0;
+      if (softwareGraphics && now - lastDraw < 1000 / 24) { render(); return; }
+      lastDraw = now;
+      draw();
+    });
   }
 
   function draw() {
@@ -245,7 +257,7 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
     cameraTween?.kill();
     transitioning = true;
     goalPosition.copy(position); goalTarget.copy(target);
-    if (instant || reducedMotion.matches) {
+    if (instant || reducedMotion.matches || softwareGraphics) {
       camera.position.copy(position); controls.target.copy(target); controls.update(); transitioning = false; render();
       return;
     }
