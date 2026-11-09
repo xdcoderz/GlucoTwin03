@@ -68,7 +68,7 @@ class ReplayTests(unittest.TestCase):
         env = dict(os.environ)
         env["FIXTURE_PATHS"] = ",".join(str(ROOT / f"data/sample/demo_patient_{number:03d}.json") for number in (1, 2))
         env["SPRING_API_URL"] = "http://127.0.0.1:1/unreachable"
-        result = subprocess.run([sys.executable, "-B", str(ROOT / "cgm-publisher/app.py"), "--dry-run"], env=env, capture_output=True, text=True, timeout=5)
+        result = subprocess.run([sys.executable, "-B", str(ROOT / "cgm-publisher/app.py"), "--dry-run"], env=env, capture_output=True, text=True, timeout=20)
         self.assertEqual(result.returncode, 0, result.stderr)
         rows = [json.loads(line) for line in result.stdout.splitlines()]
         self.assertEqual(len(rows), 18)
@@ -110,6 +110,33 @@ class PreviewTests(unittest.TestCase):
         row = self.request("/api/patients/DEMO-002")
         self.assertTrue(row["patient"]["displayName"].startswith("PREVIEW ONLY"))
         self.assertEqual(len(row["cgmHistory"]), 9)
+
+    def test_test_reset_is_disabled_by_default(self):
+        with self.assertRaises(HTTPError) as context:
+            self.request('/__test/reset', 'POST')
+        self.assertEqual(context.exception.code, 404)
+
+    def test_explicit_test_reset_clears_all_preview_state(self):
+        self.server.test_reset_enabled = True
+        try:
+            self.request('/api/patients/DEMO-001/refresh', 'POST')
+            self.assertTrue(self.request('/api/patients/DEMO-001/journal'))
+            self.server.meal_simulations = {'DEMO-001': [{'test': True}]}
+            self.server.followup['DEMO-001'][15] = {'test': True}
+            self.assertTrue(self.request('/__test/reset', 'POST')['reset'])
+            self.assertEqual(self.request('/api/patients/DEMO-001/journal'), [])
+            self.assertEqual(self.server.meal_simulations, {})
+            self.assertEqual(self.server.followup['DEMO-001'], {})
+            self.assertIsNone(self.request('/api/patients/DEMO-001')['prediction']['model_score'])
+        finally:
+            self.server.test_reset_enabled = False
+
+    def test_test_reset_cannot_bind_publicly(self):
+        result = subprocess.run([sys.executable, '-B', str(ROOT / 'tools/preview_api.py'),
+                                 '--host', '0.0.0.0', '--enable-test-reset'],
+                                capture_output=True, text=True, timeout=20)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('loopback bind address', result.stderr)
 
     def test_preview_never_invents_score(self):
         for pid in ("DEMO-001", "DEMO-002"):

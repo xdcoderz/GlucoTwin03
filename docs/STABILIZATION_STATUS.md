@@ -1,6 +1,28 @@
-# Demo stabilization, 7 November 2026
+# Demo stabilization and connected runtime
 
 Branch: `codex/stabilize-public-demo`.
+
+## Current position, 9 November 2026
+
+The visible localhost cockpit now runs against the actual native Spring Boot/FastAPI stack, not the unavailable-only preview adapter. Java 21 and a cached Maven 3.9.14 installation were found outside PATH; the existing Python environment provides scikit-learn 1.9.1. No machine-wide installation or retraining was needed. Startup/restart instructions are in [Connected local demo](CONNECTED_LOCAL_DEMO.md).
+
+Verified: 27 backend tests, 44 real runtime acceptance checks (baseline, workflow, actual model outage/recovery and backend-restart persistence), six actual-browser check groups, saved PDF content and the production TypeScript/Vite build. After the proxy/UI changes, all six targeted preview regression cases also passed. Aggregate evidence is [connected local run](research/connected_local_2026-11-09.json).
+
+The first actual browser custom-meal POST exposed a 403 CORS failure missed by preview-only checks: the proxy replaced the frontend Host. Vite now preserves it, and the browser rerun passed while an unrelated Origin remained rejected. Nginx was updated to preserve `$http_host` as well, but its container path is still unverified. This local success does not close Docker/Nginx, broader graphics/browser, public hosting or model-validity gates.
+
+The test database on port 18086 was isolated from the visible demo. Its temporary backend/frontend have been stopped. The visible route is `127.0.0.1:5173` -> `127.0.0.1:8080` -> `127.0.0.1:8000`; durable demo records use `runtime-data/local-demo.mv.db`. A real score was saved through the visible UI. The old preview adapter still intentionally returns unavailable when run separately.
+
+## Historical position, 8 November 2026
+
+The patient cockpit and shared history are described in [Patient cockpit](PATIENT_COCKPIT.md). The main patient representation is lightweight educational geometry, with the existing WebGL explorer optional. Observation selection does not recalculate the saved meal result. The workspace distinguishes preview data, API connection and model readiness.
+
+The current production frontend build passed with the existing large-bundle warning. All 19 Python tests passed. The full browser suite has **not** passed: earlier broad runs stopped with graphics/time-budget failures, and the later 31-check run was interrupted after further landing-graphics failures. Targeted checks are not a replacement for those open gates.
+
+The final cockpit verification group passed **10 browser checks**: three patient-cockpit checks, two same-origin/unavailable-result checks, three custom-meal checks and two saved-workflow checks. They verify shared selection, fixed meal-result context, synthetic follow-up, patient isolation, stream failure, meal request handling and saved review/export behaviour using the preview API and explicit UI fixtures. They do not run the actual fitted-model stack. The new cockpit tests initially exposed a test comparison mismatch between rendered inner text and DOM text; the comparison was corrected and all three then passed without weakening the state checks.
+
+After the final accessibility labels and partial-event wording changes, all **four cockpit checks** passed, including an additional numeric-score/partial-event UI fixture. A subsequent TypeScript check passed before the wording-only change. Manual layout inspection captured the implemented cockpit; scripted layout checks found no horizontal overflow at 320, 400 and 1440 pixels in light/dark themes, and no page errors. These checks leave the broader graphics and assembled-runtime gates open.
+
+Test-only reset is opt-in and restricted to loopback binding. Browser cases now start from fresh preview state. A separate assembled-demo GitHub Actions workflow was prepared for real-stack inference, outage/recovery and persistence; it has not been executed here. Docker/Maven remain unavailable locally. No public deployment or clinical readiness is claimed.
 
 ## Changes
 
@@ -42,7 +64,7 @@ Browser smoke checks: from `frontend/dashboard`, run `npx playwright test tests/
 - GitHub Actions now installs the PDF parser and runs the verified meal/workflow test group in a separate invocation, so it starts its own fresh preview state. Remote CI execution remains unverified until this branch is pushed.
 - The final mouse-control walkthrough passed within its 90-second budget, preserving all original assertions for organ selection, zoom/reset, opacity and patient switching. Together with the five meal/workflow checks and keyboard check, seven targeted browser tests passed in this pass. The two anatomy checks are also included in CI in their own invocation. This does not close the remaining full-suite and Docker gates.
 
-Local verification: production TypeScript/Vite build passed; all 15 Python tests and seven static module checks passed; three selected browser checks passed (same-origin persistence, unavailable meal output, independent mobile review). Browser preview logs still show aborted-client connections during reloads. The full browser suite and the 20-second 3D fallback have not been acceptance-tested in this change. The existing large-bundle build warning remains.
+Historical first-pass verification: production TypeScript/Vite build passed; 15 Python tests and seven static module checks passed; three selected browser checks passed. At that point, the full suite and 20-second fallback had not been acceptance-tested. Subsequent targeted fallback verification is recorded above. Use the current-position section for the latest status.
 
 - Run the updated Nginx image and real Spring/model stack together. Docker and Maven are unavailable in the current review environment.
 - Resolve remaining full-browser-suite failures and exercise 3D startup on supported hardware and software-rendering environments.

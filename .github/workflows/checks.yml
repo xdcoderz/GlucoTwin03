@@ -23,6 +23,7 @@ jobs:
       - run: mvn -B -f backend/fusion-api/pom.xml test
   frontend:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     defaults:
       run:
         working-directory: frontend/dashboard
@@ -39,11 +40,14 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install --with-deps chrome
-      - run: npx playwright test tests/publicDemo.spec.ts tests/graphicsFallback.spec.ts
       - run: python -m pip install pypdf==6.16.1
-      - run: npx playwright test tests/workflow.spec.ts tests/mealSimulator.spec.ts
+      - run: npx playwright test --reporter=line,html
         env:
           GLUCOTWIN_SOFTWARE_WEBGL: '1'
-      - run: npx playwright test tests/anatomy.spec.ts --grep "full body, organ controls|keyboard actions"
-        env:
-          GLUCOTWIN_SOFTWARE_WEBGL: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-check-report
+          path: |
+            frontend/dashboard/playwright-report
+            frontend/dashboard/test-results

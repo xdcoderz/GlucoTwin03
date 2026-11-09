@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './fixtures';
 
 test('concise evidence works offline, disclosures and downloads work, roadmap deep link moves to Future lab',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));

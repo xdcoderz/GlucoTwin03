@@ -1,7 +1,8 @@
 import { openPatientTwin } from './workspaceSupport';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('organ list, node zoom, contextual information and isolated samples', async ({ page }) => {
+  test.setTimeout(120000);
   const errors: string[] = []; const writes: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('request', request => { if (request.method() === 'POST') writes.push(request.url()); });
@@ -30,7 +31,6 @@ test('organ list, node zoom, contextual information and isolated samples', async
   await expect(marker.getByRole('tooltip')).toBeVisible();
   await page.mouse.move(0,0);
   await expect(marker.getByRole('tooltip')).not.toBeVisible();
-  await page.screenshot({path:'../../docs/screenshots/integrated_landing_desktop.png',fullPage:true});
   for (const [id,name] of [['pancreas','Pancreas'],['liver','Liver'],['gut','Digestive Tract'],['muscle','Skeletal Muscle'],['fat','Adipose Tissue']]) {
     await hero.locator(`[data-organ-hotspot=${id}]`).click();
     await expect(hero).toHaveAttribute('data-focused-organ',id);
@@ -41,7 +41,6 @@ test('organ list, node zoom, contextual information and isolated samples', async
     await expect(hero.locator(`[data-organ=${id}]`)).toHaveAttribute('aria-pressed','true');
     for(const selector of ['#organ-info-glucose','#organ-info-diabetes','#organ-info-project']) expect((await hero.locator(selector).innerText()).length).toBeGreaterThan(30);
     await expect(hero.locator('#organ-info-source')).toHaveAttribute('href',/^https:\/\/www\.niddk\.nih\.gov\//);
-    await hero.locator('.landing-model-column').screenshot({path:`../../docs/screenshots/organ_focus_${id}.png`});
     await hero.locator('#back-to-body').click();
     await expect(hero).toHaveAttribute('data-focused-organ','body');
     await expect(hero.locator('#organ-info-bar')).not.toBeVisible();
@@ -68,6 +67,7 @@ test('organ list, node zoom, contextual information and isolated samples', async
 });
 
 test('organ information waits for zoom and rapid selection keeps the latest organ', async ({page})=>{
+  test.setTimeout(75000);
   await page.goto('/');
   const hero=page.getByTestId('landing-experience');
   await expect(hero).toHaveAttribute('data-scene-status','ready',{timeout:20000});
@@ -80,13 +80,13 @@ test('organ information waits for zoom and rapid selection keeps the latest orga
   await expect(hero).toHaveAttribute('data-focus-state','ready');
   await expect(hero.locator('#organ-info-title')).toHaveText('Digestive Tract');
   await expect(hero.locator('#organ-info-bar')).toBeVisible();
-  await hero.locator('.landing-model-column').screenshot({path:'../../docs/screenshots/organ_focus_animated.png'});
   await hero.locator('#back-to-body').click();
   await expect(hero).toHaveAttribute('data-focus-state','body');
   await expect(hero.locator('#organ-info-bar')).not.toBeVisible();
 });
 
 test('landing remount, mobile navigation and failure preserve application access', async ({ page }) => {
+  test.setTimeout(120000);
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto('/');
@@ -105,11 +105,9 @@ test('landing remount, mobile navigation and failure preserve application access
     const information=await page.locator('.editorial-container').boundingBox();
     if(width<=900) expect(information!.y).toBeGreaterThanOrEqual(model!.y+model!.height-1);
     else expect(model!.width/(model!.width+information!.width)).toBeCloseTo(.7,2);
-    await page.screenshot({path:`../../docs/screenshots/integrated_landing_${width}.png`,fullPage:true});
     await page.locator('[data-organ=gut]').click();
     await expect(page.locator('#organ-info-bar')).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-    if(width===400) await page.screenshot({path:'../../docs/screenshots/organ_focus_mobile.png',fullPage:true});
     await page.locator('#back-to-body').click();
   }
   await page.getByTestId('landing-introduction').getByRole('link',{name:/Open patient workspace/}).click();
@@ -121,6 +119,7 @@ test('landing remount, mobile navigation and failure preserve application access
 });
 
 test('failed landing mesh leaves workspace and evidence available', async ({ page }) => {
+  test.setTimeout(75000);
   const errors:string[]=[]; page.on('pageerror', error=>errors.push(error.message));
   await page.route('**/models/glucotwin_anatomy.glb', route=>route.abort());
   await page.goto('/');

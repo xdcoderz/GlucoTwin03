@@ -14,7 +14,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   webServer: [
-    { command: 'python ../../tools/preview_api.py --port 18083', url: 'http://127.0.0.1:18083/health', reuseExistingServer: false },
+    { command: 'python ../../tools/preview_api.py --port 18083 --enable-test-reset', url: 'http://127.0.0.1:18083/health', reuseExistingServer: false },
     { command: 'npm run dev -- --host 127.0.0.1 --port 5183 --strictPort', url: 'http://127.0.0.1:5183', env: { VITE_API_BASE_URL: '', VITE_PROXY_TARGET: 'http://127.0.0.1:18083' }, reuseExistingServer: false },
   ],
 });

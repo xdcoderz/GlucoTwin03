@@ -1,5 +1,9 @@
 import { openPatientTwin, openDisclosure } from './workspaceSupport';
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './fixtures';
+
+// These functional flows initialize both recorded and future viewers on CPU
+// graphics. Individual readiness and value assertions keep their own limits.
+test.describe.configure({timeout:90000});
 
 const baseline = '2026-10-30T12:00:00.000Z';
 const row = (minutes: number, glucose: number) => ({ eventId: `TEST-TWIN-${minutes}-${glucose}`, observedAt: new Date(Date.parse(baseline) + minutes * 60000).toISOString(), glucoseMgDl: glucose, source: 'TEST-SYNTHETIC' });
@@ -7,7 +11,7 @@ const source = [row(-30, 130), row(-15, 136), row(0, 142)];
 async function go(page: Page) {
   await page.goto('/#workspace');
   await openPatientTwin(page);
-  await expect(page.getByTestId('anatomy-stage').filter({visible:true})).toHaveAttribute('data-status', 'ready');
+  await expect(page.getByTestId('anatomy-stage').filter({visible:true})).toHaveAttribute('data-status', 'ready', {timeout:15000});
 }
 async function sample(page: Page, index: number) {
   await page.locator('[data-destination=workspace]:visible #twin-time-recorded,[data-destination=future]:visible #viewer-time-vision').fill(String(index));
@@ -24,7 +28,7 @@ test('recorded stream updates the body; scrubbing freezes selection without chan
   rows = [...source, row(15, 185)];
   await expect(stage).toHaveAttribute('data-glucose', '185', { timeout: 8000 });
   await expect(stage).toHaveAttribute('data-signal-color', '#dc5b66');
-  await expect(page.locator('.glucose-reading')).toContainText('142');
+  await expect(page.locator('.meal-context-meta')).toContainText('142 mg/dL');
   await expect(page.locator('[data-destination=workspace] .timeline-chart')).toHaveAttribute('aria-label',/185/);
   await sample(page, 0);
   await expect(stage).toHaveAttribute('data-glucose', '130');
@@ -59,7 +63,7 @@ test('future scripts drive body and chart without replacing a score or writing t
   await expect(stage).toHaveAttribute('data-glucose', '65');
   await expect(stage).toHaveAttribute('data-signal-color', '#4489e3');
   await expect(page.locator('.score-reading')).toHaveText('—');
-  await expect(page.locator('.glucose-reading')).toContainText('142');
+  await expect(page.locator('.meal-context-meta')).toContainText('142 mg/dL');
   await page.getByRole('navigation', { name:'Main navigation' }).getByRole('link', { name:'Patient workspace',exact:true }).click();
   await expect(stage).toHaveAttribute('data-glucose', '142');
   expect(posts).toEqual([]);

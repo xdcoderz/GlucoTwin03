@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './fixtures';
 import {openPatientTwin} from './workspaceSupport';
 
 test('stalled graphics import reaches fallback while the patient workflow remains usable',async({page})=>{

@@ -1,5 +1,5 @@
 import { openPatientTwin, openDisclosure } from './workspaceSupport';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { inspectPattern, projectTo70, formatProjectionClock } from '../src/anatomy/visualResearch';
 import { mockTimeline, glucoseSignal, type TwinPoint } from '../src/anatomy/twinSignals';
 const point=(minutes:number,glucose:number):TwinPoint=>({minutes,glucose,observedAt:new Date(Date.UTC(2026,9,30,12,minutes)).toISOString()});

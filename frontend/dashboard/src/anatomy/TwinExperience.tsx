@@ -3,16 +3,17 @@ import { gsap, useGSAP, easeOut } from '../motion/gsap';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ReferenceArea, ReferenceDot, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { DashboardData, Reading } from '../types';
 import BodyTwinPanel from './BodyTwinPanel';
+import PatientCockpit from './PatientCockpit';
 import ProjectionPanel from './ProjectionPanel';
 import { inspectPattern } from './visualResearch';
 import { glucoseSignal, mockTimeline, recordedTimeline, SCENARIOS, utcLabel, type ScenarioId } from './twinSignals';
 import './twinExperience.css';
 import './visualResearch.css';
 
-type Props = { data: DashboardData; api: string; fixedPhase?: 'recorded' | 'vision'; active?: boolean; workspaceCompact?: boolean; instanceScope?: string };
+type Props = { data: DashboardData; api: string; fixedPhase?: 'recorded' | 'vision'; active?: boolean; workspaceCompact?: boolean; cockpit?: boolean; instanceScope?: string };
 
 /** Local mock mode never writes to the API, score, journal, or exports. */
-export default function TwinExperience({ data, api, fixedPhase, active = true, workspaceCompact = false, instanceScope }: Props) {
+export default function TwinExperience({ data, api, fixedPhase, active = true, workspaceCompact = false, cockpit = false, instanceScope }: Props) {
   const controlScope=instanceScope || fixedPhase || 'recorded';
   const [phase, setPhase] = useState<'recorded' | 'vision'>(fixedPhase || 'recorded');
   const studio = useRef<HTMLElement>(null);
@@ -143,7 +144,7 @@ export default function TwinExperience({ data, api, fixedPhase, active = true, w
     </div>
   );
   if(workspaceCompact) return <section ref={studio} className="workspace-history-content" aria-label="Patient glucose history" data-testid="twin-experience" data-phase="recorded">
-    <div className="workspace-sample" aria-live="polite"><div><span>Selected reading</span><strong data-testid="twin-glucose">{sourceUnavailable || !point ? '—' : point.glucose.toFixed(0)} <small>mg/dL</small></strong></div><div><span>From meal</span><strong>{point ? `${point.minutes > 0 ? '+' : ''}${point.minutes} min` : '—'}</strong></div><div><span>Change from previous</span><strong>{sourceUnavailable || delta===null ? '—' : `${delta>0?'+':''}${delta} mg/dL`}</strong></div></div>
+    {cockpit ? <PatientCockpit data={data} point={point} unavailable={sourceUnavailable} delta={delta} hasBaseline={!sourceUnavailable && points.some(p=>p.minutes===0)} hasFollowup={!sourceUnavailable && points.some(p=>p.minutes>0)} onBaseline={()=>scrub(points.findIndex(p=>p.minutes===0))} onFollowup={()=>scrub(points.length-1)} /> : <div className="workspace-sample" aria-live="polite"><div><span>Selected reading</span><strong data-testid="twin-glucose">{sourceUnavailable || !point ? '—' : point.glucose.toFixed(0)} <small>mg/dL</small></strong></div><div><span>From meal</span><strong>{point ? `${point.minutes > 0 ? '+' : ''}${point.minutes} min` : '—'}</strong></div><div><span>Change from previous</span><strong>{sourceUnavailable || delta===null ? '—' : `${delta>0?'+':''}${delta} mg/dL`}</strong></div></div>}
     {timeline}
     <details id="patient-twin" className="workspace-disclosure workspace-twin" onToggle={event=>setTwinOpen(event.currentTarget.open)}>
       <summary>View patient twin</summary>

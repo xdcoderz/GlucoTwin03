@@ -188,6 +188,7 @@ let needsRender = true;
 let autoRotation = true;
 let pointerInsideStage = false;
 let cameraTween: gsap.core.Timeline | undefined;
+let cameraDeadline: ReturnType<typeof setTimeout> | undefined;
 let bodyAura: ReturnType<typeof createBodyAura> | undefined;
 let bodyGlow=sampleGlow(null);
 
@@ -201,6 +202,7 @@ let hoveredMesh: THREE.Mesh | null = null;
 
 // Three.js Instances
 let renderer: THREE.WebGLRenderer;
+let softwareGraphics = false;
 let controls: OrbitControls;
 const host = $('#scene');
 const scene = new THREE.Scene();
@@ -240,7 +242,12 @@ function createScene() {
       alpha: true,
       powerPreference: 'high-performance'
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const gl = renderer.getContext();
+    const debug = gl.getExtension('WEBGL_debug_renderer_info');
+    const rendererName = String(gl.getParameter(debug ? debug.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+    softwareGraphics = /swiftshader|llvmpipe|software rasterizer/i.test(rendererName);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, softwareGraphics ? .75 : 2));
+    app.dataset.graphicsQuality = softwareGraphics ? 'reduced' : 'standard';
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -818,6 +825,7 @@ function overviewDistance() {
 // Select Organ with Cinematic 3/4 Camera Angles
 function selectOrgan(id: OrganId, animate = true, focusDetails = false) {
   if (!organs[id]) return;
+  clearTimeout(cameraDeadline);
   needsRender = true;
   selected = id;
   syncRotation();
@@ -871,6 +879,7 @@ function selectOrgan(id: OrganId, animate = true, focusDetails = false) {
     cameraTween = gsap.timeline({
       defaults: { duration, ease: 'power3.inOut' },
       onComplete: () => {
+        clearTimeout(cameraDeadline);
         controls.enabled = true;
         controls.target.copy(target);
         controls.update();
@@ -882,6 +891,11 @@ function selectOrgan(id: OrganId, animate = true, focusDetails = false) {
     cameraTween
       .to(camera.position, { x: camPos.x, y: camPos.y, z: camPos.z }, 0)
       .to(controls.target, { x: target.x, y: target.y, z: target.z }, 0);
+    // Software rendering can make GSAP's lag smoothing prolong a one-second
+    // transition. Settle the current selection without leaving controls locked.
+    if (softwareGraphics && duration > 0) cameraDeadline = setTimeout(() => {
+      if (!disposed && selected === id) cameraTween?.progress(1);
+    }, 1500);
   }
 
   if (!loaded) finishOrganFocus();
@@ -974,7 +988,7 @@ function render() {
   if (disposed) return;
   frameId = requestAnimationFrame(render);
   const now = performance.now();
-  if (now - lastRenderedAt < 1000 / 30) return;
+  if (now - lastRenderedAt < 1000 / (softwareGraphics ? 20 : 30)) return;
   lastRenderedAt = now;
   timer.update();
   const delta = Math.min(timer.getDelta(), 0.08);
@@ -1031,11 +1045,12 @@ function render() {
       });
     }
 
-    // Update 3D Projected Screen Hotspots
-    updateSpatialHotspots();
   }
 
   renderer.render(scene, camera);
+  // Rendering updates camera matrices. In reduced motion there may be no next
+  // frame, so project landmarks only after the final camera transform is valid.
+  if (loaded) updateSpatialHotspots();
   needsRender = false;
 }
 
@@ -1305,6 +1320,7 @@ listen(app,'pointerdown',(event)=>{
 // Cleanup is owned by React, including pending asset loads.
 function dispose() {
   disposed = true;
+  clearTimeout(cameraDeadline);
   cancelAnimationFrame(frameId);
   timer.dispose();
   resizeObserver?.disconnect();

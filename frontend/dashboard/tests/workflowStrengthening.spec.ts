@@ -1,5 +1,5 @@
 import { openPatientTwin, openDisclosure } from './workspaceSupport';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('readiness steps expose missing samples, recover, and offer a saved unavailable attempt', async ({ page, request }) => {
   const fixture = await (await request.get('http://127.0.0.1:18083/api/patients/DEMO-001/readiness')).json();

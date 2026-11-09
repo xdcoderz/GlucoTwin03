@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './fixtures';
 
 test('custom meal fields reach the API and saved simulations survive reload without replacing recorded meals',async({page,request})=>{
   const before=await (await request.get('http://127.0.0.1:18083/api/patients/DEMO-001/journal')).json();

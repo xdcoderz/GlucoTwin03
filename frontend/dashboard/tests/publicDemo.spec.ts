@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('workspace and saved attempts use the website origin', async ({ page, baseURL }) => {
   const apiOrigins = new Set<string>();

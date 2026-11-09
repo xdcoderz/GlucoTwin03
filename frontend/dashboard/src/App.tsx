@@ -13,6 +13,7 @@ import LandingExperience from './landing/LandingExperience';
 import './site/integrated.css';
 import ThemeToggle from './site/ThemeToggle';
 import './site/workspace.css';
+import './anatomy/patientCockpit.css';
 import MealSimulator from './meal/MealSimulator';
 
 const API = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
@@ -139,6 +140,7 @@ function App() {
       </section>
 
       <nav className="workspace-nav workflow-path" aria-label="Dashboard sections"><a href="#patient-record"><span aria-hidden="true">01</span>Patient &amp; meal</a><a href="#phase-one-flow"><span aria-hidden="true">02</span>Glucose history</a><a href="#score-step"><span aria-hidden="true">03</span>Score &amp; factors</a><a href="#workflow-section"><span aria-hidden="true">04</span>Follow-up</a><a href="#review-section"><span aria-hidden="true">05</span>Review</a></nav>
+      <section className="workspace-mode" aria-label="Data source and service status"><div><strong>{prediction.reason === 'module_preview_no_model' || data.patient.displayName.startsWith('PREVIEW ONLY') ? 'PREVIEW · synthetic case · scoring unavailable' : 'SYNTHETIC RESEARCH DEMO'}</strong><p>For researchers and clinician review. Recorded observations, frozen model results and fictional scenarios stay separate.</p></div><div className="workspace-services"><span>{connectionError ? 'Patient API disconnected' : 'Patient API connected'}</span><span>{connectionError || !readiness ? 'Model status unconfirmed' : readiness.model.status === 'ready' ? 'Model ready' : 'Model unavailable'}</span></div></section>
       <details className="panel context-panel"><summary>Full synthetic patient record</summary>
         <div className="panel-heading"><div><p className="eyebrow">STATIC SYNTHETIC RECORD</p><h2>Patient context</h2></div><span className="record-tag">Fictional demo profile</span></div>
         <div className="context-grid">
@@ -153,8 +155,9 @@ function App() {
         </div>
       </details>
 
+      <section id="phase-one-flow" className="panel workspace-history-panel cockpit-history-panel"><header className="workspace-block-heading"><p className="section-label">Patient cockpit / shared history</p><h2>Glucose history</h2></header><PhaseOneFlow key={patientId} api={`${API}/api`} patientId={patientId} revision={`${data.journal?.predictionId || ''}-${data.journal?.outcome.receivedSamples || 0}-${data.journal?.reviewState || ''}`} connected={!connectionError} onReadiness={setReadiness} onScore={() => void scoreCurrentMeal()} scoring={refreshing} linkToScore compact simplified />{workspaceVisited && <TwinExperience key={data.patient.patientId + (data.currentMeal.baselineAt || '')} data={data} api={`${API}/api`} fixedPhase="recorded" active={site.destination === 'workspace'} workspaceCompact cockpit />}</section>
       <MealSimulator key={`meal-form-${patientId}-${data.currentMeal.baselineAt}`} data={data} api={`${API}/api`} ready={enoughHistory} active={site.destination==='workspace'} />
-      <div className="workspace-analysis-grid"><section id="phase-one-flow" className="panel workspace-history-panel"><header className="workspace-block-heading"><p className="section-label">02 / Glucose history</p><h2>Glucose history</h2></header><PhaseOneFlow key={patientId} api={`${API}/api`} patientId={patientId} revision={`${data.journal?.predictionId || ''}-${data.journal?.outcome.receivedSamples || 0}-${data.journal?.reviewState || ''}`} connected={!connectionError} onReadiness={setReadiness} onScore={() => void scoreCurrentMeal()} scoring={refreshing} linkToScore compact simplified />{workspaceVisited && <TwinExperience key={data.patient.patientId + (data.currentMeal.baselineAt || '')} data={data} api={`${API}/api`} fixedPhase="recorded" active={site.destination === 'workspace'} workspaceCompact />}</section>
+      <div className="workspace-analysis-grid">
       <section id="score-step" className="score-step"><div className="step-heading"><p className="section-label">03 / Score &amp; factors</p><h2>Score and factors</h2></div>
       <div className="workspace-score-grid"><div className="workspace-score-decision"><section className="summary-grid score-summary-grid" aria-label="Current patient and prediction summary">
         <article className="summary-card score-card">

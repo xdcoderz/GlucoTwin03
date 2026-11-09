@@ -1,5 +1,5 @@
 import { openPatientTwin, openDisclosure } from './workspaceSupport';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('full body, organ controls, zoom drill-down, reset, and patient context', async ({ page }) => {
   // Two viewer initializations and several camera/organ interactions also run
@@ -93,6 +93,7 @@ test('400px touch layout and organ selection', async ({ page }) => {
 });
 
 test('WebGL failure keeps the organ guide and patient context available', async ({ page }) => {
+  test.setTimeout(75000);
   await page.addInitScript(() => {
     (window as Window & { denyWebGL: boolean }).denyWebGL = true;
     const original = HTMLCanvasElement.prototype.getContext;
@@ -111,9 +112,8 @@ test('WebGL failure keeps the organ guide and patient context available', async 
   await page.getByRole('navigation', { name: 'Choose an organ or tissue' }).getByRole('button', { name: 'Pancreas' }).click();
   await expect(page.locator('.twin-organ-detail h3')).toHaveText('Pancreas');
   await expect(page.getByRole('button', { name: 'Retry 3D view' })).toBeVisible();
-  await page.locator('.anatomy').screenshot({ path: '../../docs/screenshots/anatomy_webgl_fallback.png' });
   await page.evaluate(() => { (window as Window & { denyWebGL: boolean }).denyWebGL = false; });
   await page.getByRole('button', { name: 'Retry 3D view' }).click();
-  await expect(page.getByTestId('anatomy-stage')).toHaveAttribute('data-status', 'ready');
+  await expect(page.getByTestId('anatomy-stage')).toHaveAttribute('data-status', 'ready', {timeout:15000});
   await expect(page.getByTestId('anatomy-stage')).toHaveAttribute('data-view', 'pancreas');
 });

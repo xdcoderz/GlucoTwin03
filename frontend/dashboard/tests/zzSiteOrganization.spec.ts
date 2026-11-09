@@ -1,7 +1,8 @@
 import { openPatientTwin } from './workspaceSupport';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('destinations, deep links, history, mobile and future isolation', async ({ page }) => {
+  test.setTimeout(120000);
   const errors: string[]=[]; page.on('pageerror',e=>errors.push(e.message));
   let writes=0; page.on('request',r=>{if(r.method()==='POST') writes++;});
   await page.emulateMedia({reducedMotion:'reduce'});
@@ -10,7 +11,6 @@ test('destinations, deep links, history, mobile and future isolation', async ({ 
   await expect(page.getByRole('heading',{level:1})).toContainText('A little closer');
   await expect(page.getByTestId('landing-experience')).toHaveAttribute('data-scene-status','ready',{timeout:15000});
   await expect(page.locator('.journey-grid li')).toHaveCount(5);
-  await page.screenshot({path:'../../docs/screenshots/site_overview_desktop.png',fullPage:true});
   await nav.getByRole('link',{name:'Patient workspace'}).click();
   const workspace=page.locator('[data-destination=workspace]');
   await openPatientTwin(page);
@@ -22,18 +22,15 @@ test('destinations, deep links, history, mobile and future isolation', async ({ 
   await expect(workspace.locator('.readiness-gate')).toBeVisible();
   const positions = await workspace.evaluate(root=>['patient-record','meal-context','phase-one-flow','score-step','workflow-section'].map(id=>(root.querySelector(`#${id}`) as HTMLElement).getBoundingClientRect().top));
   expect(positions).toEqual([...positions].sort((a,b)=>a-b));
-  await page.screenshot({path:'../../docs/screenshots/site_workspace_desktop.png',fullPage:true});
   await nav.getByRole('link',{name:'Evidence',exact:true}).click();
   await expect(page.getByRole('heading',{level:1})).toHaveText('What the prototype demonstrates');
   await expect(page.getByRole('link',{name:'Download the project model card'})).toHaveAttribute('href','/research/MODEL_CARD.md');
-  await page.screenshot({path:'../../docs/screenshots/site_evidence_desktop.png',fullPage:true});
   await nav.getByRole('link',{name:'Future lab',exact:true}).click();
   const future=page.locator('[data-destination=future]');
   await expect(future.getByTestId('anatomy-stage')).toHaveAttribute('data-status','ready',{timeout:15000});
   await future.getByLabel('Fictional glucose story').selectOption('dip');
   await expect(future.getByTestId('twin-experience')).toHaveAttribute('data-phase','vision');
   expect(writes).toBe(0);
-  await page.screenshot({path:'../../docs/screenshots/site_future_desktop.png',fullPage:true});
   await page.goBack(); await expect(nav.getByRole('link',{name:'Evidence',exact:true})).toHaveAttribute('aria-current','page');
   await page.goBack(); await expect(workspace).toBeVisible();
   await page.goForward(); await expect(page.getByRole('heading',{level:1})).toHaveText('What the prototype demonstrates');
@@ -45,7 +42,6 @@ test('destinations, deep links, history, mobile and future isolation', async ({ 
     await nav.getByRole('link',{name:label,exact:true}).click();
     await expect(page.locator(`[data-destination=${name}]`)).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-    await page.screenshot({path:`../../docs/screenshots/site_${name}_mobile.png`,fullPage:true});
   }
   expect(errors).toEqual([]);
 });

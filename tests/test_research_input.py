@@ -74,14 +74,15 @@ class ResearchInputTests(unittest.TestCase):
             with patch.object(sys, "argv", ["app.py"] + args[1:]), patch.object(publisher, "urlopen", side_effect=AssertionError("Research must not send")), patch("builtins.print") as printed:
                 publisher.main()
                 self.assertEqual(json.loads(printed.call_args.args[0]), {"status": "validated", "mode": "research", "readings": 9, "sent": False, "modelScored": False})
-            result = subprocess.run([sys.executable, "-B"] + args, capture_output=True, text=True, timeout=5)
+            # Include Windows interpreter startup under concurrent browser load.
+            result = subprocess.run([sys.executable, "-B"] + args, capture_output=True, text=True, timeout=20)
             self.assertEqual(result.returncode, 0)
             self.assertNotIn("RESEARCH-001", result.stdout)
             self.assertNotIn("glucoseMgDl", result.stdout)
 
     def test_cli_rejects_delivery_and_raw_dry_run_for_research(self):
         for switches in ([], ["--dry-run"], ["--validate-only", "--dry-run"]):
-            result = subprocess.run([sys.executable, "-B", str(ROOT / "cgm-publisher/app.py"), "--mode", "research", "--fixture", "not-read.json"] + switches, capture_output=True, text=True, timeout=5)
+            result = subprocess.run([sys.executable, "-B", str(ROOT / "cgm-publisher/app.py"), "--mode", "research", "--fixture", "not-read.json"] + switches, capture_output=True, text=True, timeout=20)
             self.assertNotEqual(result.returncode, 0)
             self.assertNotIn("glucoseMgDl", result.stdout)
 

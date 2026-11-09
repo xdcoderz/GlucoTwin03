@@ -1,0 +1,59 @@
+name: Assembled synthetic demo
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - 'ml-service/**'
+      - 'cgm-publisher/**'
+      - 'frontend/dashboard/Dockerfile'
+      - 'frontend/dashboard/nginx.conf'
+      - 'compose.yaml'
+      - 'tools/verify_mvp_acceptance.py'
+      - '.github/workflows/assembled-demo.yml'
+permissions:
+  contents: read
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      COMPOSE_PROJECT_NAME: glucotwin-ci-proof
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build and start real services
+        run: |
+          docker compose up --build --wait --wait-timeout 240 ml-service spring dashboard
+          docker compose run --rm cgm-publisher
+      - name: Check real inference and workflow through web proxy
+        run: |
+          python tools/verify_mvp_acceptance.py --phase baseline --api http://localhost:3000/api --project glucotwin-ci-proof --evidence tmp/ci-acceptance.json
+          python tools/verify_mvp_acceptance.py --phase workflow --api http://localhost:3000/api --project glucotwin-ci-proof --evidence tmp/ci-acceptance.json
+      - name: Check actual model outage
+        run: |
+          docker compose stop ml-service
+          python tools/verify_mvp_acceptance.py --phase outage --api http://localhost:3000/api --project glucotwin-ci-proof --evidence tmp/ci-acceptance.json
+      - name: Check recovery and persisted journals
+        run: |
+          docker compose start ml-service
+          python tools/verify_mvp_acceptance.py --phase recovery --api http://localhost:3000/api --project glucotwin-ci-proof --evidence tmp/ci-acceptance.json
+          docker compose up -d --no-deps --force-recreate spring
+          python tools/verify_mvp_acceptance.py --phase persistence --api http://localhost:3000/api --project glucotwin-ci-proof --evidence tmp/ci-acceptance.json
+      - name: Collect service logs
+        if: always()
+        run: |
+          mkdir -p tmp
+          docker compose logs --no-color > tmp/ci-compose.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: assembled-demo-evidence
+          path: |
+            tmp/ci-acceptance.json
+            tmp/ci-compose.log
+      - name: Stop this job's stack
+        if: always()
+        run: docker compose down

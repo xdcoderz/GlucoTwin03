@@ -1,5 +1,5 @@
 import { openDisclosure } from './workspaceSupport';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 

@@ -2,6 +2,10 @@
 
 Demo stabilization work is tracked in [Stabilization status](docs/STABILIZATION_STATUS.md). The dashboard now calls `/api` through its own web server; local frontend development uses the Vite proxy to the backend.
 
+**Connected local demo, 9 November:** the cockpit now runs against the actual Spring/FastAPI fitted-model stack locally. Both synthetic reference scores, model outage/recovery and persistent journals were verified without Docker. See [Connected local demo and restart commands](docs/CONNECTED_LOCAL_DEMO.md). This is local research-demo verification, not public deployment or clinical validation.
+
+**Patient cockpit:** the workspace now places fixed patient background, educational anatomy and the selected glucose observation around one shared history timeline. Saved meal results stay fixed during replay, with separate follow-up completeness and explicit preview/model status. See [Patient cockpit](docs/PATIENT_COCKPIT.md). This interface update does not add physiological simulation or connect inference in the local preview.
+
 > **Research prototype under construction.** Demo inputs are synthetic. The included research model is uncalibrated and not clinically validated. No diagnosis, dosing, or emergency use.
 
 GlucoTwin fuses a static synthetic health record with a replayed glucose timeline and scores one defined post-meal event over the next **120 minutes**. The dashboard is intended for a doctor-facing research demonstration.

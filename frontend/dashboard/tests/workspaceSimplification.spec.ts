@@ -1,7 +1,7 @@
-import { test,expect } from '@playwright/test';
+import { test,expect } from './fixtures';
 import { openPatientTwin,openDisclosure } from './workspaceSupport';
 
-test('five workspace blocks, closed tools and one timeline shared with the optional twin',async({page,request})=>{
+test('patient cockpit, closed tools and one timeline shared with the optional twin',async({page,request})=>{
   await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/#workspace');
@@ -16,8 +16,8 @@ test('five workspace blocks, closed tools and one timeline shared with the optio
   await expect(ws.getByRole('button',{name:/Score & save/})).toHaveCount(1);
   await expect(ws.getByRole('button',{name:/Download saved result|Download research summary/})).toHaveCount(1);
   const historyBox=await ws.locator('#phase-one-flow').boundingBox(),scoreBox=await ws.locator('#score-step').boundingBox();
-  expect(scoreBox!.x).toBeGreaterThan(historyBox!.x+historyBox!.width);
-  expect(Math.abs(scoreBox!.y-historyBox!.y)).toBeLessThan(2);
+  expect(scoreBox!.y).toBeGreaterThan(historyBox!.y+historyBox!.height);
+  await expect(ws.getByRole('region',{name:'Connected patient cockpit'})).toBeVisible();
   await page.screenshot({path:'../../docs/screenshots/workspace_simple_desktop.png',fullPage:true});
   await openPatientTwin(page);
   await expect(ws.getByTestId('anatomy-stage')).toHaveAttribute('data-status','ready');
