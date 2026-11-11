@@ -2,7 +2,17 @@
 
 Branch: `codex/stabilize-public-demo`.
 
-## Current position, 9 November 2026
+## Dashboard loading and 3D recovery, 11 November 2026
+
+The production JavaScript entry dropped from 816.00 KB to 348.04 KB before compression, and from 244.85 KB to 114.73 KB with gzip. The Overview defers workspace code and its readiness, worklist and meal polling until the workspace is opened. Direct workspace links scroll after the deferred content mounts. If a workspace or scenario module fails to load, the navigation stays available and the section offers a reload.
+
+On detected software graphics, the Overview uses a smaller drawing buffer and starts with rotation and particle motion off. Users can turn them on. Idle views skip GPU draws, and instant camera resets update the organ markers directly. A stalled Overview module shows a fallback after 20 seconds. The workspace and evidence remain reachable.
+
+The connected local services restarted with the existing demo database. A browser check opened the score section directly and confirmed the saved 0.368 result and the ready model. The production build passed. The separate 669 KB 3D bundle still triggers a build warning. Rapid switching and the focused reset passed on software WebGL. The longer Overview walkthrough exceeded its 120-second test budget after completing the organ-marker round trips. Full graphics and Docker verification remain open.
+
+Nine of the ten focused browser checks passed together. The remaining cockpit fixture raced with browser teardown during a routed background poll. The fixture now reuses one prepared response, and the individual rerun passed. The checks cover deferred downloads, direct score links, failed workspace download and reload, stalled Overview fallback, software graphics idle and reset, and the core cockpit and preview flows.
+
+## Connected runtime, 9 November 2026
 
 The visible localhost cockpit now runs against the actual native Spring Boot/FastAPI stack, not the unavailable-only preview adapter. Java 21 and a cached Maven 3.9.14 installation were found outside PATH; the existing Python environment provides scikit-learn 1.9.1. No machine-wide installation or retraining was needed. Startup/restart instructions are in [Connected local demo](CONNECTED_LOCAL_DEMO.md).
 

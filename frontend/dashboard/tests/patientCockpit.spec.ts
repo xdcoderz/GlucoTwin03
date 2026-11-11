@@ -59,16 +59,14 @@ test('a lost glucose stream clears the selected observation, not the saved conte
 
 test('UI fixture preserves a numeric saved score and reports an event in incomplete follow-up', async ({ page, request }) => {
   await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
-  await page.route('**/api/patients/DEMO-001', async route => {
-    const response = await route.fetch();
-    const data = await response.json();
-    // Display fixture only: this does not run or validate model inference.
-    const prediction = { ...data.prediction, status: 'available', model_score: 0.731, predicted_event: true, threshold: 0.5 };
-    data.prediction = prediction;
-    data.journal.prediction = prediction;
-    data.journal.outcome = { ...data.journal.outcome, complete: false, eventObserved: true, receivedSamples: 1 };
-    await route.fulfill({ response, json: data });
-  });
+  const response = await request.get('http://127.0.0.1:18083/api/patients/DEMO-001');
+  const data = await response.json();
+  // Display fixture only. Reuse the snapshot so teardown cannot interrupt a routed fetch.
+  const prediction = { ...data.prediction, status: 'available', model_score: 0.731, predicted_event: true, threshold: 0.5 };
+  data.prediction = prediction;
+  data.journal.prediction = prediction;
+  data.journal.outcome = { ...data.journal.outcome, complete: false, eventObserved: true, receivedSamples: 1 };
+  await page.route('**/api/patients/DEMO-001', route => route.fulfill({ json: data }));
   await page.goto('/#workspace');
   const cockpit = page.getByRole('region', { name: 'Connected patient cockpit' });
   await expect(cockpit.getByTestId('cockpit-frozen-result')).toContainText('0.731');

@@ -72,8 +72,12 @@ test('organ information waits for zoom and rapid selection keeps the latest orga
   const hero=page.getByTestId('landing-experience');
   await expect(hero).toHaveAttribute('data-scene-status','ready',{timeout:20000});
   await hero.locator('[data-organ-hotspot=pancreas]').click();
-  await expect(hero).toHaveAttribute('data-focus-state','moving');
-  await expect(hero.locator('#organ-info-bar')).not.toBeVisible();
+  if(await hero.getAttribute('data-graphics-quality')==='reduced') {
+    await expect(hero).toHaveAttribute('data-focus-state','ready');
+  } else {
+    await expect(hero).toHaveAttribute('data-focus-state','moving');
+    await expect(hero.locator('#organ-info-bar')).not.toBeVisible();
+  }
   await hero.locator('[data-organ=liver]').click();
   await hero.locator('[data-organ=gut]').click();
   await expect(hero).toHaveAttribute('data-focused-organ','gut');

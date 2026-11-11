@@ -1,23 +1,37 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Overview, Evidence, ValidationRoadmap } from "./site/SitePages";
-import { useSiteLocation } from "./site/location";
+import { useSiteLocation, type Destination } from "./site/location";
 import "./site/site.css";
 import { gsap, useGSAP, easeOut } from './motion/gsap';
-import TwinExperience from "./anatomy/TwinExperience";
-import WorkspaceScenarios from "./anatomy/WorkspaceScenarios";
 import type { DashboardData, Prediction, Readiness } from "./types";
-import ResearchWorkflow from "./workflow/ResearchWorkflow";
 import PhaseOneFlow from "./workflow/PhaseOneFlow";
 import MotionDashboard from "./motion/MotionDashboard";
 import LandingExperience from './landing/LandingExperience';
 import './site/integrated.css';
 import ThemeToggle from './site/ThemeToggle';
+import SectionLoadBoundary from './site/SectionLoadBoundary';
 import './site/workspace.css';
 import './anatomy/patientCockpit.css';
-import MealSimulator from './meal/MealSimulator';
+const TwinExperience = lazy(() => import('./anatomy/TwinExperience'));
+const WorkspaceScenarios = lazy(() => import('./anatomy/WorkspaceScenarios'));
+const MealSimulator = lazy(() => import('./meal/MealSimulator'));
+const ResearchWorkflow = lazy(() => import('./workflow/ResearchWorkflow'));
 
 const API = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 const initialPatientId = new URLSearchParams(window.location.search).get("patient") === "DEMO-002" ? "DEMO-002" : "DEMO-001";
+
+function scrollToDestination(destination: Destination, anchor: string) {
+  const target = document.getElementById(anchor);
+  if (target && !['workspace', 'future', 'overview', 'evidence'].includes(anchor)) {
+    for (let element: HTMLElement | null = target; element; element = element.parentElement) {
+      if (element instanceof HTMLDetailsElement) element.open = true;
+    }
+    target.scrollIntoView({ block: 'start' });
+    return;
+  }
+  window.scrollTo(0, 0);
+  document.querySelector<HTMLElement>(`[data-destination="${destination}"] h1`)?.focus({ preventScroll: true });
+}
 
 function App() {
   const site = useSiteLocation();
@@ -34,19 +48,23 @@ function App() {
   const [readiness, setReadiness] = useState<Readiness | null>(null);
   const activePatient = useRef(patientId);
   const loadVersion = useRef(0);
+  const workspaceReady = Boolean(!loading && data?.prediction);
+  const workspaceHeading = useCallback((element: HTMLHeadingElement | null) => {
+    if (!element || site.destination !== 'workspace') return;
+    // The workspace heading commits after the deferred modules finish loading.
+    const frame = requestAnimationFrame(() => scrollToDestination('workspace', site.anchor));
+    return () => cancelAnimationFrame(frame);
+  }, [site.destination, site.anchor]);
   function selectPatient(id: string) { const url = new URL(location.href); url.searchParams.set('patient',id); history.replaceState(null,'',url); if (id === activePatient.current) return; activePatient.current = id; setData(null); setReadiness(null); setLoading(true); setConnectionError(''); setActionError(''); setRefreshing(false); setNotice(''); setPatientId(id); }
 
   useEffect(() => { selectPatient(site.patient); }, [site.patient]);
   useEffect(() => {
     if (site.destination === 'future') setFutureVisited(true);
     if (site.destination === 'workspace') setWorkspaceVisited(true);
-    const frame = requestAnimationFrame(() => {
-      const target = document.getElementById(site.anchor);
-      if (target && !['workspace','future','overview','evidence'].includes(site.anchor)) { if(target instanceof HTMLDetailsElement)target.open=true; let parent = target.parentElement; while(parent) { if(parent instanceof HTMLDetailsElement) parent.open = true; parent = parent.parentElement; } target.scrollIntoView({ block: 'start' }); }
-      else { window.scrollTo(0,0); document.querySelector<HTMLElement>(`[data-destination="${site.destination}"] h1`)?.focus({ preventScroll:true }); }
-    });
+    if (site.destination === 'workspace' && workspaceReady) return;
+    const frame = requestAnimationFrame(() => scrollToDestination(site.destination, site.anchor));
     return () => cancelAnimationFrame(frame);
-  }, [site.destination, site.anchor, loading]);
+  }, [site.destination, site.anchor, loading, workspaceReady]);
   useGSAP(() => {
     const media = gsap.matchMedia();
     media.add('(prefers-reduced-motion: no-preference)', () => {
@@ -133,9 +151,9 @@ function App() {
       <div data-destination="overview" hidden={site.destination !== 'overview'}>{site.destination === 'overview' && <LandingExperience />}<Overview /></div>
       <div data-destination="evidence" hidden={site.destination !== 'evidence'}><Evidence /></div>
       <div id="workspace" data-destination="workspace" hidden={site.destination !== 'workspace'}>
-        {loading ? <div className="destination-loading" role="status">Loading the synthetic patient…<div className="skeleton panel-skeleton" /></div> : !data || !prediction ? <section className="error-panel" role="alert"><h1 tabIndex={-1}>Patient data is unavailable</h1><p>{connectionError}</p><button className="button button-primary" onClick={() => void load()}>Retry connection</button></section> : <>
+        {!workspaceVisited ? null : loading ? <div className="destination-loading" role="status">Loading the synthetic patient…<div className="skeleton panel-skeleton" /></div> : !data || !prediction ? <section className="error-panel" role="alert"><h1 tabIndex={-1}>Patient data is unavailable</h1><p>{connectionError}</p><button className="button button-primary" onClick={() => void load()}>Retry connection</button></section> : <SectionLoadBoundary><Suspense fallback={<p role="status">Preparing the patient workspace…</p>}>
       <section id="patient-record" className="page-heading">
-        <div><p className="eyebrow">01 / Patient &amp; meal</p><h1 tabIndex={-1}>Patient workspace</h1><p className="subheading">{patientId} · {data.patient.ageYears} years · {capitalize(data.patient.sex)} · HbA1c {data.patient.hba1cPercent.toFixed(1)}%</p></div>
+        <div><p className="eyebrow">01 / Patient &amp; meal</p><h1 ref={workspaceHeading} tabIndex={-1}>Patient workspace</h1><p className="subheading">{patientId} · {data.patient.ageYears} years · {capitalize(data.patient.sex)} · HbA1c {data.patient.hba1cPercent.toFixed(1)}%</p></div>
         <div className="heading-actions"><div className="patient-switcher"><label htmlFor="patient-select">Synthetic scenario</label><select id="patient-select" value={patientId} onChange={(event) => selectPatient(event.target.value)}><option value="DEMO-001">Patient 001 · lower-score case</option><option value="DEMO-002">Patient 002 · high-score case</option></select></div></div>
       </section>
 
@@ -196,11 +214,11 @@ function App() {
       <div id="workflow-section"><ResearchWorkflow key={data.patient.patientId} api={`${API}/api`} patientId={data.patient.patientId} refreshKey={data.journal?.predictionId || ''} newAttemptRevision={newAttemptRevision} onSelect={selectPatient} onSaved={load} connected={!connectionError} currentData={data} /></div>
 
 
-      </>}
+      </Suspense></SectionLoadBoundary>}
       </div>
       <div id="future" data-destination="future" hidden={site.destination !== 'future'}>
         <header className="destination-heading"><p className="section-label">Future lab · simulated</p><h1 tabIndex={-1}>Explore a possible future interface</h1><p>Scripted glucose stories demonstrate interaction ideas. These curves are fictional and do not predict the effect of a meal or treatment.</p></header>
-        {futureVisited && data ? <TwinExperience key={patientId} data={data} api={`${API}/api`} fixedPhase="vision" active={site.destination === 'future'} /> : <div className="error-panel"><p>{loading ? 'Loading a synthetic meal baseline…' : 'A patient record is needed to start the scenarios.'}</p>{!loading && <button className="button button-secondary" onClick={() => void load()}>Retry patient connection</button>}</div>}
+        {futureVisited && data ? <SectionLoadBoundary><Suspense fallback={<p role="status">Preparing the scenario explorer…</p>}><TwinExperience key={patientId} data={data} api={`${API}/api`} fixedPhase="vision" active={site.destination === 'future'} /></Suspense></SectionLoadBoundary> : <div className="error-panel"><p>{loading ? 'Loading a synthetic meal baseline…' : 'A patient record is needed to start the scenarios.'}</p>{!loading && <button className="button button-secondary" onClick={() => void load()}>Retry patient connection</button>}</div>}
         <ValidationRoadmap />
       </div>
       <footer className="page-footer"><span>GlucoTwin · Working research prototype</span><span>Model score is uncalibrated. No diagnosis, dosing, or emergency use.</span></footer>

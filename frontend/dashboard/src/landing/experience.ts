@@ -188,7 +188,6 @@ let needsRender = true;
 let autoRotation = true;
 let pointerInsideStage = false;
 let cameraTween: gsap.core.Timeline | undefined;
-let cameraDeadline: ReturnType<typeof setTimeout> | undefined;
 let bodyAura: ReturnType<typeof createBodyAura> | undefined;
 let bodyGlow=sampleGlow(null);
 
@@ -246,7 +245,14 @@ function createScene() {
     const debug = gl.getExtension('WEBGL_debug_renderer_info');
     const rendererName = String(gl.getParameter(debug ? debug.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
     softwareGraphics = /swiftshader|llvmpipe|software rasterizer/i.test(rendererName);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, softwareGraphics ? .75 : 2));
+    if (softwareGraphics) {
+      // Keep CPU graphics interactive: movement is opt-in, not a permanent load.
+      autoRotation = false;
+      particleMotion = false;
+      syncRotation();
+      $('#motion-toggle').setAttribute('aria-checked', 'false');
+    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, softwareGraphics ? .5 : 2));
     app.dataset.graphicsQuality = softwareGraphics ? 'reduced' : 'standard';
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -255,7 +261,7 @@ function createScene() {
     host.appendChild(renderer.domElement);
 
     controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+    controls.enableDamping = !softwareGraphics;
     controls.dampingFactor = 0.06;
     controls.enablePan = false;
     controls.enableZoom = false;
@@ -517,7 +523,8 @@ function updateReticlePosition(id: OrganId) {
   if (id === 'body') {
     gsap.to([reticleInnerRing.material, reticleOuterPulse.material], {
       opacity: 0,
-      duration: 0.4,
+      duration: reducedMotion || softwareGraphics ? 0 : 0.4,
+      onUpdate: () => { needsRender = true; },
       onComplete: () => {
         reticleGroup.visible = false;
       }
@@ -538,7 +545,7 @@ function updateReticlePosition(id: OrganId) {
   gsap.fromTo(
     [reticleInnerRing.material, reticleOuterPulse.material],
     { opacity: 0 },
-    { opacity: 0.75, duration: 0.6, ease: 'power2.out' }
+    { opacity: 0.75, duration: reducedMotion || softwareGraphics ? 0 : 0.6, ease: 'power2.out', onUpdate: () => { needsRender = true; } }
   );
 }
 
@@ -781,7 +788,7 @@ function updateSpatialHotspots() {
 // Organ Material State Transitions (Active vs Ghosting)
 function applyOrganMaterials(animate = true) {
   if (!loaded) return;
-  const duration = reducedMotion || !animate ? 0 : 0.7;
+  const duration = reducedMotion || softwareGraphics || !animate ? 0 : 0.7;
 
   for (const [id, meshes] of groupMeshes) {
     const isFocused = selected === 'body' || id === selected;
@@ -815,7 +822,7 @@ function applyBodyGlow() {
   app.dataset.bodyTone=shown?bodyGlow.tone:'off';
   app.dataset.bodyGlow=shown?bodyGlow.color:'#000000';
   $('#body-glow-label').textContent=overlayVisible?bodyGlow.label:'Body glow off · natural tissue colors';
-  bodyAura?.set(bodyGlow,shown,reducedMotion);
+  bodyAura?.set(bodyGlow,shown,reducedMotion || softwareGraphics);
 }
 
 function overviewDistance() {
@@ -825,7 +832,6 @@ function overviewDistance() {
 // Select Organ with Cinematic 3/4 Camera Angles
 function selectOrgan(id: OrganId, animate = true, focusDetails = false) {
   if (!organs[id]) return;
-  clearTimeout(cameraDeadline);
   needsRender = true;
   selected = id;
   syncRotation();
@@ -874,28 +880,30 @@ function selectOrgan(id: OrganId, animate = true, focusDetails = false) {
     gsap.killTweensOf(camera.position);
     controls.enabled = false;
 
-    const duration = animate && !reducedMotion ? 1 : 0;
+    const duration = animate && !reducedMotion && !softwareGraphics ? 1 : 0;
 
-    cameraTween = gsap.timeline({
-      defaults: { duration, ease: 'power3.inOut' },
-      onComplete: () => {
-        clearTimeout(cameraDeadline);
-        controls.enabled = true;
-        controls.target.copy(target);
-        controls.update();
-        finishOrganFocus();
-        if(focusDetails) $('#organ-info-title').focus({preventScroll:true});
-      }
-    });
-
-    cameraTween
-      .to(camera.position, { x: camPos.x, y: camPos.y, z: camPos.z }, 0)
-      .to(controls.target, { x: target.x, y: target.y, z: target.z }, 0);
-    // Software rendering can make GSAP's lag smoothing prolong a one-second
-    // transition. Settle the current selection without leaving controls locked.
-    if (softwareGraphics && duration > 0) cameraDeadline = setTimeout(() => {
-      if (!disposed && selected === id) cameraTween?.progress(1);
-    }, 1500);
+    if (duration === 0) {
+      camera.position.copy(camPos);
+      controls.target.copy(target);
+      controls.enabled = true;
+      controls.update();
+      finishOrganFocus();
+      if (focusDetails && id !== 'body') $('#organ-info-title').focus({ preventScroll: true });
+    } else {
+      cameraTween = gsap.timeline({
+        defaults: { duration, ease: 'power3.inOut' },
+        onComplete: () => {
+          controls.enabled = true;
+          controls.target.copy(target);
+          controls.update();
+          finishOrganFocus();
+          if (focusDetails && id !== 'body') $('#organ-info-title').focus({ preventScroll: true });
+        }
+      });
+      cameraTween
+        .to(camera.position, { x: camPos.x, y: camPos.y, z: camPos.z }, 0)
+        .to(controls.target, { x: target.x, y: target.y, z: target.z }, 0);
+    }
   }
 
   if (!loaded) finishOrganFocus();
@@ -908,6 +916,9 @@ function finishOrganFocus() {
   needsRender = true;
   app.dataset.focusState = selected === 'body' ? 'body' : 'ready';
   syncRotation();
+  // Landmarks depend on the camera, not on finishing an expensive GPU draw.
+  camera.updateMatrixWorld(true);
+  updateSpatialHotspots();
   $('#organ-info-bar').hidden = selected === 'body';
   $('#organ-focus-status').textContent = selected === 'body' ? 'Whole-body view.' : `${organs[selected].name} focused. Organ information is available below the model.`;
 }
@@ -1004,7 +1015,7 @@ function render() {
   controls.autoRotate = autoRotation && selected === 'body' && !pointerInsideStage && !reducedMotion && app.dataset.focusState !== 'moving';
   app.dataset.rotationState = controls.autoRotate ? 'running' : 'paused';
   controls.update(delta);
-  if (reducedMotion && !needsRender) return;
+  if ((reducedMotion || softwareGraphics) && !needsRender && !controls.autoRotate && !particleMotion) return;
 
   if (loaded) {
     animationTime += delta;
@@ -1048,6 +1059,7 @@ function render() {
   }
 
   renderer.render(scene, camera);
+  app.dataset.renderCount = String(Number(app.dataset.renderCount || 0) + 1);
   // Rendering updates camera matrices. In reduced motion there may be no next
   // frame, so project landmarks only after the final camera transform is valid.
   if (loaded) updateSpatialHotspots();
@@ -1320,7 +1332,6 @@ listen(app,'pointerdown',(event)=>{
 // Cleanup is owned by React, including pending asset loads.
 function dispose() {
   disposed = true;
-  clearTimeout(cameraDeadline);
   cancelAnimationFrame(frameId);
   timer.dispose();
   resizeObserver?.disconnect();

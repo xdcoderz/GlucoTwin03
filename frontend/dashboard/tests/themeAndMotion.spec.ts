@@ -50,6 +50,10 @@ test('rotation pauses for interaction, organ focus and reduced motion',async({pa
   await page.goto('/');
   const hero=page.getByTestId('landing-experience');
   await expect(hero).toHaveAttribute('data-scene-status','ready',{timeout:20000});
+  if(await hero.getAttribute('data-graphics-quality')==='reduced') {
+    await expect(hero.getByRole('button',{name:'Auto-rotate model',exact:true})).toHaveAttribute('aria-pressed','false');
+    await hero.getByRole('button',{name:'Auto-rotate model',exact:true}).click();
+  }
   await page.mouse.move(0,0);
   await expect(hero).toHaveAttribute('data-rotation-state','running');
   await hero.locator('.landing-stage').hover();
