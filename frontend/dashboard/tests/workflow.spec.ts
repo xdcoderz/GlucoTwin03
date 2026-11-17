@@ -10,15 +10,15 @@ test('save, partial/gapped/complete follow-up, review, historical version and bo
   await page.route('**/api/worklist', async route => { await new Promise(done => setTimeout(done, 1500)); await route.continue(); });
   await page.goto('/#workspace');
   const workflow = page.getByRole('region', { name: 'Follow-up' });
-  await expect(workflow.getByText('Loading saved research records…', { exact: true })).toBeVisible();
-  await workflow.screenshot({ path: '../../docs/screenshots/workflow_loading.png' });
-  await openDisclosure(page,'.patient-list');
-  await expect(workflow.getByRole('button', { name: 'DEMO-001', exact: true })).toBeVisible();
+  const worklist = page.getByRole('region', { name: 'Patient worklist', exact: true });
+  await expect(worklist.getByText('Loading patient worklist…', { exact: true })).toBeVisible();
+  await expect(worklist.getByRole('button', { name: 'DEMO-001', exact: true })).toBeVisible();
   await page.unroute('**/api/worklist');
-  await expect(workflow).toContainText('Already ≥180 at baseline');
+  await expect(worklist).toContainText('Already ≥180 at baseline');
   await expect(workflow).toContainText('No scoring attempts saved');
   await workflow.screenshot({ path: '../../docs/screenshots/workflow_empty.png' });
   await page.getByRole('button', { name: /Score & save/ }).click();
+  await openDisclosure(page,'.journal-technical');
   await expect(workflow.locator('.record-id')).toContainText('Result');
   const first = (await (await request.get('http://127.0.0.1:18083/api/patients/DEMO-001/journal')).json())[0];
   expect(first.prediction.model_score).toBeNull();
@@ -35,7 +35,7 @@ test('save, partial/gapped/complete follow-up, review, historical version and bo
   await workflow.getByRole('button', { name: 'Complete follow-up replay' }).click();
   await expect(workflow.locator('.outcome-summary')).toContainText('8 of 8');
   await expect(workflow.locator('.outcome-summary')).toContainText('No event observed in complete samples');
-  await expect(page.locator('.glucose-reading')).toContainText('142');
+  await expect(page.locator('.meal-context-meta')).toContainText('142');
   await workflow.getByLabel('Local demo review note').fill('TEST ONLY: reviewed the fictional meal response; all sample times present.');
   await workflow.getByRole('button', { name: 'Mark reviewed', exact: true }).click();
   await openDisclosure(page,'.review-history-disclosure');
@@ -66,8 +66,7 @@ test('save, partial/gapped/complete follow-up, review, historical version and bo
   await workflow.getByRole('button', { name: 'Reopen review' }).click();
   await openDisclosure(page,'.review-history-disclosure');
   await expect(workflow.getByRole('list', { name: 'Review history' })).toContainText('Reopened');
-  await openDisclosure(page,'.patient-list');
-  await workflow.getByRole('button', { name: 'DEMO-002', exact: true }).click();
+  await worklist.getByRole('button', { name: 'DEMO-002', exact: true }).click();
   await expect(page.getByLabel('Synthetic scenario')).toHaveValue('DEMO-002');
   await expect(workflow).toContainText('No scoring attempts saved');
   await page.getByRole('button', { name: /Score & save/ }).click();
@@ -78,7 +77,8 @@ test('save, partial/gapped/complete follow-up, review, historical version and bo
   expect(errors).toEqual([]);
 });
 
-test('mobile keyboard review and workflow dependency failure/recovery', async ({ page }) => {
+test('mobile keyboard review and workflow dependency failure/recovery', async ({ page, request }) => {
+  await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
   await page.setViewportSize({ width: 400, height: 860 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/#workspace');

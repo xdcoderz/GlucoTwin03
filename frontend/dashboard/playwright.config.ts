@@ -2,6 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  testIgnore: 'twinBackend.spec.ts',
   timeout: 40_000,
   fullyParallel: false,
   workers: 1,

@@ -93,3 +93,8 @@ A positive valid sample can establish an observed event with partial coverage. A
 
 Replay response: `{"synthetic":true,"stage":"complete","accepted":8,"duplicates":0,"modelScored":false}`. Repeated stages retain stable event IDs, report duplicates, and do not erase prior observations. The synthetic timeline is shared from `follow_up_synthetic.json`. Missing saved attempt returns 409; invalid action/stage/note returns 400. Public application input remains synthetic-only. See `WORKFLOW_GUIDE.md` for examples and limitations.
 
+
+
+## Physiological twin extension
+
+The separate six-state twin API, persisted context/forecast records, calibration gates and browser flow are documented in [Twin integration](TWIN_INTEGRATION.md). This extension does not change the existing meal-classifier contract.

@@ -7,6 +7,7 @@ import TwinExperience from "./anatomy/TwinExperience";
 import WorkspaceScenarios from "./anatomy/WorkspaceScenarios";
 import type { DashboardData, Prediction, Readiness } from "./types";
 import ResearchWorkflow from "./workflow/ResearchWorkflow";
+import PatientWorklist from "./workflow/PatientWorklist";
 import PhaseOneFlow from "./workflow/PhaseOneFlow";
 import MotionDashboard from "./motion/MotionDashboard";
 import LandingExperience from './landing/LandingExperience';
@@ -132,12 +133,14 @@ function App() {
       <div data-destination="overview" hidden={site.destination !== 'overview'}>{site.destination === 'overview' && <LandingExperience />}<Overview /></div>
       <div data-destination="evidence" hidden={site.destination !== 'evidence'}><Evidence /></div>
       <div id="workspace" data-destination="workspace" hidden={site.destination !== 'workspace'}>
+
         {loading ? <div className="destination-loading" role="status">Loading the synthetic patient…<div className="skeleton panel-skeleton" /></div> : !data || !prediction ? <section className="error-panel" role="alert"><h1 tabIndex={-1}>Patient data is unavailable</h1><p>{connectionError}</p><button className="button button-primary" onClick={() => void load()}>Retry connection</button></section> : <>
       <section id="patient-record" className="page-heading">
         <div><p className="eyebrow">01 / Patient &amp; meal</p><h1 tabIndex={-1}>Patient workspace</h1><p className="subheading">{patientId} · {data.patient.ageYears} years · {capitalize(data.patient.sex)} · HbA1c {data.patient.hba1cPercent.toFixed(1)}%</p></div>
         <div className="heading-actions"><div className="patient-switcher"><label htmlFor="patient-select">Synthetic scenario</label><select id="patient-select" value={patientId} onChange={(event) => selectPatient(event.target.value)}><option value="DEMO-001">Patient 001 · lower-score case</option><option value="DEMO-002">Patient 002 · high-score case</option></select></div></div>
       </section>
 
+      {site.destination === 'workspace' && <PatientWorklist api={`${API}/api`} patientId={patientId} revision={newAttemptRevision} onSelect={selectPatient} />}
       <nav className="workspace-nav workflow-path" aria-label="Dashboard sections"><a href="#patient-record"><span aria-hidden="true">01</span>Patient &amp; meal</a><a href="#phase-one-flow"><span aria-hidden="true">02</span>Glucose history</a><a href="#score-step"><span aria-hidden="true">03</span>Score &amp; factors</a><a href="#workflow-section"><span aria-hidden="true">04</span>Follow-up</a><a href="#review-section"><span aria-hidden="true">05</span>Review</a></nav>
       <details className="panel context-panel"><summary>Full synthetic patient record</summary>
         <div className="panel-heading"><div><p className="eyebrow">STATIC SYNTHETIC RECORD</p><h2>Patient context</h2></div><span className="record-tag">Fictional demo profile</span></div>
@@ -190,7 +193,7 @@ function App() {
 
       </section></div>
       <WorkspaceScenarios key={`scenarios-${patientId}`} data={data} api={`${API}/api`} active={site.destination==='workspace'} />
-      <div id="workflow-section"><ResearchWorkflow key={data.patient.patientId} api={`${API}/api`} patientId={data.patient.patientId} refreshKey={data.journal?.predictionId || ''} newAttemptRevision={newAttemptRevision} onSelect={selectPatient} onSaved={load} connected={!connectionError} currentData={data} /></div>
+      <div id="workflow-section"><ResearchWorkflow key={data.patient.patientId} api={`${API}/api`} patientId={data.patient.patientId} refreshKey={data.journal?.predictionId || ''} newAttemptRevision={newAttemptRevision} onSaved={load} connected={!connectionError} currentData={data} /></div>
 
 
       </>}

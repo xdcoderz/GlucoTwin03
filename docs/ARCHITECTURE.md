@@ -35,3 +35,8 @@ The replay publisher is the simulated sensor source. No IoT device or MQTT broke
 ## Prediction pipeline
 
 Collect -> Engineer the documented 43 features -> Apply the artifact's median imputation, missing indicators, and scaling -> Score with logistic regression -> Explain supported leading factors.
+
+
+## Physiological twin extension
+
+The separate six-state twin API, persisted context/forecast records, calibration gates and browser flow are documented in [Twin integration](TWIN_INTEGRATION.md). This extension does not change the existing meal-classifier contract.

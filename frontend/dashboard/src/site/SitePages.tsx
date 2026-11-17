@@ -14,7 +14,7 @@ export function Evidence() {
     <header className="destination-heading"><p className="section-label">Evidence &amp; method</p><h1 id="evidence-title" tabIndex={-1}>What the prototype demonstrates</h1><p>The prediction target, held-out results and limits in one place.</p></header>
     <div className="evidence-metrics"><article><strong>493</strong><span>held-out test meals</span></article><article><strong>15</strong><span>test patients</span></article><article><strong>120 min</strong><span>event horizon</span></article></div>
     <div className="evidence-intro-grid">
-      <section className="evidence-section"><h2>Prediction target</h2><p>Glucose ≥180 mg/dL <strong>or</strong> a rise ≥40 mg/dL from the meal-time baseline, at any point in the next 120 minutes.</p><p className="evidence-small">One event score; no predicted glucose curve.</p></section>
+      <section className="evidence-section"><h2>Prediction target</h2><p>Glucose ≥180 mg/dL <strong>or</strong> a rise ≥40 mg/dL from the meal-time baseline, at any point in the next 120 minutes.</p><p className="evidence-small">These results evaluate the event classifier. The separate physiological twin produces experimental curves; its clinical accuracy has not been validated.</p></section>
       <section className="evidence-section"><h2>Data and test split</h2><p>Logistic regression trained on ShanghaiT2DM-derived meal windows. Patients are separated across training, validation and test sets.</p><p className="evidence-small">The public demo uses synthetic patient records and simulated glucose.</p></section>
     </div>
     <div className="evidence-results-grid">
