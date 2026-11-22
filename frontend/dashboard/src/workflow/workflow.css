@@ -56,3 +56,30 @@
 .research-workflow button:disabled { cursor:not-allowed; opacity:.55; }
 @media (max-width:1050px) { .journal-layout { grid-template-columns:170px minmax(0, 1fr); gap:16px; } .journal-detail { padding-left:16px; } .journal-detail-heading { flex-direction:column; gap:8px; } }
 @media (max-width:760px) { .research-workflow { padding:18px; } .workflow-heading, .journal-heading { flex-direction:column; gap:12px; } .workflow-heading h2 { font-size:21px; } .workflow-clock { white-space:normal; } .journal-layout { grid-template-columns:1fr; } .journal-versions { flex-direction:row; max-height:none; overflow-x:auto; } .journal-versions button { min-width:190px; } .journal-detail { border-left:0; border-top:1px solid var(--line); padding:20px 0 0; } .journal-metadata { grid-template-columns:1fr; gap:12px; } .worklist-table { min-width:780px; } .patient-row-button { min-height:44px; } }
+.patient-worklist { margin-block: 1rem; }
+.worklist-filters { display: flex; flex-wrap: wrap; gap: .75rem; }
+.worklist-filters label { display: grid; gap: .35rem; min-width: min(100%, 12rem); }
+.worklist-filters input, .worklist-filters select {
+  font: inherit;
+  color: var(--foreground);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: .5rem;
+  padding: .55rem .75rem;
+}
+.patient-worklist .worklist-scroll { margin-bottom: 0; }
+.forecast-values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+.forecast-values dt { font-size: .8rem; color: var(--muted-foreground); }
+.forecast-values dd { margin: .2rem 0 0; font-weight: 650; }
+@media (max-width: 480px) { .forecast-values { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.twin-backend-panel { padding: 12px 0; min-width: 0; }
+.twin-scenario-form { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 12px; margin: 16px 0; }
+.twin-scenario-form label { display: grid; gap: 6px; font-size: .85rem; }
+.twin-scenario-form input { width: 100%; min-width: 0; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--soft); color: inherit; }
+.twin-scenario-form input:focus-visible { outline: 2px solid #629cf5; outline-offset: 2px; }
+.twin-form-note { grid-column: 1/-1; }
+.twin-forecast-chart { width: 100%; min-width: 0; margin: 18px 0; }
+.twin-table-scroll { overflow-x: auto; margin: 14px 0; }
+.twin-table-scroll table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.twin-table-scroll th,.twin-table-scroll td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); }
+.twin-backend-panel p,.twin-backend-panel li { overflow-wrap: anywhere; }

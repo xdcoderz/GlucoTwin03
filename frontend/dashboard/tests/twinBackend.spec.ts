@@ -1,0 +1,64 @@
+import { expect,test } from '@playwright/test';
+const api='http://127.0.0.1:18085/api';
+const origin='2026-10-30T12:00:00Z';
+test.beforeAll(async({request})=>{
+  for(const id of ['DEMO-001','DEMO-002'])for(let i=0;i<=8;i++){
+    const response=await request.post(`${api}/cgm/events`,{data:{patientId:id,eventId:`twin-browser-${id}-${i}`,observedAt:new Date(Date.parse(origin)-(8-i)*15*60000).toISOString(),glucoseMgDl:(id==='DEMO-001'?130:170)+i*1.5,source:'synthetic-integration-test'}});
+    expect(response.status()).toBe(202);
+  }
+});
+test('real services persist physiology, context and curves, keep event scoring independent',async({page,request})=>{
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/?patient=DEMO-001#workspace');
+  await page.getByText('Glucose forecast at selected reading',{exact:true}).click();
+  const panel=page.locator('.replay-forecast');
+  await expect(panel.getByRole('button',{name:'Run & save twin forecast'})).toBeEnabled();
+  await panel.getByLabel('Additional carbohydrate (g)',{exact:true}).fill('40');
+  await panel.getByLabel('Walking duration (minutes)').fill('20');
+  await panel.getByRole('button',{name:'Run & save twin forecast'}).click();
+  await expect(panel.getByTestId('replay-forecast')).toBeVisible({timeout:65000});
+  await expect(panel).toContainText('prior-parameter');
+  await expect(panel).toContainText('+120 min');
+  const rows=await(await request.get(`${api}/patients/DEMO-001/twin/forecasts`)).json();
+  expect(rows[0].result.state).toHaveLength(6);
+  expect(rows[0].result.curve[5].scenario).toBeGreaterThan(rows[0].result.curve[5].baseline);
+  expect(rows[0].input.scenario.carbsGrams).toBe(40);
+  const other=await(await request.get(`${api}/patients/DEMO-002/twin/forecasts`)).json();expect(other).toHaveLength(0);
+  await page.mouse.move(0,0);
+  await page.screenshot({path:'../../docs/screenshots/twin_backend_desktop.png',fullPage:true});
+  await page.getByRole('button',{name:'Previous sample',exact:true}).click();
+  await expect(panel.getByTestId('replay-forecast')).toHaveCount(0);
+  await panel.getByText('Record meal or wearable context at selected reading',{exact:true}).click();
+  await panel.getByLabel('Recorded carbohydrate (g)',{exact:true}).fill('25');
+  await panel.getByLabel('Heart rate (bpm)',{exact:true}).fill('80');
+  await panel.getByRole('button',{name:'Save recorded context'}).click();
+  await expect(panel).toContainText('Context saved.');
+  await panel.getByRole('button',{name:'Run & save twin forecast'}).click();
+  await expect(panel.getByTestId('replay-forecast')).toBeVisible({timeout:65000});
+  const next=await(await request.get(`${api}/patients/DEMO-001/twin/forecasts`)).json();
+  expect(next[0].input.readings).toHaveLength(8);expect(next[0].input.context).toHaveLength(1);
+  expect(next[0].result.wearableContext[0].heartRateBpm).toBe(80);
+  await page.setViewportSize({width:400,height:860});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.mouse.move(0,0);
+  await page.screenshot({path:'../../docs/screenshots/twin_backend_mobile.png',fullPage:true});
+  // Response loss never fabricates a browser fallback.
+  await page.route('**/twin/forecasts',r=>r.fulfill({status:503,json:{reason:'TEST: twin offline'}}));
+  await panel.getByRole('button',{name:'Run & save twin forecast'}).click();
+  await expect(panel.getByRole('alert')).toContainText('No substitute forecast');
+  await expect(panel.getByTestId('replay-forecast')).toHaveCount(0);
+  await expect(panel.getByLabel('Additional carbohydrate (g)',{exact:true})).toHaveValue('40');
+  await panel.screenshot({path:'../../docs/screenshots/twin_backend_unavailable.png'});
+  await page.unroute('**/twin/forecasts');
+  await panel.getByRole('button',{name:'Run & save twin forecast'}).focus();await page.keyboard.press('Enter');
+  await expect(panel.getByTestId('replay-forecast')).toBeVisible({timeout:65000});
+  await panel.getByText('Saved twin forecasts',{exact:true}).click();
+  const download=page.waitForEvent('download');
+  await panel.getByRole('button',{name:'Download saved twin JSON'}).first().click();
+  await (await download).saveAs('../../tmp/twin-browser-export.json');
+  await page.getByText('View patient twin',{exact:true}).click();
+  await expect(page.locator('#patient-twin canvas')).toBeVisible({timeout:30000});
+  const score=await request.post(`${api}/patients/DEMO-001/refresh`);expect(score.ok()).toBe(true);
+  expect((await score.json()).status).toBe('available');
+  expect(errors).toEqual([]);
+});

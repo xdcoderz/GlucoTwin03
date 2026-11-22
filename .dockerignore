@@ -3,6 +3,7 @@
 **/node_modules
 **/target
 **/.venv
+**/.venv-twin
 **/__pycache__
 **/dist
 *.mv.db

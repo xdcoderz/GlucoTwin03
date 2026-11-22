@@ -16,6 +16,7 @@ const TwinExperience = lazy(() => import('./anatomy/TwinExperience'));
 const WorkspaceScenarios = lazy(() => import('./anatomy/WorkspaceScenarios'));
 const MealSimulator = lazy(() => import('./meal/MealSimulator'));
 const ResearchWorkflow = lazy(() => import('./workflow/ResearchWorkflow'));
+const PatientWorklist = lazy(() => import('./workflow/PatientWorklist'));
 
 const API = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 const initialPatientId = new URLSearchParams(window.location.search).get("patient") === "DEMO-002" ? "DEMO-002" : "DEMO-001";
@@ -157,6 +158,7 @@ function App() {
         <div className="heading-actions"><div className="patient-switcher"><label htmlFor="patient-select">Synthetic scenario</label><select id="patient-select" value={patientId} onChange={(event) => selectPatient(event.target.value)}><option value="DEMO-001">Patient 001 · lower-score case</option><option value="DEMO-002">Patient 002 · high-score case</option></select></div></div>
       </section>
 
+      {site.destination === 'workspace' && <PatientWorklist api={`${API}/api`} patientId={patientId} revision={newAttemptRevision} onSelect={selectPatient} />}
       <nav className="workspace-nav workflow-path" aria-label="Dashboard sections"><a href="#patient-record"><span aria-hidden="true">01</span>Patient &amp; meal</a><a href="#phase-one-flow"><span aria-hidden="true">02</span>Glucose history</a><a href="#score-step"><span aria-hidden="true">03</span>Score &amp; factors</a><a href="#workflow-section"><span aria-hidden="true">04</span>Follow-up</a><a href="#review-section"><span aria-hidden="true">05</span>Review</a></nav>
       <section className="workspace-mode" aria-label="Data source and service status"><div><strong>{prediction.reason === 'module_preview_no_model' || data.patient.displayName.startsWith('PREVIEW ONLY') ? 'PREVIEW · synthetic case · scoring unavailable' : 'SYNTHETIC RESEARCH DEMO'}</strong><p>For researchers and clinician review. Recorded observations, frozen model results and fictional scenarios stay separate.</p></div><div className="workspace-services"><span>{connectionError ? 'Patient API disconnected' : 'Patient API connected'}</span><span>{connectionError || !readiness ? 'Model status unconfirmed' : readiness.model.status === 'ready' ? 'Model ready' : 'Model unavailable'}</span></div></section>
       <details className="panel context-panel"><summary>Full synthetic patient record</summary>
@@ -211,7 +213,7 @@ function App() {
 
       </section></div>
       <WorkspaceScenarios key={`scenarios-${patientId}`} data={data} api={`${API}/api`} active={site.destination==='workspace'} />
-      <div id="workflow-section"><ResearchWorkflow key={data.patient.patientId} api={`${API}/api`} patientId={data.patient.patientId} refreshKey={data.journal?.predictionId || ''} newAttemptRevision={newAttemptRevision} onSelect={selectPatient} onSaved={load} connected={!connectionError} currentData={data} /></div>
+      <div id="workflow-section"><ResearchWorkflow key={data.patient.patientId} api={`${API}/api`} patientId={data.patient.patientId} refreshKey={data.journal?.predictionId || ''} newAttemptRevision={newAttemptRevision} onSaved={load} connected={!connectionError} currentData={data} /></div>
 
 
       </Suspense></SectionLoadBoundary>}

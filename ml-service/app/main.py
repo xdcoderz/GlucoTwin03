@@ -14,6 +14,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+from .twin_engine import TwinRequest, calculate as calculate_twin
 
 FEATURE_NAMES = [
     "baseline_glucose_mg_dl", "glucose_lag_15_min_mg_dl", "glucose_lag_30_min_mg_dl",
@@ -38,6 +39,15 @@ FEATURE_NAMES = [
 MODEL_PATH = Path(os.getenv("MODEL_PATH", "/app/artifacts/logistic_regression.joblib"))
 METADATA_PATH = Path(os.getenv("MODEL_METADATA_PATH", "/app/artifacts/model_metadata.json"))
 app = FastAPI(title="GlucoTwin research model service", version="0.1.0")
+
+
+@app.post("/twin/forecast")
+def twin_forecast(request: TwinRequest) -> dict:
+    try:
+        return calculate_twin(request)
+    except (ValueError, ArithmeticError, np.linalg.LinAlgError) as exc:
+        raise HTTPException(status_code=503, detail="twin_numerical_failure") from exc
+
 model = None
 metadata: dict = {}
 load_error: str | None = None

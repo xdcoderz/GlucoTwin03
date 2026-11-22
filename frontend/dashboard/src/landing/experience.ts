@@ -92,6 +92,7 @@ app.innerHTML = `
         </div>
       </section>
     <aside class="editorial-container" aria-label="Organ explorer">
+      <div class="organ-explorer-heading"><p>Explore the anatomy</p><h2>Connected by glucose.</h2><span>Select an organ to look closer.</span></div>
       <nav class="organ-list" aria-label="Choose an organ">
         <ul>
           ${organOrder.filter(id => id !== 'body').map(id => `

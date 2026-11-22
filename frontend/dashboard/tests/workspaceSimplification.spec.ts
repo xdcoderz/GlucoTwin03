@@ -8,7 +8,7 @@ test('patient cockpit, closed tools and one timeline shared with the optional tw
   const ws=page.locator('[data-destination=workspace]');
   await expect(ws.locator('.review-form')).toBeVisible();
   await expect(ws.getByRole('navigation',{name:'Dashboard sections'}).getByRole('link')).toHaveText(['01Patient & meal','02Glucose history','03Score & factors','04Follow-up','05Review']);
-  for(const selector of ['#patient-twin','.patient-list','.saved-attempts','.journal-technical','.demo-controls','.readiness-technical'])await expect(ws.locator(selector)).not.toHaveAttribute('open','');
+  for(const selector of ['#patient-twin','.replay-forecast','.saved-attempts','.journal-technical','.demo-controls','.readiness-technical'])await expect(ws.locator(selector)).not.toHaveAttribute('open','');
   await expect(ws.getByTestId('anatomy-stage')).toHaveCount(0);
   await expect(ws.getByTestId('pattern-panel')).toHaveCount(0);
   await expect(ws.locator('.timeline-chart')).toHaveCount(1);

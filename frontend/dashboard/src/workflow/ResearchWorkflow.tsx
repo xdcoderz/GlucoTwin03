@@ -3,13 +3,12 @@ import ResearchExport from '../reports/ResearchExport';
 import type { JournalRecord, DashboardData } from '../types';
 import './workflow.css';
 
-type Props = { api: string; patientId: string; refreshKey: string; newAttemptRevision?: number; onSelect: (id: string) => void; onSaved: () => Promise<void>; connected?: boolean; currentData?: DashboardData };
-const time = (value: string | null) => value ? new Date(value).toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC') : 'Not recorded';
+type Props = { api: string; patientId: string; refreshKey: string; newAttemptRevision?: number; onSaved: () => Promise<void>; connected?: boolean; currentData?: DashboardData };
+export const time = (value: string | null) => value ? new Date(value).toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC') : 'Not recorded';
 export const outcomeLabel = (status: string) => ({ awaiting_outcome: 'Awaiting follow-up', partial_follow_up: 'Partial follow-up', insufficient_follow_up: 'Incomplete follow-up', event_observed: 'Event observed in samples', no_event_observed_complete: 'No event observed in complete samples' }[status] || status);
-const scoreText = (row: JournalRecord) => row.prediction.status === 'available' && row.prediction.model_score !== null ? row.prediction.model_score.toFixed(3) : row.prediction.status.replaceAll('_', ' ');
+export const scoreText = (row: JournalRecord) => row.prediction.status === 'available' && row.prediction.model_score !== null ? row.prediction.model_score.toFixed(3) : row.prediction.status.replaceAll('_', ' ');
 
-export default function ResearchWorkflow({ api, patientId, refreshKey, newAttemptRevision = 0, onSelect, onSaved, connected = true, currentData }: Props) {
-  const [rows, setRows] = useState<JournalRecord[]>([]);
+export default function ResearchWorkflow({ api, patientId, refreshKey, newAttemptRevision = 0, onSaved, connected = true, currentData }: Props) {
   const [records, setRecords] = useState<JournalRecord[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   // An explicit score request opens its new result; background polling preserves selection.
@@ -22,11 +21,11 @@ export default function ResearchWorkflow({ api, patientId, refreshKey, newAttemp
   const load = useCallback(async () => {
     const request = ++serial.current;
     try {
-      const responses = await Promise.all([fetch(`${api}/worklist`, { cache: 'no-store', signal: AbortSignal.timeout(6500) }), fetch(`${api}/patients/${patientId}/journal`, { cache: 'no-store', signal: AbortSignal.timeout(6500) })]);
-      if (responses.some(response => !response.ok)) throw new Error('Workflow unavailable');
-      const [worklist, journal] = await Promise.all(responses.map(response => response.json())) as [JournalRecord[], JournalRecord[]];
+      const response = await fetch(`${api}/patients/${patientId}/journal`, { cache: 'no-store', signal: AbortSignal.timeout(6500) });
+      if (!response.ok) throw new Error('Workflow unavailable');
+      const journal: JournalRecord[] = await response.json();
       if (request !== serial.current) return;
-      setRows(worklist); setRecords(journal);
+      setRecords(journal);
       setSelectedId(current => current && journal.some(row => row.predictionId === current) ? current : journal[0]?.predictionId || null);
       setState('ready');
     } catch { if (request === serial.current) setState('error'); }
@@ -53,9 +52,7 @@ export default function ResearchWorkflow({ api, patientId, refreshKey, newAttemp
   return <section className="research-workflow" aria-labelledby="workflow-title">
     <div className="workflow-heading"><div><p className="section-label">04 / Follow-up</p><h2 id="workflow-title">Follow-up</h2><p>Later observations for the selected saved attempt.</p></div><span className="workflow-clock">SYNTHETIC REPLAY CLOCK</span></div>
     {state === 'loading' && <p role="status">Loading saved research records…</p>}
-    {state === 'error' && <div className="workflow-error" role="alert"><strong>Saved records could not be loaded.</strong><p>Displayed rows may be out of date. Retry before taking a review action.</p><button className="button button-secondary" onClick={() => void load()}>Retry worklist</button></div>}
-    {state === 'ready' && rows.length === 0 && <p role="status">No enabled synthetic scenarios. Load the demo fixtures, then reload the worklist.</p>}
-    {rows.length > 0 && <details className="workspace-disclosure patient-list"><summary>Patient list ({rows.length})</summary><div className="worklist-scroll" tabIndex={0} role="region" aria-label="Patient worklist table; scroll horizontally for all columns"><table className="worklist-table"><caption>Research review list. Model flags are not clinical priorities. Scroll horizontally for all columns on narrow screens.</caption><thead><tr><th>Patient / meal baseline</th><th>Recorded baseline</th><th>Model output</th><th>Follow-up</th><th>Review</th></tr></thead><tbody>{rows.map(row => <tr key={row.patientId} className={row.patientId === patientId ? 'worklist-current' : ''}><td><button className="patient-row-button" onClick={() => onSelect(row.patientId)} aria-current={row.patientId === patientId ? 'true' : undefined}>{row.patientId}</button><small>{time(row.baselineAt)}</small></td><td><strong>{row.baselineGlucoseMgDl === null ? 'Not recorded' : `${row.baselineGlucoseMgDl.toFixed(0)} mg/dL`}</strong>{row.baselineAlreadyHigh && <span className="workflow-tag observation">Already ≥180 at baseline</span>}</td><td><strong>{scoreText(row)}</strong>{row.prediction.status === 'available' && <small>{row.prediction.predicted_event ? 'Research threshold flag' : 'Below research threshold; not a safety clearance'}</small>}{row.qualityIssues.length > 0 && <small>History requires attention</small>}{row.inputChanged && <span className="workflow-tag observation">Saved inputs differ from current data</span>}<small>{row.computedAt ? `Computed ${time(row.computedAt)}` : 'No attempt saved'}</small></td><td>{outcomeLabel(row.outcome.status)}<small>{row.outcome.receivedSamples}/8 expected sample times</small></td><td>{row.reviewState === 'reviewed' ? 'Reviewed (local demo)' : 'Awaiting review'}</td></tr>)}</tbody></table></div></details>}
+    {state === 'error' && <div className="workflow-error" role="alert"><strong>Saved records could not be loaded.</strong><p>Displayed rows may be out of date. Retry before taking a review action.</p><button className="button button-secondary" onClick={() => void load()}>Retry saved records</button></div>}
     <div className="journal-heading"><div><p className="eyebrow">SELECTED PATIENT · {patientId}</p><h3>Saved meal result</h3></div></div>
     <p className="workflow-note">Saved attempts retain their original inputs. Review notes are local demo records.</p>
     {records.length === 0 && state === 'ready' && <div className="journal-empty"><strong>No scoring attempts saved for this meal.</strong><p>Use Score & save meal in the workspace to freeze the baseline before replaying follow-up. Unavailable model results can also be recorded.</p></div>}

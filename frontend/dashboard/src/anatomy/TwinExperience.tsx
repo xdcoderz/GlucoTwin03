@@ -5,6 +5,7 @@ import type { DashboardData, Reading } from '../types';
 import BodyTwinPanel from './BodyTwinPanel';
 import PatientCockpit from './PatientCockpit';
 import ProjectionPanel from './ProjectionPanel';
+import ReplayForecast from '../workflow/ReplayForecast';
 import { inspectPattern } from './visualResearch';
 import { glucoseSignal, mockTimeline, recordedTimeline, SCENARIOS, utcLabel, type ScenarioId } from './twinSignals';
 import './twinExperience.css';
@@ -150,6 +151,7 @@ export default function TwinExperience({ data, api, fixedPhase, active = true, w
       <summary>View patient twin</summary>
       {twinOpen && <><BodyTwinPanel patientId={data.patient.patientId} glucose={baseline} modelScore={score} medications={data.patient.medications} signal={{...signal,playing:active && twinOpen && signal.playing}} phase="recorded"/><button className="button button-secondary" aria-pressed={animateSignal} disabled={reduced || signal.glucose === null || playing} onClick={()=>setAnimateSignal(value=>!value)}>{animateSignal ? 'Pause overlay motion' : 'Animate glucose overlay'}</button></>}
     </details>
+    <ReplayForecast api={api} patientId={data.patient.patientId} origin={point?.observedAt} unavailable={sourceUnavailable || Boolean(recorded.issue)} />
   </section>;
 
   return <section ref={studio} className={`twin-experience ${phase === 'vision' ? 'vision-mode' : ''}`} aria-label="Patient digital twin studio" data-testid="twin-experience" data-phase={phase} data-instance={instanceScope || 'future'}>

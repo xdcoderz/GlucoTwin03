@@ -26,6 +26,8 @@ Our work has two product phases: **Phase 1 - working research prototype** and **
 
 At the meal-time baseline, the model looks 120 minutes ahead. An event is glucose >= 180 mg/dL **or** a rise >= 40 mg/dL from baseline, at any point in the window. See [Clinical Scope](docs/CLINICAL_SCOPE.md).
 
+**Physiological twin integration:** the workspace now calls a separate six-state backend twin with UKF updates, meal/walk comparison curves, gated patient calibration, drift handling, simulation bands and persisted results. CGM summaries and optional recorded wearable context accompany the forecast. Short demo histories use prior parameters. See [Twin integration](docs/TWIN_INTEGRATION.md) for the exact behavior, API and tests.
+
 ## Demo architecture
 
 ```text
