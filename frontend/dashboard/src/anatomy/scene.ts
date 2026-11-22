@@ -33,7 +33,7 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
   const deviceName = String(deviceInfo ? context.getParameter(deviceInfo.UNMASKED_RENDERER_WEBGL) : context.getParameter(context.RENDERER));
   const softwareGraphics = /swiftshader|llvmpipe|software rasterizer/i.test(deviceName);
   // CPU rendering needs a smaller drawing buffer to keep the form responsive.
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, softwareGraphics ? .75 : 1.7));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, softwareGraphics ? .55 : 1.7));
   host.dataset.graphicsQuality = softwareGraphics ? 'reduced' : 'standard';
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -250,7 +250,7 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
   }
 
   function applyBodyGlow() {
-    bodyAura.set(bodyGlow,overlayEnabled && hasSignal && bodyGlow.tone!=='unavailable',reducedMotion.matches);
+    bodyAura.set(bodyGlow,overlayEnabled && hasSignal && bodyGlow.tone!=='unavailable',reducedMotion.matches || softwareGraphics);
   }
 
   function animateTo(position: THREE.Vector3, target: THREE.Vector3, instant = false) {

@@ -1,6 +1,7 @@
 import { FEATURES } from '../site/features';
 import { useEffect, useRef, useState } from 'react';
 import { ORGAN_IDS, ORGANS, type OrganId, type ViewId } from './organs';
+import PatientBodyDiagram from './PatientBodyDiagram';
 import type { AnatomyScene } from './scene';
 import type { TwinSignal } from './twinSignals';
 import './anatomy.css';
@@ -13,6 +14,7 @@ type Props = {
   signal?: TwinSignal;
   phase?: 'recorded' | 'vision';
   instanceKey?: string;
+  compact?: boolean;
   displayMode?: 'glucose'|'meal_score';
   children?: React.ReactNode;
   playbackControls?: React.ReactNode;
@@ -27,7 +29,7 @@ const TOUR: { id: ViewId; title: string; explanation: string }[] = [
   { id: 'fat', title: 'Connect the background context', explanation: `${ORGANS.fat.description} GlucoTwin scores one defined glucose event over the next 120 minutes. It does not simulate these organs.` },
 ];
 
-export default function BodyTwinPanel({ patientId, glucose, modelScore, medications = [], signal, phase = 'recorded', instanceKey, displayMode='glucose', children, playbackControls }: Props) {
+export default function BodyTwinPanel({ patientId, glucose, modelScore, medications = [], signal, phase = 'recorded', instanceKey, compact = false, displayMode='glucose', children, playbackControls }: Props) {
   const idPrefix = `anatomy-${instanceKey || phase}`;
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -112,7 +114,7 @@ export default function BodyTwinPanel({ patientId, glucose, modelScore, medicati
 
   const organ = selected === 'body' ? null : ORGANS[selected];
   const keyboardAction = (event: React.MouseEvent) => event.detail === 0;
-  return <section className="anatomy" aria-labelledby={`${idPrefix}-title`}>
+  return <section className={`anatomy${compact ? ' anatomy-compact' : ''}`} aria-labelledby={`${idPrefix}-title`}>
     <div className="anatomy-heading">
       <div><p className="eyebrow">THE VIRTUAL PATIENT</p><h2 id={`${idPrefix}-title`}>{displayMode==='meal_score'?'Your meal what-if twin':'Inside the glucose story'}</h2><p className="anatomy-subtitle">{displayMode==='meal_score'?'The aura shows model-score context, not predicted glucose. Explore the organs behind the meal response.':'Glucose drives the overlay. Zoom in to explore the pancreas and connected structures.'}</p></div>
       <div className="tour-entry"><span className="anatomy-mode">ILLUSTRATIVE 3D ANATOMY</span>{FEATURES.guidedAnatomyTour && <button className="button button-secondary" onClick={event => tourStep(0, keyboardAction(event))}>{tourIndex === null ? 'Start guided tour' : 'Restart tour'}</button>}</div>
@@ -127,10 +129,16 @@ export default function BodyTwinPanel({ patientId, glucose, modelScore, medicati
       <div className="twin-viewer">
         <div className="twin-stage" ref={host} data-testid="anatomy-stage" data-view={selected} data-stage={stage} data-status={status} data-glucose={signal?.glucose ?? 'none'} data-signal-color={signal?.color} data-body-tone={showOverlay ? signal?.bodyGlow?.tone || 'unavailable' : 'off'} data-body-glow={showOverlay ? signal?.bodyGlow?.color : '#000000'} data-playing={signal?.playing ? 'true' : 'false'} data-score-context={modelScore ?? 'unavailable'} data-medication-context={medicationContext&&recordedMedications.length>0?'shown':'hidden'}>
           <canvas key={attempt} ref={canvas} tabIndex={status === 'ready' ? 0 : -1} aria-label="Interactive neck-to-knees anatomy. Drag to rotate. Click or focus the view, then scroll to zoom toward the pancreas. Plus and minus zoom, arrow keys rotate, R resets." aria-describedby={`${idPrefix}-instructions`} />
-          <div className="twin-view-label" aria-hidden="true"><span>{stage === 'body' ? '01' : stage === 'abdomen' ? '02' : '03'}</span>{stage === 'body' ? 'BODY OVERVIEW' : stage === 'abdomen' ? 'ABDOMINAL SYSTEMS' : 'ORGAN DETAIL'}</div>
+          <div className="twin-view-label" aria-hidden="true">{selected === 'body' ? 'Body overview' : ORGANS[selected].name}</div>
           <div className="twin-orientation" aria-hidden="true">ANTERIOR VIEW AT RESET<br/>SCHEMATIC / NOT TO SCALE</div>
-          <div className="twin-signal-key"><strong style={{ color: showOverlay ? signal?.color : undefined }}>{!showOverlay ? 'ANATOMY COLORS / OVERLAY HIDDEN' : displayMode==='meal_score'?'MEAL WHAT-IF SCORE CONTEXT':phase === 'vision' ? 'SIMULATED GLUCOSE OVERLAY' : 'RECORDED GLUCOSE OVERLAY'}</strong><span>{showOverlay ? displayMode==='meal_score'?<>Score flag, not glucose forecast<br/>Natural organ tissue colors</>:<>Overlay brightness tracks glucose<br/>Paths are schematic, not blood vessels</> : <>Approximate natural tissue colors<br/>Body glow hidden</>}<br/>Organ colors do not indicate health</span></div>
+          {status === 'ready' && <div className="twin-signal-key">
+            {compact ? <>
+              <strong>{showOverlay && signal?.glucose != null ? `${signal.glucose.toFixed(0)} mg/dL · selected glucose` : showOverlay ? 'Glucose overlay unavailable' : 'Glucose overlay off'}</strong>
+              <span>The glow follows the timeline.</span>
+            </> : <><strong style={{ color: showOverlay ? signal?.color : undefined }}>{!showOverlay ? 'ANATOMY COLORS / OVERLAY HIDDEN' : displayMode==='meal_score'?'MEAL WHAT-IF SCORE CONTEXT':phase === 'vision' ? 'SIMULATED GLUCOSE OVERLAY' : 'RECORDED GLUCOSE OVERLAY'}</strong><span>{showOverlay ? displayMode==='meal_score'?<>Score flag, not glucose forecast<br/>Natural organ tissue colors</>:<>Overlay brightness tracks glucose<br/>Paths are schematic, not blood vessels</> : <>Approximate natural tissue colors<br/>Body glow hidden</>}<br/>Organ colors do not indicate health</span></>}
+          </div>}
           {ORGAN_IDS.map(id => <button hidden key={id} ref={element => { markerRefs.current[id] = element; }} tabIndex={-1} className={`twin-hotspot hotspot-${id}`} onClick={() => choose(id)} aria-label={`Focus ${ORGANS[id].name}`} style={{ '--organ-color': ORGANS[id].color } as React.CSSProperties}><span />{ORGANS[id].name}</button>)}
+          {compact && status !== 'ready' && <div className="twin-diagram-fallback"><PatientBodyDiagram selected={selected} /></div>}
           {status === 'loading' && <div className="twin-overlay" role="status"><strong>Preparing the 3D patient</strong><p>Building the body and glucose-related structures.</p></div>}
           {status === 'error' && <div className="twin-overlay twin-error" role="status"><strong>3D view is unavailable</strong><p>This browser may not support WebGL, or the graphics context was interrupted. The organ guide and patient data still work below.</p><button className="twin-button" onClick={() => setAttempt(value => value + 1)}>Retry 3D view</button></div>}
           <div className="twin-scale" aria-hidden="true"><span />BODY OVERVIEW <i /> ORGAN DETAIL</div>
@@ -140,9 +148,9 @@ export default function BodyTwinPanel({ patientId, glucose, modelScore, medicati
           <button className="twin-button" disabled={status !== 'ready'} onClick={event => engine.current?.zoom('out', keyboardAction(event))}>Zoom out</button>
           <button className="twin-button" disabled={status !== 'ready'} onClick={() => engine.current?.rotate(-1)}>Rotate left</button>
           <button className="twin-button" disabled={status !== 'ready'} onClick={() => engine.current?.rotate(1)}>Rotate right</button>
-          <button className="twin-button twin-reset" onClick={event => choose('body', keyboardAction(event))}>Body overview / reset</button>
+          <button className="twin-button twin-reset" onClick={event => choose('body', keyboardAction(event))}>Reset view</button>
         </div>
-        <div className="twin-view-options"><p id={`${idPrefix}-instructions`}>Drag to rotate. Click the body, then scroll or pinch to move closer. Zooming in reveals the pancreas.</p><label htmlFor={`${idPrefix}-opacity`}>Body opacity <input id={`${idPrefix}-opacity`} type="range" min="5" max="45" step="5" value={opacity} disabled={status !== 'ready'} onChange={event => { const value = Number(event.target.value); setOpacity(value); engine.current?.transparency(value / 100); }} /><span>{opacity}%</span></label></div>
+        <div className="twin-view-options"><p id={`${idPrefix}-instructions`}>{compact ? 'Drag to rotate. Use the buttons to zoom and return to the full body.' : 'Drag to rotate. Click the body, then scroll or pinch to move closer. Zooming in reveals the pancreas.'}</p><label htmlFor={`${idPrefix}-opacity`}>Body opacity <input id={`${idPrefix}-opacity`} type="range" min="5" max="45" step="5" value={opacity} disabled={status !== 'ready'} onChange={event => { const value = Number(event.target.value); setOpacity(value); engine.current?.transparency(value / 100); }} /><span>{opacity}%</span></label></div>
         <div className="twin-appearance">
           <label className="twin-overlay-toggle"><input type="checkbox" checked={showOverlay} onChange={event => setShowOverlay(event.target.checked)} />Show glucose overlay</label>
           <p className="body-glow-status" role="status">{showOverlay ? signal?.bodyGlow?.label : 'Organ tint off · base tissue colors'}</p>

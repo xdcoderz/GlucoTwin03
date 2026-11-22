@@ -24,7 +24,7 @@ test('full body, organ controls, zoom drill-down, reset, and patient context', a
     await page.getByRole('navigation', { name: 'Choose an organ or tissue' }).getByRole('button', { name }).click();
     await expect(page.locator('.twin-organ-detail h3')).toHaveText(name);
   }
-  await page.getByRole('button', { name: 'Body overview / reset' }).click();
+  await page.getByRole('button', { name: 'Reset view', exact: true }).click();
   await expect(stage).toHaveAttribute('data-view', 'body');
   await expect(stage).toHaveAttribute('data-stage', 'body');
   await page.getByLabel('Body opacity').focus();

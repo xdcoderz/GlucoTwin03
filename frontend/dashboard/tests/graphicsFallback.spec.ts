@@ -17,6 +17,8 @@ test('stalled graphics import reaches fallback while the patient workflow remain
     const guide=page.getByRole('navigation',{name:'Choose an organ or tissue'});
     await guide.getByRole('button',{name:'Liver',exact:true}).click();
     await expect(page.locator('.twin-organ-detail h3')).toHaveText('Liver');
+    await expect(page.getByRole('img',{name:'Illustrated anatomy highlighting Liver'})).toBeVisible();
+    await expect(page.getByRole('slider',{name:/Selected sample/})).toBeEnabled();
     await expect(page.getByLabel('Meal description',{exact:true})).toBeEditable();
   } finally {release();}
 });

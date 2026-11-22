@@ -1,57 +1,281 @@
-.patient-cockpit { border:1px solid var(--border); border-radius:24px; background:var(--card); overflow:hidden; }
-.cockpit-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; padding:26px 28px; border-bottom:1px solid var(--border); }
-.cockpit-heading h2 { font-size:clamp(24px,2.7vw,34px); letter-spacing:-.035em; margin:8px 0; }
-.cockpit-heading p:not(.eyebrow) { color:var(--muted-foreground); font-size:14px; line-height:1.65; max-width:620px; margin:0; }
-.cockpit-case-id { border:1px solid var(--border); border-radius:20px; padding:8px 12px; font:12px Consolas,monospace; white-space:nowrap; }
-.cockpit-grid { display:grid; grid-template-columns:minmax(0,.85fr) minmax(230px,1.1fr) minmax(0,1fr); }
-.cockpit-context,.cockpit-observation { padding:26px; min-width:0; }
-.cockpit-context { background:color-mix(in srgb,var(--muted) 35%,var(--card)); }
-.patient-cockpit .cockpit-label { font-size:11px; letter-spacing:.09em; color:var(--muted-foreground); margin:0 0 12px; line-height:1.6; }
-.cockpit-context h3 { font-size:18px; text-transform:capitalize; }
-.cockpit-context dl { display:flex; flex-wrap:wrap; gap:24px; margin:24px 0 12px; }
-.cockpit-context dt { font-size:13px; color:var(--muted-foreground); margin-bottom:6px; }
-.cockpit-context dd { font-size:28px; margin:0; font-variant-numeric:tabular-nums; }
-.cockpit-context dd small { font-size:13px; }
-.patient-cockpit .cockpit-explain { font-size:12px; line-height:1.7; color:var(--muted-foreground); margin:12px 0; }
-.cockpit-meal { border-top:1px solid var(--border); margin-top:24px; padding-top:20px; }
-.cockpit-meal strong { display:block; font-size:14px; font-weight:500; line-height:1.7; }
-.patient-cockpit time { display:block; font-size:12px; color:var(--muted-foreground); margin-top:10px; }
-.cockpit-person { display:flex; flex-direction:column; align-items:center; text-align:center; padding:20px 16px; background:radial-gradient(ellipse at 50% 45%,color-mix(in srgb,var(--primary) 9%,var(--card)),var(--card) 70%); }
-.cockpit-stage { font-size:12px; padding:6px 12px; border:1px solid var(--border); border-radius:20px; color:var(--foreground); }
-.cockpit-body { width:100%; height:300px; max-width:300px; margin:12px 0 0; }
-.cockpit-body-shell { fill:color-mix(in srgb,var(--primary) 12%,var(--card)); stroke:color-mix(in srgb,var(--primary) 65%,var(--card)); stroke-width:1.2; }
-.cockpit-body-shadow { fill:color-mix(in srgb,var(--primary) 6%,var(--card)); stroke:var(--border); stroke-width:1; }
-.cockpit-body-grid,.cockpit-orbit { fill:none; stroke:color-mix(in srgb,var(--primary) 25%,var(--border)); stroke-width:1; }
-.cockpit-organ { fill:color-mix(in srgb,var(--primary) 20%,var(--card)); stroke:var(--primary); stroke-width:.6; }
-.cockpit-organ.is-selected { fill:var(--primary); stroke:var(--foreground); stroke-width:1.2; }
-.cockpit-organs { display:flex; justify-content:center; gap:6px; flex-wrap:wrap; }
-.cockpit-organs button,.cockpit-journey button,.cockpit-journey a { min-height:44px; border:1px solid var(--border); border-radius:10px; background:var(--card); color:var(--foreground); padding:9px 12px; font-size:12px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
-.cockpit-organs button[aria-pressed=true] { background:var(--muted); border-color:var(--primary); color:var(--primary); }
-.cockpit-organ-note { margin-top:14px; min-height:72px; font-size:13px; line-height:1.7; }
-.cockpit-organ-note p { color:var(--muted-foreground); margin:4px 0 0; font-size:12px; }
-.cockpit-person .cockpit-explain { max-width:280px; }
-.cockpit-person a { color:var(--primary); text-underline-offset:3px; }
-.patient-cockpit .cockpit-sample { border:0; padding:0; display:grid; gap:16px; }
-.patient-cockpit .cockpit-sample>div:first-child strong { font-size:40px; letter-spacing:-.04em; }
-.patient-cockpit .cockpit-sample span { font-size:12px; }
-.patient-cockpit .cockpit-sample small { font-size:14px; }
-.cockpit-frozen { margin-top:24px; border-top:1px solid var(--border); padding-top:20px; }
-.cockpit-frozen>strong { display:block; font-size:22px; font-weight:500; }
-.cockpit-frozen p,.cockpit-frozen small { font-size:12px; color:var(--muted-foreground); line-height:1.7; }
-.cockpit-result-id { display:block; font:11px/1.7 Consolas,monospace; color:var(--muted-foreground); overflow-wrap:anywhere; margin-top:10px; }
-.cockpit-journey { display:flex; flex-wrap:wrap; gap:10px; border-top:1px solid var(--border); padding:18px 26px 8px; }
-.cockpit-journey button:disabled { opacity:.55; cursor:not-allowed; }
-.cockpit-followup { padding:8px 26px 20px; margin:0; color:var(--muted-foreground); font-size:13px; line-height:1.7; }
-.workspace-mode { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; border:1px solid var(--border); border-left:3px solid var(--primary); padding:16px 20px; margin:0 0 24px; background:var(--card); border-radius:12px; }
-.workspace-mode strong { font-size:14px; color:var(--foreground); }
-.workspace-mode p { margin:6px 0 0; color:var(--muted-foreground); font-size:13px; line-height:1.65; }
-.workspace-services { display:flex; gap:8px; flex-wrap:wrap; }
-.workspace-services span { padding:7px 10px; border:1px solid var(--border); border-radius:20px; font-size:12px; color:var(--foreground); }
-.motion-dashboard .cockpit-history-panel { margin:24px 0; }
-.cockpit-history-panel > .workspace-block-heading { margin-bottom:18px; }
-.cockpit-history-panel .workspace-history-content > .twin-timeline { margin-top:24px; padding:22px 6px 0; border-top:1px solid var(--border); }
-.cockpit-history-panel .timeline-chart { height:250px; }
-.motion-dashboard .workspace-analysis-grid { display:block; margin-top:24px; }
-.motion-dashboard .workspace-analysis-grid .workspace-score-grid { grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); }
-@media(max-width:1000px) { .cockpit-grid { grid-template-columns:minmax(0,1fr) minmax(0,1fr); } .cockpit-person { grid-column:1/-1; grid-row:1; } .cockpit-body { height:250px; } .cockpit-heading { flex-wrap:wrap; } }
-@media(max-width:650px) { .cockpit-grid { grid-template-columns:minmax(0,1fr); } .cockpit-heading,.cockpit-context,.cockpit-observation { padding:20px; } .cockpit-journey { padding:16px 20px 8px; } .cockpit-followup { padding:8px 20px 20px; } .cockpit-heading h2 { font-size:25px; } .cockpit-history-panel .timeline-chart { height:220px; } .motion-dashboard .workspace-analysis-grid .workspace-score-grid { grid-template-columns:1fr; } }
+.patient-cockpit {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.cockpit-heading,
+.cockpit-visual-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 20px;
+}
+
+.cockpit-heading {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cockpit-heading h2 { font-size: clamp(24px, 2.7vw, 34px); letter-spacing: -.035em; margin: 0 0 4px; }
+.cockpit-heading p,
+.cockpit-anatomy-caption,
+.cockpit-diagram-key {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+
+.cockpit-timeline-link { color: var(--primary); font-size: 14px; text-underline-offset: 4px; padding: 10px 0; }
+.cockpit-timeline-link span { margin-left: 4px; }
+.cockpit-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, .37fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "anatomy observation" "anatomy context";
+}
+
+.cockpit-person,
+.cockpit-observation,
+.cockpit-context { min-width: 0; padding: 20px 24px; }
+.cockpit-person { grid-area: anatomy; border-right: 1px solid var(--border); }
+.cockpit-visual-heading h3 { font-size: 19px; margin: 0; color: var(--foreground); }
+.cockpit-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--foreground);
+}
+
+.cockpit-stage i,
+.cockpit-diagram-key span {
+  display: inline-block;
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cockpit-signal);
+}
+
+.motion-dashboard .cockpit-person .workspace-twin { margin: 14px 0 12px; padding: 0; }
+.motion-dashboard .cockpit-person .workspace-twin > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+}
+.motion-dashboard .cockpit-person .workspace-twin > summary > span:last-child {
+  border-radius: 7px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 6px 10px;
+  white-space: nowrap;
+  font-weight: 650;
+}
+
+.cockpit-illustration {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(170px, .75fr);
+  align-items: center;
+  gap: 22px;
+}
+.cockpit-illustration[hidden] { display: none; }
+.cockpit-diagram,
+.cockpit-person .twin-stage {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background:
+    radial-gradient(ellipse at 50% 48%, color-mix(in srgb, var(--cockpit-signal) 15%, transparent), transparent 71%),
+    var(--background);
+}
+.cockpit-diagram { display: grid; justify-items: center; padding: 12px 8px; }
+.cockpit-body { display: block; width: 100%; max-width: 300px; height: 292px; }
+.cockpit-body-shell {
+  fill: color-mix(in srgb, var(--primary) 10%, var(--card));
+  stroke: color-mix(in srgb, var(--cockpit-signal) 72%, var(--border));
+  stroke-width: 1.25;
+}
+.cockpit-body-grid,
+.cockpit-orbit { fill: none; stroke: color-mix(in srgb, var(--cockpit-signal) 24%, var(--border)); stroke-width: 1; }
+.cockpit-organ { fill: color-mix(in srgb, var(--primary) 27%, var(--card)); stroke: var(--primary); stroke-width: .6; }
+.cockpit-body[data-structure=pancreas] [data-id=pancreas],
+.cockpit-body[data-structure=liver] [data-id=liver],
+.cockpit-body[data-structure=gut] [data-id=gut],
+.cockpit-body[data-structure=muscle] [data-id=muscle],
+.cockpit-body[data-structure=fat] [data-id=fat] { fill: var(--primary); stroke: var(--foreground); stroke-width: 1.15; }
+
+.cockpit-diagram-key { display: flex; align-items: center; gap: 7px; padding: 0 6px; }
+.cockpit-anatomy-caption { margin-top: 10px; }
+.cockpit-organs { display: flex; flex-wrap: wrap; gap: 6px; }
+.cockpit-organs button,
+.cockpit-journey button,
+.cockpit-journey a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: none;
+}
+.cockpit-organs button[aria-pressed=true] { background: var(--accent); border-color: var(--primary); color: var(--primary); }
+.cockpit-organ-note { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 12px; font-size: 14px; line-height: 1.55; }
+.cockpit-organ-note p { color: var(--muted-foreground); margin: 5px 0 0; font-size: 13px; }
+
+.cockpit-observation { grid-area: observation; border-bottom: 1px solid var(--border); }
+.cockpit-context { grid-area: context; background: color-mix(in srgb, var(--muted) 38%, var(--card)); }
+.patient-cockpit .cockpit-label { font-size: 11px; font-weight: 650; letter-spacing: .065em; color: var(--muted-foreground); margin: 0 0 6px; line-height: 1.5; }
+.cockpit-context h3 { font-size: 17px; text-transform: capitalize; margin: 0; }
+.cockpit-context dl { display: flex; flex-wrap: wrap; gap: 14px 24px; margin: 14px 0; }
+.cockpit-context dt { font-size: 13px; color: var(--muted-foreground); margin-bottom: 3px; }
+.cockpit-context dd { font-size: 24px; margin: 0; font-variant-numeric: tabular-nums; }
+.cockpit-context dd small { font-size: 13px; }
+.cockpit-meal { border-top: 1px solid var(--border); padding-top: 12px; }
+.cockpit-meal strong { display: block; font-size: 14px; font-weight: 550; line-height: 1.55; }
+.patient-cockpit time { display: block; font-size: 12px; color: var(--muted-foreground); margin-top: 6px; }
+.patient-cockpit .cockpit-sample { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cockpit-current { grid-column: 1/-1; }
+.patient-cockpit .cockpit-current strong { font-size: clamp(33px, 4.2vw, 54px); letter-spacing: -.045em; line-height: 1; }
+.patient-cockpit .cockpit-sample span { font-size: 12px; }
+.patient-cockpit .cockpit-sample small { font-size: 14px; }
+.patient-cockpit .cockpit-sample > div:not(:first-child) strong { font-size: 16px; }
+.cockpit-frozen { margin-top: 15px; border-top: 1px solid var(--border); padding-top: 14px; }
+.cockpit-frozen>strong { display: block; font-size: 22px; font-weight: 600; color: var(--primary); }
+.cockpit-frozen p,
+.cockpit-frozen small,
+.cockpit-followup { font-size: 13px; color: var(--muted-foreground); line-height: 1.6; }
+.cockpit-frozen p { margin: 5px 0; }
+.cockpit-result-id { display: block; font: 11px/1.6 Consolas, monospace; color: var(--muted-foreground); overflow-wrap: anywhere; margin-top: 7px; }
+
+.cockpit-replay { padding: 20px 24px; border-top: 1px solid var(--border); scroll-margin-top: 126px; }
+.motion-dashboard .cockpit-replay > .twin-timeline { padding: 0; border: 0; margin: 0; }
+.cockpit-replay .timeline-chart { height: 230px; }
+.cockpit-journey { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.cockpit-journey a { color: var(--primary); border-color: var(--primary); }
+.cockpit-journey button:disabled { opacity: .55; cursor: not-allowed; }
+.cockpit-followup { margin: 10px 0 0; }
+
+.motion-dashboard [data-destination=workspace] .page-heading { padding: 20px 0 15px; margin-bottom: 0; }
+.motion-dashboard [data-destination=workspace] .page-heading h1 { font-size: clamp(28px, 3.2vw, 39px); margin: 0; }
+.motion-dashboard [data-destination=workspace] .workspace-nav { padding: 4px 0; margin-bottom: 12px; }
+.motion-dashboard .workspace-worklist { margin: 0 0 8px; }
+.motion-dashboard .workspace-worklist > summary { font-size: 14px; min-height: 44px; }
+.motion-dashboard [data-destination=workspace] .workspace-worklist .patient-worklist { margin: 10px 0 0; }
+.workspace-mode { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 12px 16px; margin: 0 0 14px; background: var(--card); border-radius: 12px; }
+.workspace-mode strong { font-size: 13px; color: var(--foreground); }
+.workspace-services { display: flex; gap: 8px; flex-wrap: wrap; }
+.workspace-services span { padding: 5px 9px; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; color: var(--foreground); }
+.motion-dashboard .cockpit-history-panel { margin: 12px 0 18px; }
+.cockpit-history-panel > .workspace-readiness-gate { margin-top: 14px; }
+.motion-dashboard .workspace-analysis-grid { display: block; margin-top: 24px; }
+.motion-dashboard .workspace-analysis-grid .workspace-score-grid { grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); }
+.motion-dashboard .workspace-experiments { margin: 28px 0; }
+
+.motion-dashboard .anatomy-compact .anatomy-heading { padding: 10px 0 12px; }
+.anatomy-compact .anatomy-heading h2 { font-size: 19px; }
+.anatomy-compact .anatomy-heading .eyebrow,
+.anatomy-compact .anatomy-mode,
+.anatomy-compact .twin-orientation,
+.anatomy-compact .twin-scale,
+.anatomy-compact .organ-number { display: none; }
+.motion-dashboard .anatomy-compact .anatomy-layout { grid-template-columns: minmax(0, 1.8fr) minmax(160px, 1fr); }
+.motion-dashboard .anatomy-compact .twin-stage { height: clamp(345px, 34vw, 480px); scroll-margin-top: 110px; }
+.motion-dashboard .anatomy-compact .twin-guide { padding: 12px; }
+.anatomy-compact .twin-organ-list button,
+.anatomy-compact .twin-button { min-height: 44px; font-size: 13px; }
+.motion-dashboard .anatomy-compact .twin-hotspot { font-size: 12px; }
+.anatomy-compact .twin-controls { padding: 10px 0; }
+.anatomy-compact .twin-view-label {
+  top: 10px;
+  left: 10px;
+  padding: 5px 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--foreground);
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.anatomy-compact .twin-signal-key { left: 10px; bottom: 10px; padding: 7px 9px; }
+.anatomy-compact .twin-signal-key strong { font-size: 12px; letter-spacing: 0; }
+.anatomy-compact .twin-signal-key span { margin-top: 3px; font-size: 11px; }
+.anatomy-compact .twin-organ-detail { min-height: 0; }
+.anatomy-compact .twin-organ-detail > p:not(.twin-detail-kicker),
+.anatomy-compact .twin-model-connection p,
+.anatomy-compact .twin-view-options p,
+.anatomy-compact .twin-appearance p { font-size: 12px; }
+
+.anatomy-compact .twin-stage:not([data-status=ready]) {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+.anatomy-compact .twin-stage:not([data-status=ready]) canvas {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+.twin-diagram-fallback {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 8px;
+  pointer-events: none;
+}
+.twin-diagram-fallback .cockpit-body { height: 100%; max-height: 100%; }
+.anatomy-compact .twin-overlay {
+  position: relative;
+  inset: auto;
+  padding: 12px 14px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+}
+.anatomy-compact .twin-overlay p { margin: 4px 0 0; }
+.anatomy-compact .twin-overlay .twin-button { margin-top: 6px; }
+.cockpit-motion-control { margin-top: 8px; }
+
+@media (max-width: 1100px) {
+  .motion-dashboard .anatomy-compact .anatomy-layout { grid-template-columns: minmax(0, 1fr); }
+  .motion-dashboard .anatomy-compact .twin-guide { border-left: 0; border-top: 1px solid var(--border); }
+  .anatomy-compact .twin-organ-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .cockpit-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "observation context" "anatomy anatomy"; }
+  .cockpit-person { border-right: 0; }
+  .cockpit-context { border-left: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+}
+@media (max-width: 600px) {
+  .motion-dashboard [data-destination=workspace] .workspace-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cockpit-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "observation" "anatomy" "context"; }
+  .cockpit-heading,
+  .cockpit-person,
+  .cockpit-observation,
+  .cockpit-context,
+  .cockpit-replay { padding: 14px; }
+  .cockpit-context { border-top: 1px solid var(--border); border-left: 0; border-bottom: 0; }
+  .cockpit-illustration { grid-template-columns: minmax(0, 1fr); gap: 13px; }
+  .cockpit-body { height: 242px; }
+  .cockpit-replay .timeline-chart { height: 210px; }
+  .motion-dashboard .workspace-analysis-grid .workspace-score-grid { grid-template-columns: 1fr; }
+  .motion-dashboard .anatomy-compact .twin-stage { height: 365px; }
+  .anatomy-compact .twin-hotspot { display: none; }
+}
+@media (pointer: coarse) {
+  .anatomy-compact .twin-stage canvas { touch-action: pan-y !important; }
+}

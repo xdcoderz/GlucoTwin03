@@ -11,12 +11,14 @@ test('cockpit shares one observation timeline and separates fixed context', asyn
   const frozen = await cockpit.getByTestId('cockpit-frozen-result').textContent();
   await page.getByRole('slider', { name: /Selected sample/ }).fill('0');
   await expect(cockpit.getByTestId('twin-glucose')).toContainText('112');
+  await expect(cockpit.locator('.cockpit-diagram')).toHaveAttribute('data-glucose', '112');
   await expect(cockpit.locator('.cockpit-stage')).toHaveText('Before the meal');
   await expect(page.getByRole('img', { name: /Recorded glucose timeline/ })).toHaveAttribute('aria-label', /Selected 112/);
   await expect(cockpit.getByTestId('cockpit-frozen-result')).toHaveText(frozen!);
   await expect(cockpit.getByRole('complementary', { name: 'Fixed patient background' })).toContainText('7.6');
   await cockpit.getByRole('button', { name: 'At the meal', exact: true }).click();
   await expect(cockpit.getByTestId('twin-glucose')).toContainText('142');
+  await expect(cockpit.locator('.cockpit-diagram')).toHaveAttribute('data-glucose', '142');
   await cockpit.getByRole('button', { name: 'Explain Liver', exact: true }).click();
   await expect(cockpit.locator('.cockpit-organ-note')).toContainText('Liver function and glucose production are not measured');
   await page.setViewportSize({ width: 400, height: 900 });
@@ -53,6 +55,8 @@ test('a lost glucose stream clears the selected observation, not the saved conte
   await expect(cockpit.getByTestId('twin-glucose')).toContainText('—', { timeout: 12000 });
   await expect(cockpit.locator('.cockpit-stage')).toHaveText('Observation unavailable');
   await expect(cockpit.getByRole('button', { name: 'At the meal', exact: true })).toBeDisabled();
+  await expect(cockpit.getByRole('button', { name: 'Previous sample', exact: true })).toBeDisabled();
+  await expect(cockpit.getByRole('img', { name: /Recorded glucose timeline/ })).toHaveAttribute('aria-label', /Selected reading unavailable/);
   await expect(cockpit.getByTestId('cockpit-frozen-result')).toContainText('Score unavailable');
   await expect(cockpit.getByRole('complementary', { name: 'Fixed patient background' })).toContainText('7.6');
 });

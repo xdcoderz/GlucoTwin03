@@ -1,6 +1,61 @@
 # Connected local GlucoTwin demo
 
-Verified on 9 November 2026. This is the native local application, not Docker or a public deployment.
+The competition branch runs natively on the presentation laptop. Demo patients, meals and glucose readings are synthetic. The meal-event classifier is a fitted research model.
+
+## Competition walkthrough
+
+**Before the presentation.** From this checkout, build the Java backend and React dashboard:
+
+```powershell
+.\tools\Local-Demo.ps1 -Component Build
+Set-Location frontend/dashboard
+npm.cmd ci
+npm.cmd run build
+Set-Location ../..
+```
+
+Start one long-running component in each of three PowerShell terminals from the repository root:
+
+```powershell
+# Terminal 1
+.\tools\Local-Demo.ps1 -Component Model
+# Terminal 2
+.\tools\Local-Demo.ps1 -Component Backend -DatabaseName competition-demo
+# Terminal 3
+.\tools\Local-Demo.ps1 -Component Preview
+```
+
+In another terminal, replay the two starting histories and check the services:
+
+```powershell
+.\tools\Local-Demo.ps1 -Component Replay
+.\tools\Local-Demo.ps1 -Component Check
+```
+
+The check should report **9/9** samples for both patients and **model ready**. If you need a fresh rehearsal after completing one, stop the backend and restart it with a new `-DatabaseName`, then replay the starting history. The previous database remains available. Go to the [patient workspace](http://127.0.0.1:5173/?patient=DEMO-001#workspace).
+
+| Show | Say |
+| --- | --- |
+| Select **Patient 001**. Point to the recorded meal and the selected reading. | “This synthetic case brings together a health record, meal details, and a history of glucose sensor readings.” |
+| Open **View patient twin**, choose **Pancreas**, then use **Reset view**. Move the timeline to an earlier reading. | “The 3D body is educational. Its glow follows the selected glucose reading. The chart and body are showing the same point in time.” |
+| Choose **At the meal**, then **Score & save meal** under **Score & factors**. | “The trained model scores one defined event over the 120 minutes after the meal. The score is saved with the exact inputs and model version.” |
+| Open **Follow-up → Demo controls**. Replay the first 45 minutes, then complete the replay. Return to the cockpit and choose **Latest follow-up sample**. | “These are later synthetic readings. We can see what arrived and how complete the follow-up is. The saved score remains tied to the meal.” |
+| Add a synthetic note, choose **Mark reviewed**, and **Download saved result**. | “The PDF contains the same saved result, original input fingerprint, and review.” |
+| For the optional simulation, choose **At the meal**, then open **Glucose forecast at selected reading** and run a meal-and-walk comparison. | “These two curves compare scenarios under the simulator’s assumptions. The short demo history uses default model parameters.” |
+
+If the 3D renderer is slow or unavailable, use the illustrated anatomy and its organ buttons. The same timeline, scoring and export controls remain available. Keep a copy of the walkthrough recording alongside the presentation as a backup.
+
+### Competition verification, 22 November 2026
+
+- The compiled dashboard completed the rehearsal against the real Spring and FastAPI services. Both synthetic cases began with nine readings. The fitted model returned **0.368** for DEMO-001 and **0.989** for DEMO-002.
+- The desktop walkthrough loaded 3D with software graphics, focused the pancreas, changed the selected glucose through the timeline, and reset the view. Phone-width browser emulation with WebGL disabled confirmed the illustration, organ controls and timeline remain usable.
+- The downloaded PDF preserved the saved result ID, input fingerprint, fitted model version, score and review. Both journals, including follow-up and review state, survived a proof backend restart.
+- The meal-and-walk simulation used only observations through the selected reading and saved a separate forecast. It used default parameters for the short synthetic history. Its saved forecast survived the proof restart.
+- The production frontend build, 31 backend tests and 27 Python tests passed. This release has local evidence. A physical phone run and a clean Docker rebuild remain open.
+
+## Earlier connected runtime verification
+
+The original connected local verification was recorded on 9 November 2026.
 
 ## What is different now?
 
@@ -79,7 +134,7 @@ Terminal 3 — seed the two synthetic histories, then start the website:
 .\tools\Local-Demo.ps1 -Component Dashboard
 ```
 
-Replay waits up to 60 seconds for backend readiness before sending events. The initial verification attempt ran before the fresh backend finished starting and failed without sending its first event; after readiness was added, the replay and status checks passed. Exact repeated replay events are idempotent.
+Replay waits for backend readiness before sending events. Exact repeated replay events are idempotent. Use **Dashboard** for development with automatic refresh, and **Preview** to serve the compiled dashboard after running `npm.cmd run build`.
 
 From another terminal, check the entire connection without creating scoring attempts:
 

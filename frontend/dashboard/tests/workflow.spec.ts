@@ -10,6 +10,7 @@ test('save, partial/gapped/complete follow-up, review, historical version and bo
   await page.route('**/api/worklist', async route => { await new Promise(done => setTimeout(done, 1500)); await route.continue(); });
   await page.goto('/#workspace');
   const workflow = page.getByRole('region', { name: 'Follow-up' });
+  await openDisclosure(page, '.workspace-worklist');
   const worklist = page.getByRole('region', { name: 'Patient worklist', exact: true });
   await expect(worklist.getByText('Loading patient worklist…', { exact: true })).toBeVisible();
   await expect(worklist.getByRole('button', { name: 'DEMO-001', exact: true })).toBeVisible();
@@ -67,6 +68,7 @@ test('save, partial/gapped/complete follow-up, review, historical version and bo
   await workflow.getByRole('button', { name: 'Reopen review' }).click();
   await openDisclosure(page,'.review-history-disclosure');
   await expect(workflow.getByRole('list', { name: 'Review history' })).toContainText('Reopened');
+  await openDisclosure(page, '.workspace-worklist');
   await worklist.getByRole('button', { name: 'DEMO-002', exact: true }).click();
   await expect(page.getByLabel('Synthetic scenario')).toHaveValue('DEMO-002');
   await expect(workflow).toContainText('No scoring attempts saved');
@@ -97,6 +99,7 @@ test('mobile keyboard review and workflow dependency failure/recovery', async ({
   await workflow.screenshot({ path: '../../docs/screenshots/workflow_journal_mobile.png' });
   await page.route('**/api/worklist', route => route.fulfill({ status: 503, json: { error: 'TEST ONLY offline worklist' } }));
   await page.reload();
+  await openDisclosure(page, '.workspace-worklist');
   await expect(page.getByRole('button', { name: 'Retry worklist' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save scoring attempt' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Score & save/ })).toBeEnabled();

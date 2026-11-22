@@ -1,7 +1,7 @@
 <# Run one component per PowerShell terminal; does not install software or delete records. #>
 [CmdletBinding()]
 param(
-    [ValidateSet('Check','Build','Model','Backend','Replay','Dashboard')]
+    [ValidateSet('Check','Build','Model','Backend','Replay','Dashboard','Preview')]
     [string]$Component = 'Check',
     [ValidateRange(1024,65535)][int]$ModelPort = 8000,
     [ValidateRange(1024,65535)][int]$BackendPort = 8080,
@@ -41,14 +41,14 @@ function Get-DemoMaven {
 
 function Wait-DemoBackend {
     $clock = [Diagnostics.Stopwatch]::StartNew()
-    while ($clock.Elapsed.TotalSeconds -lt 60) {
+    while ($clock.Elapsed.TotalSeconds -lt 90) {
         try {
             $ready = Invoke-RestMethod "http://127.0.0.1:$BackendPort/actuator/health/readiness" -TimeoutSec 3
             if ($ready.status -eq 'UP') { return }
         } catch { }
         Start-Sleep -Milliseconds 500
     }
-    throw 'Backend did not become ready within 60 seconds. Start Backend first; no replay was sent by this call.'
+    throw 'Backend did not become ready within 90 seconds. Start Backend first; no replay was sent by this call.'
 }
 
 Push-Location -LiteralPath $repo
@@ -85,13 +85,18 @@ try {
             & $python cgm-publisher/app.py --fixture data/sample/demo_patient_001.json --fixture data/sample/demo_patient_002.json
             if ($LASTEXITCODE -ne 0) { throw 'Synthetic replay failed.' }
         }
-        'Dashboard' {
+        { $_ -in 'Dashboard','Preview' } {
             $vite = Join-Path $repo 'frontend/dashboard/node_modules/vite/bin/vite.js'
             if (!(Test-Path -LiteralPath $vite)) { throw 'Install dashboard dependencies with npm ci in frontend/dashboard first.' }
+            $serve = @()
+            if ($Component -eq 'Preview') {
+                if (!(Test-Path -LiteralPath 'frontend/dashboard/dist/index.html')) { throw 'Build the dashboard with npm run build in frontend/dashboard first.' }
+                $serve = @('preview')
+            }
             $env:VITE_PROXY_TARGET = "http://127.0.0.1:$BackendPort"
             $env:VITE_API_BASE_URL = ''
             Push-Location frontend/dashboard
-            try { & node $vite --host 127.0.0.1 --port $DashboardPort --strictPort }
+            try { & node $vite @serve --host 127.0.0.1 --port $DashboardPort --strictPort }
             finally { Pop-Location }
             if ($LASTEXITCODE -ne 0) { throw 'Dashboard stopped with an error.' }
         }

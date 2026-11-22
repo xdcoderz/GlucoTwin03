@@ -11,7 +11,7 @@ test('organ list, node zoom, contextual information and isolated samples', async
   const hero = page.getByTestId('landing-experience');
   await expect(hero).toHaveAttribute('data-scene-status','ready',{timeout:20000});
   const intro=page.getByTestId('landing-introduction');
-  await expect(intro.getByRole('heading',{level:1})).toContainText('A little closer');
+  await expect(intro.getByRole('heading',{level:1})).toContainText('See the person.');
   await expect(page.locator('.safety-banner')).toHaveCount(0);
   const boxes=await page.evaluate(()=>Object.fromEntries(['.site-topbar','.landing-introduction','.anatomy-workbench','.landing-model-column','.editorial-container','.insight'].map(selector=>[selector,document.querySelector(selector)!.getBoundingClientRect().toJSON()])));
   expect(boxes['.landing-introduction'].top).toBeGreaterThanOrEqual(boxes['.site-topbar'].bottom-1);
@@ -57,7 +57,7 @@ test('organ list, node zoom, contextual information and isolated samples', async
   await expect(hero.locator('#organ-info-title')).toHaveText('Liver');
   await hero.locator('#reset-camera').click();
   await expect(hero.locator('#organ-info-bar')).not.toBeVisible();
-  await expect(intro.getByRole('heading',{level:1})).toContainText('A little closer');
+  await expect(intro.getByRole('heading',{level:1})).toContainText('See the person.');
   await hero.getByRole('slider',{name:'Select sample reading'}).fill('5');
   await expect(hero.locator('#glucose-value')).toHaveText('—');
   await hero.getByRole('button',{name:'Scripted curve',exact:true}).click();
@@ -133,7 +133,7 @@ test('failed landing mesh leaves workspace and evidence available', async ({ pag
   await page.unroute('**/models/glucotwin_anatomy.glb');
   await hero.getByRole('button',{name:'Restore Scene'}).click();
   await expect(hero).toHaveAttribute('data-scene-status','ready',{timeout:20000});
-  await page.getByTestId('landing-introduction').getByRole('link',{name:/Model evidence/}).click();
+  await page.getByTestId('landing-introduction').getByRole('link',{name:'Explore the evidence',exact:true}).click();
   await expect(page.getByRole('heading',{level:1})).toHaveText('What the prototype demonstrates');
   expect(errors).toEqual([]);
 });

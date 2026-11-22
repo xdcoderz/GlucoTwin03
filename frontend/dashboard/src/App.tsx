@@ -38,6 +38,7 @@ function App() {
   const site = useSiteLocation();
   const [futureVisited, setFutureVisited] = useState(site.destination === "future");
   const [workspaceVisited, setWorkspaceVisited] = useState(site.destination === 'workspace');
+  const [worklistOpen, setWorklistOpen] = useState(false);
   const [patientId, setPatientId] = useState(initialPatientId);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -154,13 +155,20 @@ function App() {
       <div id="workspace" data-destination="workspace" hidden={site.destination !== 'workspace'}>
         {!workspaceVisited ? null : loading ? <div className="destination-loading" role="status">Loading the synthetic patient…<div className="skeleton panel-skeleton" /></div> : !data || !prediction ? <section className="error-panel" role="alert"><h1 tabIndex={-1}>Patient data is unavailable</h1><p>{connectionError}</p><button className="button button-primary" onClick={() => void load()}>Retry connection</button></section> : <SectionLoadBoundary><Suspense fallback={<p role="status">Preparing the patient workspace…</p>}>
       <section id="patient-record" className="page-heading">
-        <div><p className="eyebrow">01 / Patient &amp; meal</p><h1 ref={workspaceHeading} tabIndex={-1}>Patient workspace</h1><p className="subheading">{patientId} · {data.patient.ageYears} years · {capitalize(data.patient.sex)} · HbA1c {data.patient.hba1cPercent.toFixed(1)}%</p></div>
+        <div><h1 ref={workspaceHeading} tabIndex={-1}>Patient workspace</h1><p className="subheading">{patientId}</p></div>
         <div className="heading-actions"><div className="patient-switcher"><label htmlFor="patient-select">Synthetic scenario</label><select id="patient-select" value={patientId} onChange={(event) => selectPatient(event.target.value)}><option value="DEMO-001">Patient 001 · lower-score case</option><option value="DEMO-002">Patient 002 · high-score case</option></select></div></div>
       </section>
 
-      {site.destination === 'workspace' && <PatientWorklist api={`${API}/api`} patientId={patientId} revision={newAttemptRevision} onSelect={selectPatient} />}
       <nav className="workspace-nav workflow-path" aria-label="Dashboard sections"><a href="#patient-record"><span aria-hidden="true">01</span>Patient &amp; meal</a><a href="#phase-one-flow"><span aria-hidden="true">02</span>Glucose history</a><a href="#score-step"><span aria-hidden="true">03</span>Score &amp; factors</a><a href="#workflow-section"><span aria-hidden="true">04</span>Follow-up</a><a href="#review-section"><span aria-hidden="true">05</span>Review</a></nav>
-      <section className="workspace-mode" aria-label="Data source and service status"><div><strong>{prediction.reason === 'module_preview_no_model' || data.patient.displayName.startsWith('PREVIEW ONLY') ? 'PREVIEW · synthetic case · scoring unavailable' : 'SYNTHETIC RESEARCH DEMO'}</strong><p>For researchers and clinician review. Recorded observations, frozen model results and fictional scenarios stay separate.</p></div><div className="workspace-services"><span>{connectionError ? 'Patient API disconnected' : 'Patient API connected'}</span><span>{connectionError || !readiness ? 'Model status unconfirmed' : readiness.model.status === 'ready' ? 'Model ready' : 'Model unavailable'}</span></div></section>
+      <section className="workspace-mode" aria-label="Data source and service status"><strong>{prediction.reason === 'module_preview_no_model' || data.patient.displayName.startsWith('PREVIEW ONLY') ? 'PREVIEW · synthetic case · scoring unavailable' : 'SYNTHETIC RESEARCH DEMO'}</strong><div className="workspace-services"><span>{connectionError ? 'Patient API disconnected' : 'Patient API connected'}</span><span>{connectionError || !readiness ? 'Model status unconfirmed' : readiness.model.status === 'ready' ? 'Model ready' : 'Model unavailable'}</span></div></section>
+      <details className="workspace-disclosure workspace-worklist" open={worklistOpen} onToggle={event => setWorklistOpen(event.currentTarget.open)}>
+        <summary>Browse synthetic patients</summary>
+        {site.destination === 'workspace' && worklistOpen && <SectionLoadBoundary><Suspense fallback={<p role="status">Loading patient worklist…</p>}><PatientWorklist api={`${API}/api`} patientId={patientId} revision={newAttemptRevision} onSelect={selectPatient} /></Suspense></SectionLoadBoundary>}
+      </details>
+      <section id="phase-one-flow" className="cockpit-history-panel" aria-label="Glucose history">
+        {workspaceVisited && <TwinExperience key={data.patient.patientId + (data.currentMeal.baselineAt || '')} data={data} api={`${API}/api`} fixedPhase="recorded" active={site.destination === 'workspace'} workspaceCompact cockpit />}
+        <PhaseOneFlow key={patientId} api={`${API}/api`} patientId={patientId} revision={`${data.journal?.predictionId || ''}-${data.journal?.outcome.receivedSamples || 0}-${data.journal?.reviewState || ''}`} connected={!connectionError} onReadiness={setReadiness} onScore={() => void scoreCurrentMeal()} scoring={refreshing} linkToScore compact simplified />
+      </section>
       <details className="panel context-panel"><summary>Full synthetic patient record</summary>
         <div className="panel-heading"><div><p className="eyebrow">STATIC SYNTHETIC RECORD</p><h2>Patient context</h2></div><span className="record-tag">Fictional demo profile</span></div>
         <div className="context-grid">
@@ -175,8 +183,6 @@ function App() {
         </div>
       </details>
 
-      <section id="phase-one-flow" className="panel workspace-history-panel cockpit-history-panel"><header className="workspace-block-heading"><p className="section-label">Patient cockpit / shared history</p><h2>Glucose history</h2></header><PhaseOneFlow key={patientId} api={`${API}/api`} patientId={patientId} revision={`${data.journal?.predictionId || ''}-${data.journal?.outcome.receivedSamples || 0}-${data.journal?.reviewState || ''}`} connected={!connectionError} onReadiness={setReadiness} onScore={() => void scoreCurrentMeal()} scoring={refreshing} linkToScore compact simplified />{workspaceVisited && <TwinExperience key={data.patient.patientId + (data.currentMeal.baselineAt || '')} data={data} api={`${API}/api`} fixedPhase="recorded" active={site.destination === 'workspace'} workspaceCompact cockpit />}</section>
-      <MealSimulator key={`meal-form-${patientId}-${data.currentMeal.baselineAt}`} data={data} api={`${API}/api`} ready={enoughHistory} active={site.destination==='workspace'} />
       <div className="workspace-analysis-grid">
       <section id="score-step" className="score-step"><div className="step-heading"><p className="section-label">03 / Score &amp; factors</p><h2>Score and factors</h2></div>
       <div className="workspace-score-grid"><div className="workspace-score-decision"><section className="summary-grid score-summary-grid" aria-label="Current patient and prediction summary">
@@ -193,7 +199,7 @@ function App() {
       <section className="score-action-panel" aria-label="Score and save this meal"><div>
           <p className="workspace-readiness" role="status">{connectionError ? 'API disconnected · changes paused' : readiness ? `${readiness.receivedExpectedSamples}/${readiness.expectedSamples} input samples · ${readiness.historyReady ? 'History ready' : 'History needs attention'} · ${readiness.model.status === 'ready' ? 'Model ready' : 'Model unavailable'}` : 'Checking history and model readiness…'}</p>
           <button className="button button-primary score-button" onClick={() => void scoreCurrentMeal()} disabled={refreshing || !enoughHistory} aria-describedby="score-help">{refreshing && <span className="scoring-indicator" aria-hidden="true" />}{refreshing ? "Scoring…" : score !== null ? "Score & save new attempt" : "Score & save meal"}</button>
-          <p id="score-help" className="button-help">{!readiness ? 'Waiting for the backend readiness check.' : !enoughHistory ? "Requires all nine correctly timed readings and a connected API. See History readiness above for details." : "Creates a saved attempt for the original recorded meal. Use the meal form above for custom what-if scores."}</p>
+          <p id="score-help" className="button-help">{!readiness ? 'Waiting for the backend readiness check.' : !enoughHistory ? 'Requires all nine correctly timed readings and a connected API. See History readiness above for details.' : <>Saves the score for the recorded meal. <a href="#meal-context">Try a different meal</a> in the experiment below.</>}</p>
           {notice && <p className="sr-live" role="status" aria-live="polite">{notice}</p>}
           {actionError && <p className="action-error" role="alert">{actionError}</p>}
       </div></section></div>
@@ -212,8 +218,11 @@ function App() {
       </section></div>
 
       </section></div>
-      <WorkspaceScenarios key={`scenarios-${patientId}`} data={data} api={`${API}/api`} active={site.destination==='workspace'} />
       <div id="workflow-section"><ResearchWorkflow key={data.patient.patientId} api={`${API}/api`} patientId={data.patient.patientId} refreshKey={data.journal?.predictionId || ''} newAttemptRevision={newAttemptRevision} onSaved={load} connected={!connectionError} currentData={data} /></div>
+      <section className="workspace-experiments" aria-label="Optional research experiments">
+        <MealSimulator key={`meal-form-${patientId}-${data.currentMeal.baselineAt}`} data={data} api={`${API}/api`} ready={enoughHistory} active={site.destination==='workspace'} />
+        <WorkspaceScenarios key={`scenarios-${patientId}`} data={data} api={`${API}/api`} active={site.destination==='workspace'} />
+      </section>
 
 
       </Suspense></SectionLoadBoundary>}

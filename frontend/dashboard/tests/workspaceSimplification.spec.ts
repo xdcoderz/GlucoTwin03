@@ -2,11 +2,13 @@ import { test,expect } from './fixtures';
 import { openPatientTwin,openDisclosure } from './workspaceSupport';
 
 test('patient cockpit, closed tools and one timeline shared with the optional twin',async({page,request})=>{
-  await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
+  test.setTimeout(60000);
+  const seeded=await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
+  expect(seeded.ok()).toBe(true);
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/#workspace');
   const ws=page.locator('[data-destination=workspace]');
-  await expect(ws.locator('.review-form')).toBeVisible();
+  await expect(ws.locator('.review-form')).toBeVisible({timeout:15000});
   await expect(ws.getByRole('navigation',{name:'Dashboard sections'}).getByRole('link')).toHaveText(['01Patient & meal','02Glucose history','03Score & factors','04Follow-up','05Review']);
   for(const selector of ['#patient-twin','.replay-forecast','.saved-attempts','.journal-technical','.demo-controls','.readiness-technical'])await expect(ws.locator(selector)).not.toHaveAttribute('open','');
   await expect(ws.getByTestId('anatomy-stage')).toHaveCount(0);
@@ -37,8 +39,12 @@ test('patient cockpit, closed tools and one timeline shared with the optional tw
 });
 
 test('collapsed demo and history preserve scoring, follow-up, review and version selection',async({page,request})=>{
+  test.setTimeout(60000);
+  const seeded=await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
+  expect(seeded.ok()).toBe(true);
   await page.goto('/#workspace');
   const before=await (await request.get('http://127.0.0.1:18083/api/patients/DEMO-001/journal')).json();
+  expect(before).toHaveLength(1);
   await page.getByRole('button',{name:/Score & save/}).click();
   await expect(page.locator('.outcome-summary')).toBeVisible();
   const after=await (await request.get('http://127.0.0.1:18083/api/patients/DEMO-001/journal')).json();

@@ -25,7 +25,7 @@ test('natural anatomy can be inspected independently of the glucose overlay', as
   await expect(page.locator('.twin-signal-key')).toContainText('OVERLAY HIDDEN');
   await page.getByRole('navigation', { name: 'Choose an organ or tissue' }).getByRole('button', { name: 'Pancreas' }).click();
   await expect(stage).toHaveAttribute('data-stage', 'detail');
-  await page.getByRole('button', { name: 'Body overview / reset' }).click();
+  await page.getByRole('button', { name: 'Reset view', exact: true }).click();
   await page.getByText('About tissue colors and references', { exact: true }).click();
   await expect(page.locator('.twin-appearance details')).toContainText('not patient measurements or a validated anatomical atlas');
   await expect(page.locator('.twin-appearance a')).toHaveCount(5);
