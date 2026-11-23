@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './fixtures';
 import {sampleGlow} from '../src/anatomy/visualStates';
 
 test('body glow withholds invalid samples and distinguishes concerning, improving and neutral trends',()=>{

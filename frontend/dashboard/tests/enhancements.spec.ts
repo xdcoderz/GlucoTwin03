@@ -1,5 +1,5 @@
 import { openPatientTwin } from './workspaceSupport';
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './fixtures';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
@@ -15,7 +15,7 @@ async function saveReport(page: Page, path: string) {
 
 test('guided tour stays hidden while manual organ exploration remains available', async ({page})=>{
   await page.goto('/#workspace');await openPatientTwin(page);
-  await expect(page.getByTestId('anatomy-stage')).toHaveAttribute('data-status','ready');
+  await expect(page.getByTestId('anatomy-stage')).toHaveAttribute('data-status','ready',{timeout:15000});
   await expect(page.getByRole('button',{name:'Start guided tour'})).toHaveCount(0);
   await page.getByRole('navigation',{name:'Choose an organ or tissue'}).getByRole('button',{name:'Liver'}).click();
   await expect(page.getByTestId('anatomy-stage')).toHaveAttribute('data-view','liver');

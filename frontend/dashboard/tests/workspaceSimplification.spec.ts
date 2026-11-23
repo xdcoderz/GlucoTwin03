@@ -1,12 +1,14 @@
-import { test,expect } from '@playwright/test';
+import { test,expect } from './fixtures';
 import { openPatientTwin,openDisclosure } from './workspaceSupport';
 
-test('five workspace blocks, closed tools and one timeline shared with the optional twin',async({page,request})=>{
-  await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
+test('patient cockpit, closed tools and one timeline shared with the optional twin',async({page,request})=>{
+  test.setTimeout(60000);
+  const seeded=await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
+  expect(seeded.ok()).toBe(true);
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/#workspace');
   const ws=page.locator('[data-destination=workspace]');
-  await expect(ws.locator('.review-form')).toBeVisible();
+  await expect(ws.locator('.review-form')).toBeVisible({timeout:15000});
   await expect(ws.getByRole('navigation',{name:'Dashboard sections'}).getByRole('link')).toHaveText(['01Patient & meal','02Glucose history','03Score & factors','04Follow-up','05Review']);
   for(const selector of ['#patient-twin','.replay-forecast','.saved-attempts','.journal-technical','.demo-controls','.readiness-technical'])await expect(ws.locator(selector)).not.toHaveAttribute('open','');
   await expect(ws.getByTestId('anatomy-stage')).toHaveCount(0);
@@ -16,8 +18,8 @@ test('five workspace blocks, closed tools and one timeline shared with the optio
   await expect(ws.getByRole('button',{name:/Score & save/})).toHaveCount(1);
   await expect(ws.getByRole('button',{name:/Download saved result|Download research summary/})).toHaveCount(1);
   const historyBox=await ws.locator('#phase-one-flow').boundingBox(),scoreBox=await ws.locator('#score-step').boundingBox();
-  expect(scoreBox!.x).toBeGreaterThan(historyBox!.x+historyBox!.width);
-  expect(Math.abs(scoreBox!.y-historyBox!.y)).toBeLessThan(2);
+  expect(scoreBox!.y).toBeGreaterThan(historyBox!.y+historyBox!.height);
+  await expect(ws.getByRole('region',{name:'Connected patient cockpit'})).toBeVisible();
   await page.screenshot({path:'../../docs/screenshots/workspace_simple_desktop.png',fullPage:true});
   await openPatientTwin(page);
   await expect(ws.getByTestId('anatomy-stage')).toHaveAttribute('data-status','ready');
@@ -37,8 +39,12 @@ test('five workspace blocks, closed tools and one timeline shared with the optio
 });
 
 test('collapsed demo and history preserve scoring, follow-up, review and version selection',async({page,request})=>{
+  test.setTimeout(60000);
+  const seeded=await request.post('http://127.0.0.1:18083/api/patients/DEMO-001/refresh');
+  expect(seeded.ok()).toBe(true);
   await page.goto('/#workspace');
   const before=await (await request.get('http://127.0.0.1:18083/api/patients/DEMO-001/journal')).json();
+  expect(before).toHaveLength(1);
   await page.getByRole('button',{name:/Score & save/}).click();
   await expect(page.locator('.outcome-summary')).toBeVisible();
   const after=await (await request.get('http://127.0.0.1:18083/api/patients/DEMO-001/journal')).json();

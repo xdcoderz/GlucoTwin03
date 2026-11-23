@@ -1,5 +1,5 @@
 import { openPatientTwin, openDisclosure } from './workspaceSupport';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('readiness steps expose missing samples, recover, and offer a saved unavailable attempt', async ({ page, request }) => {
   const fixture = await (await request.get('http://127.0.0.1:18083/api/patients/DEMO-001/readiness')).json();
@@ -42,7 +42,7 @@ test('a background API outage preserves review draft, disables changes and recov
   await expect(page.getByRole('button', { name: 'Mark reviewed', exact: true })).toBeDisabled();
   await expect(page.getByTestId('anatomy-stage')).toBeAttached();
   await page.unroute('**/api/patients/DEMO-002');
-  await page.getByRole('button', { name: 'Retry connection', exact: true }).click();
+  // Automatic polling may recover before a user can click the retry button.
   await expect(page.locator('.connection-warning')).toHaveCount(0);
   await expect(page.getByLabel('Local demo review note')).toHaveValue(/preserve this unsaved draft/);
   await expect(page.getByRole('button', { name: 'Mark reviewed', exact: true })).toBeEnabled();

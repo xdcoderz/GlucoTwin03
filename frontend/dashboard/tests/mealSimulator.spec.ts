@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect} from './fixtures';
 
 test('custom meal fields reach the API and saved simulations survive reload without replacing recorded meals',async({page,request})=>{
   const before=await (await request.get('http://127.0.0.1:18083/api/patients/DEMO-001/journal')).json();
@@ -41,7 +41,7 @@ test('returned meal scores drive a separate labeled twin and edits clear stale o
   await meal.getByLabel('Total portion (g)',{exact:true}).fill('350');
   await meal.getByRole('button',{name:'Simulate this meal'}).click();
   await expect(meal.getByTestId('meal-simulation-score')).toHaveText('0.720');
-  const stage=meal.getByTestId('anatomy-stage');await expect(stage).toHaveAttribute('data-status','ready');
+  const stage=meal.getByTestId('anatomy-stage');await expect(stage).toHaveAttribute('data-status','ready',{timeout:15000});
   await expect(stage).toHaveAttribute('data-body-tone','attention');await expect(stage).toHaveAttribute('data-organ-palette','natural');
   await expect(meal.locator('.twin-signal-key')).toContainText('MEAL WHAT-IF SCORE CONTEXT');
   await expect(meal.locator('.body-glow-legend')).toContainText('Blue does not establish a safe meal');

@@ -1,7 +1,8 @@
 import { openPatientTwin, openDisclosure } from './workspaceSupport';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('natural anatomy can be inspected independently of the glucose overlay', async ({ page }) => {
+  test.setTimeout(90000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/#workspace');
   await openPatientTwin(page);
@@ -24,15 +25,12 @@ test('natural anatomy can be inspected independently of the glucose overlay', as
   await expect(page.locator('.twin-signal-key')).toContainText('OVERLAY HIDDEN');
   await page.getByRole('navigation', { name: 'Choose an organ or tissue' }).getByRole('button', { name: 'Pancreas' }).click();
   await expect(stage).toHaveAttribute('data-stage', 'detail');
-  await page.locator('.twin-viewer').screenshot({ path: '../../docs/screenshots/tissue_pancreas.png' });
-  await page.getByRole('button', { name: 'Body overview / reset' }).click();
-  await page.locator('.twin-viewer').screenshot({ path: '../../docs/screenshots/tissue_full_body.png' });
+  await page.getByRole('button', { name: 'Reset view', exact: true }).click();
   await page.getByText('About tissue colors and references', { exact: true }).click();
   await expect(page.locator('.twin-appearance details')).toContainText('not patient measurements or a validated anatomical atlas');
   await expect(page.locator('.twin-appearance a')).toHaveCount(5);
   await page.setViewportSize({ width: 400, height: 860 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.locator('.twin-viewer').screenshot({ path: '../../docs/screenshots/tissue_mobile.png' });
   await overlay.check();
   await expect(page.locator('.twin-signal-key')).toContainText('RECORDED GLUCOSE OVERLAY');
 });

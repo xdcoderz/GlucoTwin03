@@ -28,7 +28,13 @@ export type AnatomyScene = {
 /** User-supplied procedural GLB, with separate recorded/fictional glucose overlays. */
 export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanvasElement, callbacks: Callbacks): Promise<AnatomyScene> {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "low-power" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+  const context = renderer.getContext();
+  const deviceInfo = context.getExtension('WEBGL_debug_renderer_info');
+  const deviceName = String(deviceInfo ? context.getParameter(deviceInfo.UNMASKED_RENDERER_WEBGL) : context.getParameter(context.RENDERER));
+  const softwareGraphics = /swiftshader|llvmpipe|software rasterizer/i.test(deviceName);
+  // CPU rendering needs a smaller drawing buffer to keep the form responsive.
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, softwareGraphics ? .55 : 1.7));
+  host.dataset.graphicsQuality = softwareGraphics ? 'reduced' : 'standard';
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
@@ -162,6 +168,8 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
   contextHalo.position.set(0,.05,-.38);contextHalo.scale.y=2.2;contextHalo.visible=false;scene.add(contextHalo);
 
   let disposed = false;
+  let renderFrame = 0;
+  let lastDraw = 0;
   let active: ViewId = 'body';
   let shellOpacity = .20;
   let cameraTween: gsap.core.Tween | null = null;
@@ -208,6 +216,17 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
   updateDots();
 
   function render() {
+    if (disposed || renderFrame) return;
+    // Context, opacity and signal often change together. Draw once per frame.
+    renderFrame = requestAnimationFrame(now => {
+      renderFrame = 0;
+      if (softwareGraphics && now - lastDraw < 1000 / 24) { render(); return; }
+      lastDraw = now;
+      draw();
+    });
+  }
+
+  function draw() {
     if (disposed) return;
     const distance = camera.position.distanceTo(controls.target);
     const stage = active === 'body' ? 'body' : cameraStage(distance);
@@ -231,14 +250,14 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
   }
 
   function applyBodyGlow() {
-    bodyAura.set(bodyGlow,overlayEnabled && hasSignal && bodyGlow.tone!=='unavailable',reducedMotion.matches);
+    bodyAura.set(bodyGlow,overlayEnabled && hasSignal && bodyGlow.tone!=='unavailable',reducedMotion.matches || softwareGraphics);
   }
 
   function animateTo(position: THREE.Vector3, target: THREE.Vector3, instant = false) {
     cameraTween?.kill();
     transitioning = true;
     goalPosition.copy(position); goalTarget.copy(target);
-    if (instant || reducedMotion.matches) {
+    if (instant || reducedMotion.matches || softwareGraphics) {
       camera.position.copy(position); controls.target.copy(target); controls.update(); transitioning = false; render();
       return;
     }
@@ -380,7 +399,7 @@ export async function createAnatomyScene(host: HTMLDivElement, canvas: HTMLCanva
       syncFlow(); render();
     },
     dispose() {
-      disposed = true; cameraTween?.kill(); bodyAura.dispose(); cancelAnimationFrame(signalFrame); observer.disconnect(); visibilityObserver.disconnect();
+      disposed = true; cancelAnimationFrame(renderFrame); cameraTween?.kill(); bodyAura.dispose(); cancelAnimationFrame(signalFrame); observer.disconnect(); visibilityObserver.disconnect();
       document.removeEventListener('visibilitychange', syncFlow); reducedMotion.removeEventListener('change', syncFlow);
       controls.removeEventListener('change', changed); controls.removeEventListener('start', interrupt); controls.dispose();
       canvas.removeEventListener('pointerdown', pointerDown); canvas.removeEventListener('pointerup', pointerUp);

@@ -52,7 +52,11 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
-        self.wfile.write(encoded)
+        try:
+            self.wfile.write(encoded)
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            # Navigation/abort cancels polling requests; state remains intact.
+            pass
 
     def do_OPTIONS(self):
         self.send_response(204)
@@ -80,7 +84,16 @@ class Handler(BaseHTTPRequestHandler):
             except (ValueError, TypeError):
                 self.reply(400, {'error': 'Invalid demo workflow body'})
                 return
-        if method == "GET" and parts == ["health"]:
+        if parts == ['__test', 'reset']:
+            if method != 'POST' or not getattr(self.server, 'test_reset_enabled', False):
+                self.reply(404, {'error': 'Unknown route'})
+                return
+            self.server.patients = load_patients()
+            self.server.journal = {pid: [] for pid in self.server.patients}
+            self.server.followup = {pid: {} for pid in self.server.patients}
+            self.server.meal_simulations = {}
+            self.reply(200, {'reset': True, 'mode': 'preview_test'})
+        elif method == "GET" and parts == ["health"]:
             self.reply(200, {"status": "ok", "mode": "preview", "model_loaded": False})
         elif method == 'GET' and parts == ['api', 'worklist']:
             self.reply(200, [journal.latest(self.server, pid) for pid in patients])
@@ -153,12 +166,23 @@ class Handler(BaseHTTPRequestHandler):
         self.dispatch("POST")
 
 
+class PreviewServer(ThreadingHTTPServer):
+    # A workspace starts several independent polls in one burst. The stdlib's
+    # small default backlog can refuse valid connections on a slower machine.
+    request_queue_size = 64
+    daemon_threads = True
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=18081)
+    parser.add_argument('--enable-test-reset', action='store_true', help='Enable reset only for isolated loopback browser tests')
     args = parser.parse_args()
-    server = ThreadingHTTPServer((args.host, args.port), Handler)
+    if args.enable_test_reset and args.host not in ('127.0.0.1', '::1'):
+        parser.error('Test reset requires a loopback bind address')
+    server = PreviewServer((args.host, args.port), Handler)
+    server.test_reset_enabled = args.enable_test_reset
     server.patients = load_patients()
     print(f"PREVIEW ONLY: http://{args.host}:{args.port}; scores remain unavailable", flush=True)
     server.serve_forever()

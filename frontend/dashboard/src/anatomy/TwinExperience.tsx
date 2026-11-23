@@ -3,6 +3,7 @@ import { gsap, useGSAP, easeOut } from '../motion/gsap';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ReferenceArea, ReferenceDot, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { DashboardData, Reading } from '../types';
 import BodyTwinPanel from './BodyTwinPanel';
+import PatientCockpit from './PatientCockpit';
 import ProjectionPanel from './ProjectionPanel';
 import ReplayForecast from '../workflow/ReplayForecast';
 import { inspectPattern } from './visualResearch';
@@ -10,10 +11,10 @@ import { glucoseSignal, mockTimeline, recordedTimeline, SCENARIOS, utcLabel, typ
 import './twinExperience.css';
 import './visualResearch.css';
 
-type Props = { data: DashboardData; api: string; fixedPhase?: 'recorded' | 'vision'; active?: boolean; workspaceCompact?: boolean; instanceScope?: string };
+type Props = { data: DashboardData; api: string; fixedPhase?: 'recorded' | 'vision'; active?: boolean; workspaceCompact?: boolean; cockpit?: boolean; instanceScope?: string };
 
 /** Local mock mode never writes to the API, score, journal, or exports. */
-export default function TwinExperience({ data, api, fixedPhase, active = true, workspaceCompact = false, instanceScope }: Props) {
+export default function TwinExperience({ data, api, fixedPhase, active = true, workspaceCompact = false, cockpit = false, instanceScope }: Props) {
   const controlScope=instanceScope || fixedPhase || 'recorded';
   const [phase, setPhase] = useState<'recorded' | 'vision'>(fixedPhase || 'recorded');
   const studio = useRef<HTMLElement>(null);
@@ -44,6 +45,7 @@ export default function TwinExperience({ data, api, fixedPhase, active = true, w
   }, []);
 
   useEffect(() => {
+    if (!active) return;
     let stopped = false;
     let timer: number;
     let controller: AbortController;
@@ -67,7 +69,7 @@ export default function TwinExperience({ data, api, fixedPhase, active = true, w
     }
     void poll();
     return () => { stopped = true; clearTimeout(timer); controller?.abort(); };
-  }, [api, data.patient.patientId, retry]);
+  }, [api, data.patient.patientId, retry, active]);
 
   const recorded = useMemo(() => recordedTimeline(readings, data.currentMeal.baselineAt), [readings, data.currentMeal.baselineAt]);
   const baseline = recorded.points.find(point => point.minutes === 0)?.glucose ?? null;
@@ -115,7 +117,11 @@ export default function TwinExperience({ data, api, fixedPhase, active = true, w
     setSelectedTime(points[index >= points.length - 1 ? 0 : Math.max(0, index)]?.observedAt ?? null);
     setPlaying(true);
   }
-  const score = data.prediction.status === 'available' ? data.prediction.model_score : null;
+  const savedPrediction = data.journal?.predictionId ? data.journal.prediction : data.prediction;
+  const score = savedPrediction.status === 'available' ? savedPrediction.model_score : null;
+  const chartSelection = sourceUnavailable || !point
+    ? 'Selected reading unavailable.'
+    : `Selected ${point.glucose} milligrams per deciliter at ${point.minutes} minutes from meal.`;
 
   const timeline = (
     <div className="twin-timeline">
@@ -124,7 +130,7 @@ export default function TwinExperience({ data, api, fixedPhase, active = true, w
       {recorded.issue && <p className="timeline-warning" role="alert">{recorded.issue}</p>}
       {!points.length ? <p className="timeline-empty">{phase === 'vision' ? 'A valid recorded meal baseline is needed to start a fictional scenario.' : 'No valid samples in this meal window. Replay the patient’s synthetic data to begin.'}</p> : <>
         <div className="timeline-chart-labels"><span>Glucose · mg/dL</span><span>{phase === 'recorded' ? 'Shaded region: 120-minute follow-up window' : 'Fictional scenario · next 120 minutes'}</span></div>
-        <div className="timeline-chart" role="img" aria-label={`${phase === 'vision' ? 'Fictional' : 'Recorded'} glucose timeline with ${points.length} samples. Selected ${point?.glucose} milligrams per deciliter at ${point?.minutes} minutes from meal.`}>
+        <div className="timeline-chart" role="img" aria-label={`${phase === 'vision' ? 'Fictional' : 'Recorded'} glucose timeline with ${points.length} samples. ${chartSelection}`}>
           <ResponsiveContainer width="100%" height="100%"><LineChart data={points} margin={{ top: 20, right: 22, bottom: 6, left: -12 }}>
             <CartesianGrid stroke="var(--border)" vertical={false} /><XAxis dataKey="minutes" type="number" domain={phase === 'recorded' ? [-120,120] : [0,120]} ticks={phase === 'recorded' ? [-120,-60,0,60,120] : [0,30,60,90,120]} tickFormatter={value => value === 0 ? 'Meal' : `${value > 0 ? '+' : ''}${value}m`} tick={{ fontSize: 11 }} /><YAxis domain={[40, (max: number) => Math.max(240, Math.ceil(max / 20) * 20)]} tick={{ fontSize: 11 }} width={52} />
             {phase === 'recorded' && <ReferenceArea x1={0} x2={120} fill="var(--accent)" fillOpacity={.6} />}
@@ -133,24 +139,57 @@ export default function TwinExperience({ data, api, fixedPhase, active = true, w
             {phase==='vision'&&<ReferenceLine y={70} stroke="var(--chart-low)" strokeDasharray="4 4" label={{value:'70 · illustration',position:'insideBottomRight',fill:'var(--chart-low)',fontSize:10}} />}
             <ReferenceLine x={0} stroke="var(--muted-foreground)" strokeDasharray="3 4" />
             <Line dataKey="glucose" type="linear" stroke={phase === 'vision' ? 'var(--primary)' : 'var(--chart-recorded)'} strokeWidth={2.5} strokeDasharray={phase === 'vision' ? '6 4' : undefined} dot={{ r: 3 }} isAnimationActive={false} />
-            {point && <ReferenceDot x={point.minutes} y={point.glucose} r={7} fill={phase === 'vision' ? 'var(--primary)' : 'var(--chart-recorded)'} stroke="var(--card)" strokeWidth={2} />}
+            {!sourceUnavailable && point && <ReferenceDot x={point.minutes} y={point.glucose} r={7} fill={phase === 'vision' ? 'var(--primary)' : 'var(--chart-recorded)'} stroke="var(--card)" strokeWidth={2} />}
           </LineChart></ResponsiveContainer>
         </div>
-        {!instanceScope && <label className="timeline-scrubber" htmlFor={`twin-time-${instanceScope || phase}`}><span>Selected sample <b>{index + 1} / {points.length}</b></span><input id={`twin-time-${instanceScope || phase}`} type="range" min={0} max={Math.max(0, points.length - 1)} step={1} value={Math.max(0, index)} aria-valuetext={`${point?.minutes} minutes from meal, ${point?.glucose} milligrams per deciliter`} onChange={event => scrub(Number(event.target.value))} /></label>}
-        {!instanceScope && <div className="timeline-controls">{workspaceCompact && <><button className="button button-secondary" disabled={reduced || points.length < 2 || sourceUnavailable} onClick={play}>{playing ? 'Pause replay' : 'Play replay'}</button><button className="button button-secondary" disabled={!points.length || index <= 0} onClick={()=>scrub(index-1)}>Previous sample</button><button className="button button-secondary" disabled={!points.length || index >= points.length-1} onClick={()=>scrub(index+1)}>Next sample</button></>}{phase === 'recorded' && <button className="button button-secondary" aria-pressed={following} onClick={() => { setPlaying(false); setFollowing(true); }}>Follow latest</button>}<p>{reduced ? 'Reduced motion: use the slider or sample buttons.' : 'Replay speed: one sample per second. Not real elapsed time.'}</p></div>}
+        {!instanceScope && <label className="timeline-scrubber" htmlFor={`twin-time-${instanceScope || phase}`}><span>Selected sample <b>{index + 1} / {points.length}</b></span><input id={`twin-time-${instanceScope || phase}`} type="range" min={0} max={Math.max(0, points.length - 1)} step={1} value={Math.max(0, index)} disabled={sourceUnavailable} aria-valuetext={sourceUnavailable ? 'Stream unavailable' : `${point?.minutes} minutes from meal, ${point?.glucose} milligrams per deciliter`} onChange={event => scrub(Number(event.target.value))} /></label>}
+        {!instanceScope && <div className="timeline-controls">
+          {workspaceCompact && <>
+            <button className="button button-secondary" disabled={reduced || points.length < 2 || sourceUnavailable} onClick={play}>{playing ? 'Pause replay' : 'Play replay'}</button>
+            <button className="button button-secondary" disabled={sourceUnavailable || index <= 0} onClick={() => scrub(index - 1)}>Previous sample</button>
+            <button className="button button-secondary" disabled={sourceUnavailable || index >= points.length - 1} onClick={() => scrub(index + 1)}>Next sample</button>
+          </>}
+          {phase === 'recorded' && <button className="button button-secondary" aria-pressed={following} disabled={sourceUnavailable} onClick={() => { setPlaying(false); setFollowing(true); }}>Follow latest</button>}
+          <p>{reduced ? 'Reduced motion: use the slider or sample buttons.' : 'Replay speed: one sample per second. Not real elapsed time.'}</p>
+        </div>}
       </>}
       {!workspaceCompact && <div className="twin-interpretation"><strong>{phase === 'vision' ? 'Mock event overlay' : 'Sample interpretation'}</strong><p>{sourceUnavailable ? 'Waiting for a connected glucose stream.' : !point ? 'No sample selected.' : !isFutureWindow ? 'This sample is at or before the meal. It supplies context; it is not a future event.' : matchesTarget ? `${phase === 'vision' ? 'This fictional' : 'This received'} sample meets the research event rule (≥180 mg/dL or rise ≥40 from baseline).` : 'This individual sample does not meet the research event rule. It cannot rule out an event elsewhere in the window.'}</p><span>{phase === 'vision' ? 'Scenario samples stay separate from saved model results, journals and PDFs.' : 'A line connects received points for readability; glucose between samples is unknown.'}</span></div>}
     </div>
   );
-  if(workspaceCompact) return <section ref={studio} className="workspace-history-content" aria-label="Patient glucose history" data-testid="twin-experience" data-phase="recorded">
-    <div className="workspace-sample" aria-live="polite"><div><span>Selected reading</span><strong data-testid="twin-glucose">{sourceUnavailable || !point ? '—' : point.glucose.toFixed(0)} <small>mg/dL</small></strong></div><div><span>From meal</span><strong>{point ? `${point.minutes > 0 ? '+' : ''}${point.minutes} min` : '—'}</strong></div><div><span>Change from previous</span><strong>{sourceUnavailable || delta===null ? '—' : `${delta>0?'+':''}${delta} mg/dL`}</strong></div></div>
-    {timeline}
-    <details id="patient-twin" className="workspace-disclosure workspace-twin" onToggle={event=>setTwinOpen(event.currentTarget.open)}>
-      <summary>View patient twin</summary>
-      {twinOpen && <><BodyTwinPanel patientId={data.patient.patientId} glucose={baseline} modelScore={score} medications={data.patient.medications} signal={{...signal,playing:active && twinOpen && signal.playing}} phase="recorded"/><button className="button button-secondary" aria-pressed={animateSignal} disabled={reduced || signal.glucose === null || playing} onClick={()=>setAnimateSignal(value=>!value)}>{animateSignal ? 'Pause overlay motion' : 'Animate glucose overlay'}</button></>}
-    </details>
-    <ReplayForecast api={api} patientId={data.patient.patientId} origin={point?.observedAt} unavailable={sourceUnavailable || Boolean(recorded.issue)} />
-  </section>;
+  if (workspaceCompact) {
+    const anatomy = <details id="patient-twin" className="workspace-disclosure workspace-twin" onToggle={event => {
+      const open = event.currentTarget.open;
+      setTwinOpen(open);
+      if (!open) setAnimateSignal(false);
+    }}>
+      <summary aria-label={twinOpen ? 'Close 3D patient twin' : 'Open 3D patient twin'}><span>View patient twin</span><span aria-hidden="true">{twinOpen ? 'Close 3D' : 'Explore in 3D'}</span></summary>
+      {twinOpen && active && <>
+        <BodyTwinPanel patientId={data.patient.patientId} glucose={baseline} modelScore={score} medications={data.patient.medications} signal={signal} phase="recorded" compact={cockpit} />
+        <button className="button button-secondary cockpit-motion-control" aria-pressed={animateSignal} disabled={reduced || signal.glucose === null || playing} onClick={() => setAnimateSignal(value => !value)}>{animateSignal ? 'Pause overlay motion' : 'Animate glucose overlay'}</button>
+      </>}
+    </details>;
+    return <section ref={studio} className="workspace-history-content" aria-label="Patient glucose history" data-testid="twin-experience" data-phase="recorded">
+      {cockpit ? <PatientCockpit
+        data={data}
+        point={point}
+        unavailable={sourceUnavailable}
+        delta={delta}
+        hasBaseline={!sourceUnavailable && points.some(sample => sample.minutes === 0)}
+        hasFollowup={!sourceUnavailable && points.some(sample => sample.minutes > 0)}
+        onBaseline={() => scrub(points.findIndex(sample => sample.minutes === 0))}
+        onFollowup={() => scrub(points.length - 1)}
+        signal={signal}
+        twinOpen={twinOpen}
+        anatomy={anatomy}
+        timeline={timeline}
+      /> : <>
+        <div className="workspace-sample" aria-live="polite"><div><span>Selected reading</span><strong data-testid="twin-glucose">{sourceUnavailable || !point ? '—' : point.glucose.toFixed(0)} <small>mg/dL</small></strong></div><div><span>From meal</span><strong>{point ? `${point.minutes > 0 ? '+' : ''}${point.minutes} min` : '—'}</strong></div><div><span>Change from previous</span><strong>{sourceUnavailable || delta === null ? '—' : `${delta > 0 ? '+' : ''}${delta} mg/dL`}</strong></div></div>
+        {timeline}
+        {anatomy}
+      </>}
+      {active && <ReplayForecast api={api} patientId={data.patient.patientId} origin={point?.observedAt} unavailable={sourceUnavailable || Boolean(recorded.issue)} />}
+    </section>;
+  }
 
   return <section ref={studio} className={`twin-experience ${phase === 'vision' ? 'vision-mode' : ''}`} aria-label="Patient digital twin studio" data-testid="twin-experience" data-phase={phase} data-instance={instanceScope || 'future'}>
     {!fixedPhase && <><div className="experience-topline"><div><p className="eyebrow">GLUCOTWIN / INTERACTIVE PATIENT</p><h2>One patient. Two perspectives.</h2></div><span className="experience-patient">{data.patient.patientId}<small>Synthetic patient</small></span></div>

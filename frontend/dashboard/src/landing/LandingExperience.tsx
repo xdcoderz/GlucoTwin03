@@ -13,13 +13,16 @@ export default function LandingExperience() {
     let cleanup: (() => void) | undefined;
     setFailed(false);
     setMounting(true);
+    const deadline = window.setTimeout(() => { if (!cancelled) { setFailed(true); setMounting(false); } }, 20000);
     import('./experience').then(({ mountLanding }) => {
       if (cancelled || !host.current) return;
       const experience = mountLanding(host.current, () => setAttempt(value => value + 1));
       cleanup = experience.dispose;
+      window.clearTimeout(deadline);
+      setFailed(false);
       setMounting(false);
-    }).catch(() => { if (!cancelled) { setFailed(true); setMounting(false); } });
-    return () => { cancelled = true; cleanup?.(); };
+    }).catch(() => { window.clearTimeout(deadline); if (!cancelled) { setFailed(true); setMounting(false); } });
+    return () => { cancelled = true; window.clearTimeout(deadline); cleanup?.(); };
   }, [attempt]);
   return <div className="landing-experience">
     <section className="landing-introduction" aria-labelledby="landing-title" data-testid="landing-introduction">
@@ -28,7 +31,7 @@ export default function LandingExperience() {
       <dl className="landing-capabilities"><div><dt>Prediction window</dt><dd>120 <span>minutes</span></dd></div><div><dt>Connected context</dt><dd>Patient <span>+ meal + glucose</span></dd></div><div><dt>Experience</dt><dd>Interactive <span>visual twin</span></dd></div></dl>
     </section>
     <div ref={host} data-testid="landing-experience" />
-    {failed && <div className="landing-fallback"><h2>The anatomy experience could not start</h2><p>The patient workspace and model evidence are still available.</p><button className="button button-secondary" onClick={() => setAttempt(value => value + 1)}>Retry anatomy</button><a className="button button-primary" href="#workspace">Open patient workspace</a></div>}
+    {failed && <div className="landing-fallback"><h2>The anatomy experience could not start</h2><p>Open the patient workspace or reload the page to try the anatomy again.</p><button className="button button-secondary" onClick={() => window.location.reload()}>Reload page</button><a className="button button-primary" href="#workspace">Open patient workspace</a></div>}
     {mounting && <p className="landing-loading" role="status">Preparing the anatomy experience…</p>}
   </div>;
 }

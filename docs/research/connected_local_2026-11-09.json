@@ -1,0 +1,55 @@
+{
+  "verifiedOn": "2026-11-09",
+  "generatedAtUtc": "2026-11-09T05:19:00.088941+00:00",
+  "mode": "native local Java/Spring + Python/FastAPI + Vite; not Docker",
+  "syntheticDemoInputs": true,
+  "realFittedInference": true,
+  "modelVersion": "shanghai-logistic-v1",
+  "artifactSha256": "fe713ef5e19300033e2586493919dc4ac6b96a8fd9dc9813b5915d2f5cd01921",
+  "backendTests": 27,
+  "runtimeChecks": 44,
+  "runtimeAllPassed": true,
+  "runtimePhases": {
+    "baseline": 13,
+    "workflow": 21,
+    "outage": 3,
+    "recovery": 3,
+    "persistence": 4
+  },
+  "referenceScores": {
+    "DEMO-001": 0.3677653238267805,
+    "DEMO-002": 0.9887812722077698
+  },
+  "browserChecks": [
+    "The backend rejects an unrelated Origin through the same proxy.",
+    "Actual saved score remains fixed while observation and shared timeline change.",
+    "Actual custom-meal response uses 43 inputs, exact weight/categories and the fitted model without modifying either recorded journal.",
+    "Custom-meal record and exact output reopen after reload.",
+    "Second patient displays its own actual saved score and result ID.",
+    "No horizontal overflow at 320, 400 and 1440 pixels."
+  ],
+  "browserPageErrors": [],
+  "customMeal": {
+    "simulationId": "3fc4cbf9-1afe-486c-a431-12922e531feb",
+    "inputHash": "cc5a38d702d5b79a7dfa189f633a4e3bdf280d679c4616eb3c220cc984ac266a",
+    "model": "shanghai-logistic-v1",
+    "score": 0.41383120128309137,
+    "featureCount": 43
+  },
+  "savedPdfVerified": true,
+  "routingRegression": {
+    "initialFailure": "Browser custom-meal POST received 403 Invalid CORS request while direct requests succeeded",
+    "fix": "Preserve external Host in Vite; Nginx template updated similarly",
+    "browserSameOriginPassed": true,
+    "unrelatedOriginStillRejected": true,
+    "nginxContainerVerified": false
+  },
+  "productionBuild": "passed; existing large-bundle warning",
+  "remaining": [
+    "Full graphics/browser suite",
+    "Docker/Nginx image verification",
+    "Public deployment and visitor isolation",
+    "Model calibration and external validation"
+  ],
+  "clinicalValidationEstablished": false
+}

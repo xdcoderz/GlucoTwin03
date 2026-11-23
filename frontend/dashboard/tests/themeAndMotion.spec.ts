@@ -1,6 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('dark default, saved theme choice, all destinations and phone layouts', async ({page})=>{
+  test.setTimeout(120000);
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto('/');
@@ -32,7 +33,6 @@ test('dark default, saved theme choice, all destinations and phone layouts', asy
       for(const width of [1440,400]) {
         await page.setViewportSize({width,height:1000});
         expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-        await page.screenshot({path:`../../docs/screenshots/theme_${theme}_${id}_${width}.png`,fullPage:id==='overview'});
       }
       await page.setViewportSize({width:1440,height:1000});
     }
@@ -46,9 +46,14 @@ test('dark default, saved theme choice, all destinations and phone layouts', asy
 });
 
 test('rotation pauses for interaction, organ focus and reduced motion',async({page})=>{
+  test.setTimeout(90000);
   await page.goto('/');
   const hero=page.getByTestId('landing-experience');
   await expect(hero).toHaveAttribute('data-scene-status','ready',{timeout:20000});
+  if(await hero.getAttribute('data-graphics-quality')==='reduced') {
+    await expect(hero.getByRole('button',{name:'Auto-rotate model',exact:true})).toHaveAttribute('aria-pressed','false');
+    await hero.getByRole('button',{name:'Auto-rotate model',exact:true}).click();
+  }
   await page.mouse.move(0,0);
   await expect(hero).toHaveAttribute('data-rotation-state','running');
   await hero.locator('.landing-stage').hover();

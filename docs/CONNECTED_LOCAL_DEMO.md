@@ -1,0 +1,179 @@
+# Connected local GlucoTwin demo
+
+The competition branch runs natively on the presentation laptop. Demo patients, meals and glucose readings are synthetic. The meal-event classifier is a fitted research model.
+
+## Competition walkthrough
+
+**Before the presentation.** From this checkout, build the Java backend and React dashboard:
+
+```powershell
+.\tools\Local-Demo.ps1 -Component Build
+Set-Location frontend/dashboard
+npm.cmd ci
+npm.cmd run build
+Set-Location ../..
+```
+
+Start one long-running component in each of three PowerShell terminals from the repository root:
+
+```powershell
+# Terminal 1
+.\tools\Local-Demo.ps1 -Component Model
+# Terminal 2
+.\tools\Local-Demo.ps1 -Component Backend -DatabaseName competition-demo
+# Terminal 3
+.\tools\Local-Demo.ps1 -Component Preview
+```
+
+In another terminal, replay the two starting histories and check the services:
+
+```powershell
+.\tools\Local-Demo.ps1 -Component Replay
+.\tools\Local-Demo.ps1 -Component Check
+```
+
+The check should report **9/9** samples for both patients and **model ready**. If you need a fresh rehearsal after completing one, stop the backend and restart it with a new `-DatabaseName`, then replay the starting history. The previous database remains available. Go to the [patient workspace](http://127.0.0.1:5173/?patient=DEMO-001#workspace).
+
+| Show | Say |
+| --- | --- |
+| Select **Patient 001**. Point to the recorded meal and the selected reading. | “This synthetic case brings together a health record, meal details, and a history of glucose sensor readings.” |
+| Open **View patient twin**, choose **Pancreas**, then use **Reset view**. Move the timeline to an earlier reading. | “The 3D body is educational. Its glow follows the selected glucose reading. The chart and body are showing the same point in time.” |
+| Choose **At the meal**, then **Score & save meal** under **Score & factors**. | “The trained model scores one defined event over the 120 minutes after the meal. The score is saved with the exact inputs and model version.” |
+| Open **Follow-up → Demo controls**. Replay the first 45 minutes, then complete the replay. Return to the cockpit and choose **Latest follow-up sample**. | “These are later synthetic readings. We can see what arrived and how complete the follow-up is. The saved score remains tied to the meal.” |
+| Add a synthetic note, choose **Mark reviewed**, and **Download saved result**. | “The PDF contains the same saved result, original input fingerprint, and review.” |
+| For the optional simulation, choose **At the meal**, then open **Glucose forecast at selected reading** and run a meal-and-walk comparison. | “These two curves compare scenarios under the simulator’s assumptions. The short demo history uses default model parameters.” |
+
+If the 3D renderer is slow or unavailable, use the illustrated anatomy and its organ buttons. The same timeline, scoring and export controls remain available. Keep a copy of the walkthrough recording alongside the presentation as a backup.
+
+### Competition verification, 22 November 2026
+
+- The compiled dashboard completed the rehearsal against the real Spring and FastAPI services. Both synthetic cases began with nine readings. The fitted model returned **0.368** for DEMO-001 and **0.989** for DEMO-002.
+- The desktop walkthrough loaded 3D with software graphics, focused the pancreas, changed the selected glucose through the timeline, and reset the view. Phone-width browser emulation with WebGL disabled confirmed the illustration, organ controls and timeline remain usable.
+- The downloaded PDF preserved the saved result ID, input fingerprint, fitted model version, score and review. Both journals, including follow-up and review state, survived a proof backend restart.
+- The meal-and-walk simulation used only observations through the selected reading and saved a separate forecast. It used default parameters for the short synthetic history. Its saved forecast survived the proof restart.
+- The production frontend build, 31 backend tests and 27 Python tests passed. This release has local evidence. A physical phone run and a clean Docker rebuild remain open.
+
+## Earlier connected runtime verification
+
+The original connected local verification was recorded on 9 November 2026.
+
+## What is different now?
+
+The website at `http://127.0.0.1:5173` now calls the actual Spring Boot backend on port 8080. That backend calls the actual FastAPI model service on port 8000 and saves records in a local H2 database.
+
+The old preview service intentionally returned no model scores. It remains a separate test/preview implementation. Connecting the fitted model does not convert the synthetic example patients into real people or establish clinical accuracy.
+
+```text
+Synthetic patient backgrounds ───────────┐
+                                       v
+Synthetic glucose replay ───────> Spring Boot ───────> FastAPI
+                                   |     ^          fitted model
+                                   |     |               |
+                                   |     └── model result ┘
+                                   v
+                               local H2 file
+                                   ^
+                                   |
+                           Vite / React cockpit
+```
+
+The model artifact was already trained from ShanghaiT2DM-derived research data. No retraining or newly combined dataset was required to connect it. Model loading checks its SHA-256, feature names/order and exact scikit-learn version.
+
+## How to interpret the sample results
+
+| Synthetic case | Recorded-meal model score | Meaning |
+|---|---:|---|
+| DEMO-001 | 0.3677653238267805 | Below the fixed 0.50 research cutoff. Not a guarantee of safety. |
+| DEMO-002 | 0.9887812722077698 | Above the fixed 0.50 research cutoff. Not a 98.9% personal event probability. |
+
+The defined event is glucose reaching at least 180 mg/dL OR rising at least 40 mg/dL from the meal-time baseline within the next 120 minutes. These scores are uncalibrated and cannot support diagnosis, treatment, dosing or emergency use.
+
+One separate synthetic custom-meal experiment used “2 rotis with dal and a cup of curd”, 250 g total weight and 180 minutes since the prior meal. The actual model returned 0.41383120128309137. This demonstrates input delivery and inference, not the causal effect of eating that meal. Dal has no dedicated feature and the model does not take carbohydrate grams.
+
+## What you can try
+
+1. Open `http://127.0.0.1:5173/?patient=DEMO-001#workspace`.
+2. Check that the source says **SYNTHETIC RESEARCH DEMO**, the patient API is connected, and the model is ready.
+3. Inspect the cockpit and move the observation timeline. This changes the observation, not a saved meal-time score.
+4. Use **Score & save meal** to create a genuine fitted-model result for the original recorded meal. A ready model with no requested result displays **Not scored yet**.
+5. Inspect the leading factors. They describe model contributions, not causes or organ-function measurements.
+6. Try the custom meal form. Its saved what-if results remain separate from the recorded-meal journal.
+7. In Follow-up, expand **Demo controls** if you want to append explicitly fictional later readings. They are not generated by the model.
+8. Add a synthetic review note and export the saved result. The PDF refers to that result's original snapshot.
+
+The primary cockpit is a lightweight educational illustration. The existing 3D explorer is optional. Passing inference checks does not close the broader graphics acceptance work.
+
+## Restarting it yourself
+
+Run commands from this repository's root. Long-running components need separate PowerShell terminals; keep them open. The launcher does not install software, delete databases or stop other processes.
+
+Prerequisites: Java 21, Maven, Node/dashboard dependencies, and a Python environment containing `ml-service/requirements.txt`. The launcher searches ancestor `.venv` folders and cached Maven-wrapper distributions. Use `-PythonPath` or `-MavenPath` if your tools are elsewhere. The verified run reused Java 21, cached Maven 3.9.14 and an existing Python environment with scikit-learn 1.9.1; no machine-wide installation was needed.
+
+Build once after backend changes:
+
+```powershell
+.\tools\Local-Demo.ps1 -Component Build
+```
+
+Terminal 1 — the trained-model service:
+
+```powershell
+.\tools\Local-Demo.ps1 -Component Model
+```
+
+Terminal 2 — patient coordination and saved records:
+
+```powershell
+.\tools\Local-Demo.ps1 -Component Backend
+```
+
+Terminal 3 — seed the two synthetic histories, then start the website:
+
+```powershell
+.\tools\Local-Demo.ps1 -Component Replay
+.\tools\Local-Demo.ps1 -Component Dashboard
+```
+
+Replay waits for backend readiness before sending events. Exact repeated replay events are idempotent. Use **Dashboard** for development with automatic refresh, and **Preview** to serve the compiled dashboard after running `npm.cmd run build`.
+
+From another terminal, check the entire connection without creating scoring attempts:
+
+```powershell
+.\tools\Local-Demo.ps1 -Component Check
+```
+
+Ctrl+C stops a component in its own terminal. Saved records for the default backend use `runtime-data/local-demo.mv.db`; reuse the same database name after restarting to retain them. Runtime files are ignored by Git. A different `-DatabaseName` creates a separate demo history; it is not a reset of an existing database.
+
+## What was actually verified
+
+- Java packaging and **27 backend tests**, with no failures.
+- **44 runtime acceptance checks** through a Vite same-origin route: both real scores, five returned factors, snapshot integrity, partial/gapped/complete fictional follow-up, duplicate handling, append-only reviews, actual model outage/recovery and backend-restart persistence.
+- Actual browser custom-meal submission with 43 model inputs and the expected returned score; both recorded journals remain unchanged by the what-if.
+- Custom-meal persistence/reopening after browser reload and patient-switch isolation.
+- An unrelated `Origin` remains rejected with HTTP 403.
+- A downloaded PDF contains the actual saved result ID, input hash, model version, rounded score and synthetic label.
+- Core UI checked at 320, 400 and 1440 pixels without horizontal overflow or page errors.
+- Production TypeScript/Vite build passed with the existing large-bundle warning.
+
+The acceptance database was `runtime-data/connected-proof-20261109-01.mv.db`, on a separate backend port. It is not the visible `local-demo` database. Verification notes, deliberate outage records and fictional follow-up were confined to that proof database. A genuine recorded-meal score was then requested through the visible cockpit in the clean demo database.
+
+## Routing bug found during verification
+
+The preview-only tests had not exposed a browser-to-Spring CORS failure. The first actual browser meal request sent valid fields but received **403 Invalid CORS request**. Direct API requests worked because they did not include the browser's Origin header.
+
+Vite was replacing the frontend Host with the internal backend Host, making a same-origin browser POST appear cross-origin to Spring. The development proxy now preserves the browser Host. The Nginx template also preserves `$http_host`, including the port. No CORS allowlist was widened and no Origin header is rewritten.
+
+The browser rerun succeeded and explicitly confirmed that an unrelated Origin is still rejected. The Nginx change has not been container-verified here. Public HTTPS hosting still needs its own exact-origin/proxy configuration and deployment acceptance.
+
+## Repeating the isolated verification
+
+Use a separate database and spare ports; the acceptance harness intentionally creates synthetic records. Do not run it against the visible demo database expecting a clean journal.
+
+- Runtime harness: `tools/verify_mvp_acceptance.py`, phases baseline, workflow, outage, recovery and persistence. Stop/restart the model or backend only for the documented phase.
+- Browser harness: `node tools/verify_connected_cockpit.mjs --origin http://127.0.0.1:5185 --evidence tmp/connected-ui-20261109/report.json --allow-synthetic-writes`.
+- Aggregate run evidence: `docs/research/connected_local_2026-11-09.json`.
+- Detailed local evidence: `tmp/connected-local-20261109.json` and `tmp/connected-ui-20261109/report.json`.
+
+## Remaining work
+
+Full graphics/browser acceptance, container/Nginx verification, smaller frontend bundles, model calibration/external validation and a protected public deployment remain open. Running a fitted model successfully verifies the software path; it does not improve the model's existing clinical evidence.
